@@ -320,6 +320,65 @@ function SHead({ title, sub }) {
    DASHBOARD
 ══════════════════════════════════════════════════════════════════════════ */
 function DashboardView({ realData }) {
+  // --- Computed from realData ---
+  const pagos = (realData && realData.pagos) || [];
+  const academy = (realData && realData.academy) || [];
+  const reuniones = (realData && realData.reuniones) || [];
+  const leads = (realData && realData.leads) || [];
+
+  // revData: ingresos mensuales reales (últimos 12 meses)
+  const byMonth = {};
+  pagos.forEach(p => {
+    if (!p.processed_at) return;
+    const d = new Date(p.processed_at);
+    const key = d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
+    byMonth[key] = byMonth[key] || { s: 0, p: 0 };
+    if (p.is_academy) byMonth[key].p += Number(p.amount || 0);
+    else byMonth[key].s += Number(p.amount || 0);
+  });
+  const computedRevData = Object.entries(byMonth).slice(-12).map(([m, v]) => ({ m, s: v.s, p: v.p }));
+  const chartRevData = computedRevData.length > 0 ? computedRevData : revData;
+
+  // funnelData: leads por estado
+  const estadoMap = {};
+  leads.forEach(l => {
+    const e = l.estado || 'nuevo';
+    estadoMap[e] = (estadoMap[e] || 0) + 1;
+  });
+  const stageOrder = ['nuevo', 'contactado', 'respondio', 'reunion', 'propuesta', 'cliente'];
+  const stageLabels = { nuevo: 'Prospectos', contactado: 'Contactados', respondio: 'Respondieron', reunion: 'Reunión', propuesta: 'Propuesta', cliente: 'Clientes' };
+  const computedFunnelData = stageOrder
+    .filter(s => estadoMap[s])
+    .map(s => ({ n: stageLabels[s] || s, v: estadoMap[s] }));
+  const chartFunnelData = computedFunnelData.length > 0 ? computedFunnelData : funnelData;
+  const funnelMax = chartFunnelData[0]?.v || 1;
+
+  // activity: últimos eventos reales
+  const fmtAgo = d => {
+    if (!d) return '';
+    const diff = Date.now() - new Date(d).getTime();
+    const min = Math.floor(diff / 60000);
+    if (min < 60) return min + 'min';
+    const h = Math.floor(min / 60);
+    if (h < 24) return h + 'h';
+    return Math.floor(h / 24) + 'd';
+  };
+  const computedActivity = [
+    ...pagos.slice(0, 3).map(p => ({
+      ico: 'dollar', txt: (p.customer_name || p.customer_email || 'Pago') + ' — pago recibido',
+      val: '€' + Number(p.amount || 0).toLocaleString('es-ES'), t: fmtAgo(p.processed_at || p.created_at), c: '#34d399'
+    })),
+    ...reuniones.filter(r => r.status === 'programada').slice(0, 2).map(r => ({
+      ico: 'capture', txt: 'Reunión con ' + (r.guest_name || r.guest_email || 'invitado'),
+      val: r.event_name || 'Reunión', t: fmtAgo(r.created_at), c: '#fbbf24'
+    })),
+    ...academy.slice(0, 2).map(m => ({
+      ico: 'academy', txt: (m.display_name || m.email || 'Miembro') + ' — Astra Academy',
+      val: '+€' + (m.plan_name === 'Pro' ? '497' : '297'), t: fmtAgo(m.joined_at || m.created_at), c: '#a78bfa'
+    })),
+  ].slice(0, 6);
+  const chartActivity = computedActivity.length > 0 ? computedActivity : activity;
+
   return (
     <div className="fi">
       <div style={{ marginBottom:24 }}>
@@ -349,7 +408,7 @@ function DashboardView({ realData }) {
             <span className="bd bd-g">+34% YoY</span>
           </div>
           <ResponsiveContainer width="100%" height={172}>
-            <AreaChart data={revData}>
+            <AreaChart data={chartRevData}>
               <defs>
                 <linearGradient id="gS" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.17}/><stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
@@ -371,8 +430,8 @@ function DashboardView({ realData }) {
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:3 }}>Funnel de Captación</div>
           <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Conversión mes · 2.3% cierre</div>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-            {funnelData.map((d,i)=>{
-              const pct=Math.round((d.v/840)*100);
+            {chartFunnelData.map((d,i)=>{
+              const pct=Math.round((d.v/funnelMax)*100);
               const a=1-i*0.14;
               return (
                 <div key={i} style={{ display:"flex", alignItems:"center", gap:9 }}>
@@ -392,8 +451,8 @@ function DashboardView({ realData }) {
       <div style={{ display:"grid", gridTemplateColumns:"1fr 282px", gap:12 }}>
         <div className="gl gc">
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:13 }}>Actividad Reciente</div>
-          {activity.map((a,i)=>(
-            <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:i<activity.length-1?"1px solid rgba(255,255,255,0.036)":"none" }}>
+          {chartActivity.map((a,i)=>(
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:i<chartActivity.length-1?"1px solid rgba(255,255,255,0.036)":"none" }}>
               <div style={{ width:29, height:29, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", background:`${a.c}12`, border:`1px solid ${a.c}22`, flexShrink:0 }}>
                 <Icon name={a.ico} size={13} stroke={a.c} sw={1.6}/>
               </div>
