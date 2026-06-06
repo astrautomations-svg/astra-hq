@@ -1022,7 +1022,7 @@ export default function AstraHQ() {
         <div className="sb" style={{ width:sw, minWidth:sw }}>
           {/* Logo */}
           <div style={{ height:56, display:"flex", alignItems:"center", gap:col?0:9, padding:col?"0 18px":"0 14px", borderBottom:"1px solid rgba(255,255,255,0.052)", justifyContent:col?"center":"flex-start" }}>
-            <div style={{ flexShrink:0 }}>
+            <div style={{ flexShrink:0, mixBlendMode:"screen" }}>
               <AstraLogo size={col?28:26} mode="white"/>
             </div>
             {!col && (
