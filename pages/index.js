@@ -325,6 +325,7 @@ function DashboardView({ realData }) {
   const academy = (realData && realData.academy) || [];
   const reuniones = (realData && realData.reuniones) || [];
   const leads = (realData && realData.leads) || [];
+  const leadsCaptacion = (realData && realData.leads_captacion) || [];
 
   // revData: ingresos mensuales reales (últimos 12 meses)
   const byMonth = {};
@@ -339,17 +340,23 @@ function DashboardView({ realData }) {
   const computedRevData = Object.entries(byMonth).slice(-12).map(([m, v]) => ({ m, s: v.s, p: v.p }));
   const chartRevData = computedRevData.length > 0 ? computedRevData : revData;
 
-  // funnelData: leads por estado
-  const estadoMap = {};
-  leads.forEach(l => {
-    const e = l.estado || 'nuevo';
-    estadoMap[e] = (estadoMap[e] || 0) + 1;
-  });
-  const stageOrder = ['nuevo', 'contactado', 'respondio', 'reunion', 'propuesta', 'cliente'];
-  const stageLabels = { nuevo: 'Prospectos', contactado: 'Contactados', respondio: 'Respondieron', reunion: 'Reunión', propuesta: 'Propuesta', cliente: 'Clientes' };
-  const computedFunnelData = stageOrder
-    .filter(s => estadoMap[s])
-    .map(s => ({ n: stageLabels[s] || s, v: estadoMap[s] }));
+  // funnelData: desde leads_captacion en Supabase
+  const funnelSource = leadsCaptacion.length > 0 ? leadsCaptacion : leads;
+  const totalProspectos = funnelSource.length;
+  const totalContactados = funnelSource.filter(l => l.primer_contacto || l.estado === 'contactado' || l.estado === 'follow_up' || l.estado === 'loom_enviado' || l.estado === 'follow_up_loom').length;
+  const totalRespondieron = funnelSource.filter(l => l.respondio || l.loom_enviado || l.estado === 'loom_enviado' || l.estado === 'follow_up_loom').length;
+  const totalReunion = (realData && realData.reuniones) ? realData.reuniones.length : 0;
+  const totalPropuesta = 0; // actualizar cuando haya dato
+  const totalClientes = (realData && realData.academy_members) ? realData.academy_members.length : 0;
+
+  const computedFunnelData = [
+    { n: 'Prospectos',   v: totalProspectos   || funnelData[0].v },
+    { n: 'Contactados',  v: totalContactados  || funnelData[1].v },
+    { n: 'Respondieron', v: totalRespondieron || funnelData[2].v },
+    { n: 'Reunión',      v: totalReunion      || funnelData[3].v },
+    { n: 'Propuesta',    v: totalPropuesta    || funnelData[4].v },
+    { n: 'Clientes',     v: totalClientes     || funnelData[5].v },
+  ].filter(d => d.v > 0);
   const chartFunnelData = computedFunnelData.length > 0 ? computedFunnelData : funnelData;
   const funnelMax = chartFunnelData[0]?.v || 1;
 

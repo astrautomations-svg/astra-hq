@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET");
   
   try {
-    const [pagos, academy, reuniones, leads, newsletter, chatbot, setter] = await Promise.all([
+    const [pagos, academy, reuniones, leads, newsletter, chatbot, setter, leadsCaptacion] = await Promise.all([
       supabase.from("pagos").select("*").order("processed_at", { ascending: false }),
       supabase.from("academy_members").select("*").order("joined_at", { ascending: false }),
       supabase.from("reuniones").select("*").order("start_time", { ascending: false }),
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
       supabase.from("newsletter_suscriptores").select("*"),
       supabase.from("conversaciones_chatbot").select("*").order("created_at", { ascending: false }).limit(50),
       supabase.from("Leads-Setter-IA").select("*").order("updated_at", { ascending: false }).limit(100),
+      supabase.from("leads_captacion").select("*").order("updated_at", { ascending: false }),
     ]);
 
     // Log any errors
