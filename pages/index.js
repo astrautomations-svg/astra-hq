@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import {
   AreaChart, Area, BarChart, Bar,
@@ -1034,11 +1034,14 @@ function WhatsAppView({ realData, onRefresh }) {
     .filter(m => m.contact_id === selKey)
     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
-  // CualificaciÃ³n del contacto seleccionado
+  // Cualificacion del contacto seleccionado
   const qual = leadState.find(s => s.contact_id === selKey) || null;
 
   const fmtTime = d => d ? new Date(d).toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
-  const tempColor = { caliente: "#f87171", tibio: "#fbbf24", frio: "#38bdf8" };
+  const tempColor = { caliente: "#34d399", tibio: "#fbbf24", frio: "#38bdf8", descartado: "#f87171" };
+  const tempGrad = { frio: "linear-gradient(135deg, rgba(56,189,248,0.55), rgba(56,189,248,0.18))", tibio: "linear-gradient(135deg, rgba(251,191,36,0.55), rgba(251,191,36,0.18))", caliente: "linear-gradient(135deg, rgba(52,211,153,0.55), rgba(52,211,153,0.18))", descartado: "linear-gradient(135deg, rgba(248,113,113,0.55), rgba(248,113,113,0.18))" };
+  const tempBorder = { frio: "rgba(56,189,248,0.5)", tibio: "rgba(251,191,36,0.5)", caliente: "rgba(52,211,153,0.5)", descartado: "rgba(248,113,113,0.5)" };
+  const TempBadge = ({ t, size = "sm" }) => { if (!t) return null; const grad = tempGrad[t] || "linear-gradient(135deg, rgba(148,163,184,0.5), rgba(148,163,184,0.15))"; const bd = tempBorder[t] || "rgba(148,163,184,0.45)"; const pad = size === "lg" ? "4px 12px" : "2px 9px"; const fs = size === "lg" ? 11.5 : 9.5; return (<span style={{ display: "inline-flex", alignItems: "center", padding: pad, borderRadius: 999, fontSize: fs, fontWeight: 700, color: "#fff", letterSpacing: "0.02em", textTransform: "capitalize", background: grad, border: "1px solid " + bd, backdropFilter: "blur(8px) saturate(160%)", WebkitBackdropFilter: "blur(8px) saturate(160%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.25)", flexShrink: 0, whiteSpace: "nowrap" }}>{t}</span>); };
 
   const sendManual = async () => {
     if (!draft.trim() || !sel) return;
@@ -1066,7 +1069,7 @@ function WhatsAppView({ realData, onRefresh }) {
 
   return (
     <div className="fi">
-      <SHead title="WhatsApp" sub="Conversaciones del bot Â· IntervenciÃ³n manual" />
+      <SHead title="WhatsApp" sub="Conversaciones del bot - Intervencion manual" />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
         <KpiCard label="Contactos" value={String(contacts.length)} icon="msg" ac="#34d399" />
         <KpiCard label="En modo manual" value={String(contacts.filter(c => c.bot_activo === false).length)} icon="users" ac="#fbbf24" />
@@ -1079,7 +1082,7 @@ function WhatsAppView({ realData, onRefresh }) {
         <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Conversaciones</div>
           <div style={{ overflowY: "auto", flex: 1 }}>
-            {contacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center" }}>Sin conversaciones todavÃ­a</div>}
+            {contacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center" }}>Sin conversaciones todavia</div>}
             {contacts.map(c => {
               const q = leadState.find(s => s.contact_id === c.id);
               const active = c.id === selKey;
@@ -1094,7 +1097,7 @@ function WhatsAppView({ realData, onRefresh }) {
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 3 }}>
                       <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{c.source || "â€”"}</span>
-                      {q && <span style={{ fontSize: 9.5, fontWeight: 700, color: tempColor[q.temperatura] || "#888" }}>â— {q.temperatura}</span>}
+                      {q && <TempBadge t={q.temperatura} />}
                     </div>
                   </div>
                 </div>
@@ -1113,6 +1116,7 @@ function WhatsAppView({ realData, onRefresh }) {
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{sel.name || sel.phone_e164}</div>
                     <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{sel.phone_e164}</div>
+                    {qual && <div style={{ marginTop: 5 }}><TempBadge t={qual.temperatura} size="lg" /></div>}
                   </div>
                 </div>
                 <button onClick={toggleBot}
@@ -1145,12 +1149,12 @@ function WhatsAppView({ realData, onRefresh }) {
                 </button>
               </div>
             </>
-          ) : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: 12.5, color: "rgba(255,255,255,0.25)" }}>Selecciona una conversaciÃ³n</div>}
+          ) : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: 12.5, color: "rgba(255,255,255,0.25)" }}>Selecciona una conversacion</div>}
         </div>
 
-        {/* COLUMNA 3: cualificaciÃ³n */}
+        {/* COLUMNA 3: cualificacion */}
         <div className="gl gc" style={{ overflowY: "auto" }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>CualificaciÃ³n</div>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>Cualificacion</div>
           {qual ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
@@ -1174,7 +1178,7 @@ function WhatsAppView({ realData, onRefresh }) {
                 <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{qual.resumen_lead || "â€”"}</span>
               </div>
             </div>
-          ) : <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Sin datos de cualificaciÃ³n todavÃ­a</div>}
+          ) : <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Sin datos de cualificacion todavia</div>}
         </div>
       </div>
     </div>
