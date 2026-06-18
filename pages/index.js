@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import {
   AreaChart, Area, BarChart, Bar,
@@ -79,6 +79,7 @@ const P = {
   card:       <><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></>,
   globe:      <><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></>,
   calendar:   <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
+  whatsapp:   <><path d="M3 21l1.6-4.7a8.4 8.4 0 113.5 3.4z"/><path d="M8.5 9c0 .4.1.8.3 1.2.6 1.4 1.6 2.4 3 3 .4.2.8.3 1.2.3.4 0 .7-.3.8-.7l.2-.7c.1-.4-.1-.8-.5-.9l-1-.3c-.3-.1-.6 0-.8.2-.6-.3-1.1-.8-1.4-1.4.2-.2.3-.5.2-.8l-.3-1c-.1-.4-.5-.6-.9-.5l-.7.2c-.4.1-.7.4-.7.8z"/></>,
 };
 
 const Icon = ({ name, size = 16, stroke = "currentColor", sw = 1.4 }) => (
@@ -325,6 +326,7 @@ function DashboardView({ realData }) {
   const academy = (realData && realData.academy) || [];
   const reuniones = (realData && realData.reuniones) || [];
   const leads = (realData && realData.leads) || [];
+  const leadsCaptacion = (realData && realData.leads_captacion) || [];
 
   // revData: ingresos mensuales reales (últimos 12 meses)
   const byMonth = {};
@@ -339,17 +341,23 @@ function DashboardView({ realData }) {
   const computedRevData = Object.entries(byMonth).slice(-12).map(([m, v]) => ({ m, s: v.s, p: v.p }));
   const chartRevData = computedRevData.length > 0 ? computedRevData : revData;
 
-  // funnelData: leads por estado
-  const estadoMap = {};
-  leads.forEach(l => {
-    const e = l.estado || 'nuevo';
-    estadoMap[e] = (estadoMap[e] || 0) + 1;
-  });
-  const stageOrder = ['nuevo', 'contactado', 'respondio', 'reunion', 'propuesta', 'cliente'];
-  const stageLabels = { nuevo: 'Prospectos', contactado: 'Contactados', respondio: 'Respondieron', reunion: 'Reunión', propuesta: 'Propuesta', cliente: 'Clientes' };
-  const computedFunnelData = stageOrder
-    .filter(s => estadoMap[s])
-    .map(s => ({ n: stageLabels[s] || s, v: estadoMap[s] }));
+  // funnelData: desde leads_captacion en Supabase
+  const funnelSource = leadsCaptacion.length > 0 ? leadsCaptacion : leads;
+  const totalProspectos = funnelSource.length;
+  const totalContactados = funnelSource.filter(l => l.primer_contacto || l.estado === 'contactado' || l.estado === 'follow_up' || l.estado === 'loom_enviado' || l.estado === 'follow_up_loom').length;
+  const totalRespondieron = funnelSource.filter(l => l.respondio || l.loom_enviado || l.estado === 'loom_enviado' || l.estado === 'follow_up_loom').length;
+  const totalReunion = (realData && realData.reuniones) ? realData.reuniones.length : 0;
+  const totalPropuesta = 0; // actualizar cuando haya dato
+  const totalClientes = (realData && realData.academy_members) ? realData.academy_members.length : 0;
+
+  const computedFunnelData = [
+    { n: 'Prospectos',   v: totalProspectos   || funnelData[0].v },
+    { n: 'Contactados',  v: totalContactados  || funnelData[1].v },
+    { n: 'Respondieron', v: totalRespondieron || funnelData[2].v },
+    { n: 'Reunión',      v: totalReunion      || funnelData[3].v },
+    { n: 'Propuesta',    v: totalPropuesta    || funnelData[4].v },
+    { n: 'Clientes',     v: totalClientes     || funnelData[5].v },
+  ].filter(d => d.v > 0);
   const chartFunnelData = computedFunnelData.length > 0 ? computedFunnelData : funnelData;
   const funnelMax = chartFunnelData[0]?.v || 1;
 
@@ -979,12 +987,208 @@ function ReunionesView({ realData }) {
   );
 }
 
+/* â”€â”€ WhatsAppView â”€â”€ pegar dentro de index.js, antes del NAV â”€â”€ */
+function WhatsAppView({ realData, onRefresh }) {
+  // â”€â”€ Avatar con iniciales + color por contacto â”€â”€
+  const avatarColors = ["#38bdf8","#34d399","#a78bfa","#fbbf24","#f87171","#818cf8","#f97316","#2dd4bf"];
+  const initials = (name, phone) => {
+    const base = (name || "").trim();
+    if (base) {
+      const parts = base.split(/\s+/);
+      return ((parts[0]?.[0] || "") + (parts[1]?.[0] || "")).toUpperCase() || base.slice(0,2).toUpperCase();
+    }
+    const p = (phone || "?").replace(/\D/g, "");
+    return p.slice(-2) || "?";
+  };
+  const colorFor = (key) => {
+    const s = String(key || "?");
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = s.charCodeAt(i) + ((h << 5) - h);
+    return avatarColors[Math.abs(h) % avatarColors.length];
+  };
+  const Avatar = ({ name, phone, size = 34 }) => {
+    const c = colorFor(name || phone);
+    return (
+      <div style={{ width: size, height: size, borderRadius: "50%", flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        fontSize: size * 0.38, fontWeight: 700, color: "#fff",
+        background: `linear-gradient(135deg, ${c}, ${c}99)`,
+        border: `1px solid ${c}55` }}>
+        {initials(name, phone)}
+      </div>
+    );
+  };
+
+  const contacts = (realData && realData.waContacts) || [];
+  const messages = (realData && realData.waMessages) || [];
+  const leadState = (realData && realData.waLeadState) || [];
+  const [selId, setSelId] = useState(null);
+  const [draft, setDraft] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const sel = contacts.find(c => c.id === selId) || contacts[0] || null;
+  const selKey = sel ? sel.id : null;
+
+  // Mensajes del contacto seleccionado, en orden cronolÃ³gico
+  const thread = messages
+    .filter(m => m.contact_id === selKey)
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+  // CualificaciÃ³n del contacto seleccionado
+  const qual = leadState.find(s => s.contact_id === selKey) || null;
+
+  const fmtTime = d => d ? new Date(d).toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+  const tempColor = { caliente: "#f87171", tibio: "#fbbf24", frio: "#38bdf8" };
+
+  const sendManual = async () => {
+    if (!draft.trim() || !sel) return;
+    setSending(true);
+    try {
+      const r = await fetch("/api/wa-send", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contact_id: sel.id, wa_id: sel.wa_id, text: draft }),
+      });
+      if (r.ok) { setDraft(""); if (onRefresh) onRefresh(); }
+    } catch (e) { console.error(e); }
+    setSending(false);
+  };
+
+  const toggleBot = async () => {
+    if (!sel) return;
+    try {
+      await fetch("/api/wa-takeover", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contact_id: sel.id, bot_activo: !sel.bot_activo }),
+      });
+      if (onRefresh) onRefresh();
+    } catch (e) { console.error(e); }
+  };
+
+  return (
+    <div className="fi">
+      <SHead title="WhatsApp" sub="Conversaciones del bot Â· IntervenciÃ³n manual" />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
+        <KpiCard label="Contactos" value={String(contacts.length)} icon="msg" ac="#34d399" />
+        <KpiCard label="En modo manual" value={String(contacts.filter(c => c.bot_activo === false).length)} icon="users" ac="#fbbf24" />
+        <KpiCard label="Calientes" value={String(leadState.filter(s => s.temperatura === "caliente").length)} icon="target" ac="#f87171" />
+        <KpiCard label="Mensajes (recientes)" value={String(messages.length)} icon="activity" ac="#38bdf8" />
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: 12, height: "calc(100vh - 280px)", minHeight: 460 }}>
+        {/* COLUMNA 1: contactos */}
+        <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Conversaciones</div>
+          <div style={{ overflowY: "auto", flex: 1 }}>
+            {contacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center" }}>Sin conversaciones todavÃ­a</div>}
+            {contacts.map(c => {
+              const q = leadState.find(s => s.contact_id === c.id);
+              const active = c.id === selKey;
+              return (
+                <div key={c.id} onClick={() => setSelId(c.id)}
+                  style={{ padding: "11px 16px", borderBottom: "1px solid rgba(255,255,255,0.03)", cursor: "pointer", background: active ? "rgba(56,189,248,0.08)" : "transparent", borderLeft: active ? "2px solid #38bdf8" : "2px solid transparent", display: "flex", gap: 10, alignItems: "center" }}>
+                  <Avatar name={c.name} phone={c.phone_e164} size={36} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name || c.phone_e164 || "â€”"}</span>
+                      {c.bot_activo === false && <span className="bd bd-a" style={{ flexShrink: 0 }}>Manual</span>}
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 3 }}>
+                      <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{c.source || "â€”"}</span>
+                      {q && <span style={{ fontSize: 9.5, fontWeight: 700, color: tempColor[q.temperatura] || "#888" }}>â— {q.temperatura}</span>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* COLUMNA 2: hilo */}
+        <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+          {sel ? (
+            <>
+              <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Avatar name={sel.name} phone={sel.phone_e164} size={38} />
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{sel.name || sel.phone_e164}</div>
+                    <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{sel.phone_e164}</div>
+                  </div>
+                </div>
+                <button onClick={toggleBot}
+                  style={{ fontSize: 11, fontWeight: 600, padding: "5px 12px", borderRadius: 7, cursor: "pointer", border: "1px solid", borderColor: sel.bot_activo ? "rgba(248,113,113,0.4)" : "rgba(52,211,153,0.4)", background: sel.bot_activo ? "rgba(248,113,113,0.1)" : "rgba(52,211,153,0.1)", color: sel.bot_activo ? "#f87171" : "#34d399" }}>
+                  {sel.bot_activo ? "Apagar bot" : "Reactivar bot"}
+                </button>
+              </div>
+              <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+                {thread.length === 0 && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 30 }}>Sin mensajes</div>}
+                {thread.map((m, i) => {
+                  const out = m.direction === "outbound";
+                  return (
+                    <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
+                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
+                        {m.body || (m.message_type !== "text" ? `[${m.message_type}]` : "")}
+                      </div>
+                      <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", gap: 8 }}>
+                <input value={draft} onChange={e => setDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === "Enter" && !sending) sendManual(); }}
+                  placeholder={sel.bot_activo ? "Apaga el bot para responder a manoâ€¦" : "Escribe tu respuestaâ€¦"}
+                  disabled={sel.bot_activo}
+                  style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 12px", fontSize: 12.5, color: "rgba(255,255,255,0.85)", outline: "none", fontFamily: "inherit", opacity: sel.bot_activo ? 0.4 : 1 }} />
+                <button className="btn" onClick={sendManual} disabled={sending || sel.bot_activo || !draft.trim()} style={{ fontSize: 12 }}>
+                  {sending ? "â€¦" : "Enviar"}
+                </button>
+              </div>
+            </>
+          ) : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: 12.5, color: "rgba(255,255,255,0.25)" }}>Selecciona una conversaciÃ³n</div>}
+        </div>
+
+        {/* COLUMNA 3: cualificaciÃ³n */}
+        <div className="gl gc" style={{ overflowY: "auto" }}>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>CualificaciÃ³n</div>
+          {qual ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Temperatura</div>
+                <span className={`bd ${qual.temperatura === "caliente" ? "bd-r" : qual.temperatura === "tibio" ? "bd-a" : "bd-b"}`}>{qual.temperatura || "â€”"}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Etapa</div>
+                <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.7)" }}>{qual.etapa_funnel || "â€”"}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Objetivo</div>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.objetivo || "â€”"}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Frenos</div>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.frenos || "â€”"}</span>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Resumen</div>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{qual.resumen_lead || "â€”"}</span>
+              </div>
+            </div>
+          ) : <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Sin datos de cualificaciÃ³n todavÃ­a</div>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 const NAV=[
   {k:"dashboard",l:"Dashboard",i:"dashboard"},
   {k:"finanzas", l:"Finanzas", i:"finance"},
   {k:"academy",  l:"Academy",  i:"academy"},
   {k:"clientes", l:"Clientes", i:"clients"},
   {k:"captacion",l:"Captación",i:"capture"},
+  {k:"whatsapp", l:"WhatsApp", i:"whatsapp"},
   {k:"sistemas", l:"Sistemas", i:"systems"},
   {k:"analytics",l:"Analytics",i:"analytics"},
   {k:"n8n",      l:"n8n",      i:"n8n"},
@@ -1028,7 +1232,7 @@ export default function AstraHQ() {
   const fetchData = () => {
     fetch("/api/dashboard")
       .then(r=>r.json())
-      .then(({pagos,academy,reuniones,leads,newsletter,chatbot,setter})=>{
+      .then(({pagos,academy,reuniones,leads,newsletter,chatbot,setter,waContacts,waMessages,waLeadState})=>{
       const p = pagos||[], ac = academy||[], re_ = reuniones||[];
       // Deduplicar pagos: mismo email+importe+fecha = mismo pago Stripe duplicado
       const seen = new Set();
@@ -1058,6 +1262,9 @@ export default function AstraHQ() {
         newsletterCount: (newsletter||[]).filter(n=>n.status==="subscribed").length,
         setterCount: s_.length,
         setterInteresados: s_.filter(s=>s.estado_lead==="interesado"||s.estado_lead==="reunion").length,
+        waContacts: waContacts||[],
+        waMessages: waMessages||[],
+        waLeadState: waLeadState||[],
       });
     })
     .catch(e=>console.error("Dashboard fetch error:",e));
@@ -1201,7 +1408,7 @@ export default function AstraHQ() {
         <div style={{ marginLeft:sw, paddingTop:56, minHeight:"100vh", transition:"margin-left .28s ease", position:"relative", zIndex:2 }}
           onClick={()=>notif&&setNotif(false)}>
           <div style={{ padding:"26px 26px", maxWidth:1380, margin:"0 auto" }}>
-            {view==="dashboard" ? <DashboardView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : view==="academy" ? <AcademyView realData={realData}/> : view==="reuniones" ? <ReunionesView realData={realData}/> : view==="clientes" ? <ClientesView realData={realData}/>  : view==="captacion" ? <ClientesView realData={realData}/> : view==="sistemas" ? <SistemasView realData={realData}/> : view==="analytics" ? <AnalyticsView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : (
+            {view==="dashboard" ? <DashboardView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : view==="academy" ? <AcademyView realData={realData}/> : view==="reuniones" ? <ReunionesView realData={realData}/> : view==="clientes" ? <ClientesView realData={realData}/>  : view==="captacion" ? <ClientesView realData={realData}/> : view==="whatsapp" ? <WhatsAppView realData={realData} onRefresh={fetchData}/> : view==="sistemas" ? <SistemasView realData={realData}/> : view==="analytics" ? <AnalyticsView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : (
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:300, gap:12 }}>
                 <div style={{ width:48, height:48, borderRadius:12, background:"rgba(255,255,255,0.038)", border:"1px solid rgba(255,255,255,0.068)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <Icon name="layers" size={19} stroke="rgba(255,255,255,0.26)"/>
