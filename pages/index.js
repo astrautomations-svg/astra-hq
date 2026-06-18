@@ -1131,7 +1131,7 @@ function WhatsAppView({ realData, onRefresh }) {
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
                       <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
-                        {m.body || (m.message_type !== "text" ? `[${m.message_type}]` : "")}
+                        {m.message_type === "audio" ? (<div>{m.media_url ? <audio controls src={m.media_url} style={{ height: 34, maxWidth: 230 }} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
                     </div>
