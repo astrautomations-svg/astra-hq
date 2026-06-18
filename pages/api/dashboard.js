@@ -1,8 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
+﻿import { createClient } from "@supabase/supabase-js";
 // Service role key - only used server-side in API routes, never exposed to browser
 const supabase = createClient(
   "https://aryognsfjvbywqrhtwim.supabase.co",
-  process.env.SUPABASE_SERVICE_KEY || "REEMPLAZAR_POR_NUEVA_SERVICE_KEY"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeW9nbnNmanZieXdxcmh0d2ltIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTQ1NDc3MiwiZXhwIjoyMDk1MDMwNzcyfQ.FfC3yf3SK9_dAIfwUMDnx0P9Jw_654BGU17NSiXAakc"
 );
 export default async function handler(req, res) {
   // Allow CORS from Vercel
