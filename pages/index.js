@@ -642,6 +642,7 @@ function PanaderiasOutbound({ realData }) {
   const [sel, setSel] = useState(null);
   const [thread, setThread] = useState([]);
   const [loadingChat, setLoadingChat] = useState(false);
+  const [filtro, setFiltro] = useState("todos");
 
   useEffect(() => {
     fetch("/api/panaderias").then(r => r.json()).then(d => {
@@ -676,6 +677,8 @@ function PanaderiasOutbound({ realData }) {
   const porEstado = e => panaderias.filter(p => (p.estado || "sin_contactar") === e);
   const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
 
+  const visibles = filtro === "todos" ? panaderias : porEstado(filtro);
+
   return (
     <div style={{ marginTop: 24 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
@@ -683,36 +686,40 @@ function PanaderiasOutbound({ realData }) {
         <h2 style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>Campaña Panaderías</h2>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 11, marginBottom: 16 }}>
-        {Object.entries(estados).map(([k, e]) => (
-          <div key={k} className="gl gc" style={{ padding: "16px 18px" }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>{e.label}</div>
-            <div style={{ fontSize: 24, fontWeight: 700, color: e.color }}>{porEstado(k).length}</div>
-          </div>
-        ))}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
+        <div onClick={() => setFiltro("todos")} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: filtro === "todos" ? "1px solid rgba(255,255,255,0.4)" : "1px solid rgba(255,255,255,0.06)", background: filtro === "todos" ? "rgba(255,255,255,0.05)" : undefined }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>Todos</div>
+          <div style={{ fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>{panaderias.length}</div>
+        </div>
+        {Object.entries(estados).map(([k, e]) => {
+          const activo = filtro === k;
+          return (
+            <div key={k} onClick={() => setFiltro(k)} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: activo ? "1px solid " + e.color : "1px solid rgba(255,255,255,0.06)", background: activo ? e.bg : undefined }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>{e.label}</div>
+              <div style={{ fontSize: 24, fontWeight: 700, color: e.color }}>{porEstado(k).length}</div>
+            </div>
+          );
+        })}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: sel ? "1fr 1fr" : "1fr", gap: 12 }}>
         <div className="gl gc">
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>Panaderías</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Panaderías</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)" }}>{filtro === "todos" ? "Todas" : estados[filtro].label} · {visibles.length}</div>
+          </div>
           {loading ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando...</div> :
-            panaderias.length === 0 ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Sin panaderías cargadas todavía</div> :
-            Object.entries(estados).map(([k, e]) => {
-              const lista = porEstado(k);
-              if (lista.length === 0) return null;
+            visibles.length === 0 ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>No hay panaderías en este estado</div> :
+            visibles.map(p => {
+              const e = estados[p.estado || "sin_contactar"] || estados.sin_contactar;
               return (
-                <div key={k} style={{ marginBottom: 14 }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: e.color, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>{e.label} ({lista.length})</div>
-                  {lista.map(p => (
-                    <div key={p.id} onClick={() => openChat(p)}
-                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 11px", borderRadius: 9, background: sel && sel.id === p.id ? "rgba(56,189,248,0.08)" : "rgba(255,255,255,0.024)", border: "1px solid rgba(255,255,255,0.044)", marginBottom: 6, cursor: "pointer" }}>
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.nombre || p.telefono}</div>
-                        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{p.telefono} · {p.zona || "—"} · {p.comercial}</div>
-                      </div>
-                      <span style={{ fontSize: 9.5, fontWeight: 700, color: "#fff", padding: "2px 9px", borderRadius: 999, background: e.bg, border: "1px solid " + e.bd, flexShrink: 0 }}>{e.label.slice(0, -1)}</span>
-                    </div>
-                  ))}
+                <div key={p.id} onClick={() => openChat(p)}
+                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 11px", borderRadius: 9, background: sel && sel.id === p.id ? "rgba(56,189,248,0.08)" : "rgba(255,255,255,0.024)", border: "1px solid rgba(255,255,255,0.044)", marginBottom: 6, cursor: "pointer" }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.nombre || p.telefono}</div>
+                    <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{p.telefono} · {p.zona || "—"} · {p.comercial}</div>
+                  </div>
+                  <span style={{ fontSize: 9.5, fontWeight: 700, color: "#fff", padding: "2px 9px", borderRadius: 999, background: e.bg, border: "1px solid " + e.bd, flexShrink: 0 }}>{e.label.slice(0, -1)}</span>
                 </div>
               );
             })}
@@ -748,6 +755,8 @@ function PanaderiasOutbound({ realData }) {
     </div>
   );
 }
+
+
 
 function ClientesView({ realData }) {
   const leads = (realData && realData.leads) || [];
