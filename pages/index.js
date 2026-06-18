@@ -6,14 +6,14 @@ import {
   PieChart, Pie, Cell
 } from "recharts";
 
-/* ══════════════════════════════════════════════════════════════════════════
-   ASTRA LOGO — pixel-perfect reconstruction from original 500×500 image
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   ASTRA LOGO â€” pixel-perfect reconstruction from original 500Ã—500 image
    
    Structure (mapped to viewBox 0 0 100 60):
    
    Main body = large diagonal shape, left-edge diagonal, right-edge:
      - Vertical from (83.3, 0) down to (83.3, 12.8)
-     - Steps LEFT to (59.5, 12.8) → down to (59.5, 14.8)        ← the step
+     - Steps LEFT to (59.5, 12.8) â†’ down to (59.5, 14.8)        â† the step
      - Then a thin diagonal SLOT cuts through the body
      - Right side re-emerges continues to (83.3, 39.5)
      - Then diagonal down-left to (57, 60)
@@ -23,7 +23,7 @@ import {
      starts at the step corner, runs parallel to left edge diagonally
    
    Separate square: (83.5, 41) to (100, 60)
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const LOGO_SRC = "data:image/png;base64,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";
 
@@ -47,9 +47,9 @@ const AstraLogo = ({ size = 32, mode = "white" }) => {
 };
 
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ICON SYSTEM
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const P = {
   dashboard:  <><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></>,
   finance:    <><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></>,
@@ -89,9 +89,9 @@ const Icon = ({ name, size = 16, stroke = "currentColor", sw = 1.4 }) => (
   </svg>
 );
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    DATA
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const revData = [
   {m:"Jul",s:8200,p:1200},{m:"Ago",s:9400,p:1800},{m:"Sep",s:11200,p:2100},
   {m:"Oct",s:10800,p:1900},{m:"Nov",s:13500,p:2400},{m:"Dic",s:15200,p:3100},
@@ -100,15 +100,15 @@ const revData = [
 ];
 const funnelData = [
   {n:"Prospectos",v:840},{n:"Contactados",v:312},{n:"Respondieron",v:148},
-  {n:"Reunión",v:67},{n:"Propuesta",v:34},{n:"Clientes",v:19},
+  {n:"ReuniÃ³n",v:67},{n:"Propuesta",v:34},{n:"Clientes",v:19},
 ];
 const activity = [
-  {ico:"dollar",    txt:"Grupo Alega — pago recibido",    val:"+€4.800",   t:"5min",  c:"#34d399"},
-  {ico:"briefcase", txt:"Clínica Aura cerrada — cliente", val:"+€1.200/m", t:"23min", c:"#60a5fa"},
-  {ico:"academy",   txt:"Sofía Gil — Astra Academy",      val:"+€497",     t:"47min", c:"#a78bfa"},
-  {ico:"capture",   txt:"Reunión Factor Energía",         val:"Mañana 10h",t:"1h",   c:"#fbbf24"},
-  {ico:"zap",       txt:"Moa Society — renovación",       val:"+€2.400",   t:"2h",   c:"#34d399"},
-  {ico:"target",    txt:"14 leads — campaña dental",      val:"14 leads",  t:"3h",   c:"#38bdf8"},
+  {ico:"dollar",    txt:"Grupo Alega â€” pago recibido",    val:"+â‚¬4.800",   t:"5min",  c:"#34d399"},
+  {ico:"briefcase", txt:"ClÃ­nica Aura cerrada â€” cliente", val:"+â‚¬1.200/m", t:"23min", c:"#60a5fa"},
+  {ico:"academy",   txt:"SofÃ­a Gil â€” Astra Academy",      val:"+â‚¬497",     t:"47min", c:"#a78bfa"},
+  {ico:"capture",   txt:"ReuniÃ³n Factor EnergÃ­a",         val:"MaÃ±ana 10h",t:"1h",   c:"#fbbf24"},
+  {ico:"zap",       txt:"Moa Society â€” renovaciÃ³n",       val:"+â‚¬2.400",   t:"2h",   c:"#34d399"},
+  {ico:"target",    txt:"14 leads â€” campaÃ±a dental",      val:"14 leads",  t:"3h",   c:"#38bdf8"},
 ];
 const systems = [
   {n:"Astra Setter",  ico:"cpu",    s:"op",   a:"284 leads",  b:"47 conv."},
@@ -117,24 +117,24 @@ const systems = [
   {n:"n8n Workflows", ico:"share2", s:"op",   a:"34 activos", b:"Hace 2min"},
 ];
 const kanban = {
-  Lead:       [{n:"Clínica Dental Ríos",av:"CR",mrr:0},{n:"Panadería El Sol",av:"PE",mrr:0},{n:"Gestoría Martínez",av:"GM",mrr:0}],
-  Contactado: [{n:"Autoescuela Rápid",av:"AR",mrr:0},{n:"Inmobiliaria Nova",av:"IN",mrr:0}],
-  Propuesta:  [{n:"Academia Fitness",av:"AF",mrr:0},{n:"Restaurante Mía",av:"RM",mrr:0}],
-  Negociación:[{n:"Clínica Aura",av:"CA",mrr:1200}],
-  Cliente:    [{n:"Ebike Guadarrama",av:"EG",mrr:1800},{n:"Dulce Pan Isabel",av:"DP",mrr:950},{n:"Arte Pan Hidalgo",av:"AP",mrr:950},{n:"Moa Society",av:"MS",mrr:2400},{n:"Factor Energía",av:"FE",mrr:3200},{n:"Grupo Alega",av:"GA",mrr:4800}],
+  Lead:       [{n:"ClÃ­nica Dental RÃ­os",av:"CR",mrr:0},{n:"PanaderÃ­a El Sol",av:"PE",mrr:0},{n:"GestorÃ­a MartÃ­nez",av:"GM",mrr:0}],
+  Contactado: [{n:"Autoescuela RÃ¡pid",av:"AR",mrr:0},{n:"Inmobiliaria Nova",av:"IN",mrr:0}],
+  Propuesta:  [{n:"Academia Fitness",av:"AF",mrr:0},{n:"Restaurante MÃ­a",av:"RM",mrr:0}],
+  NegociaciÃ³n:[{n:"ClÃ­nica Aura",av:"CA",mrr:1200}],
+  Cliente:    [{n:"Ebike Guadarrama",av:"EG",mrr:1800},{n:"Dulce Pan Isabel",av:"DP",mrr:950},{n:"Arte Pan Hidalgo",av:"AP",mrr:950},{n:"Moa Society",av:"MS",mrr:2400},{n:"Factor EnergÃ­a",av:"FE",mrr:3200},{n:"Grupo Alega",av:"GA",mrr:4800}],
 };
 const members = [
-  {n:"Carlos Jiménez",e:"carlos@gmail.com",     f:"01/02/25",s:"Activo",  a:"Hace 2h"},
+  {n:"Carlos JimÃ©nez",e:"carlos@gmail.com",     f:"01/02/25",s:"Activo",  a:"Hace 2h"},
   {n:"Laura Sanz",    e:"laura@hotmail.com",     f:"14/02/25",s:"Activo",  a:"Hace 5h"},
   {n:"Diego Morales", e:"dmorales@empresa.es",   f:"03/03/25",s:"Activo",  a:"Ayer"},
   {n:"Ana Ruiz",      e:"ana.ruiz@gmail.com",    f:"18/03/25",s:"Pendiente",a:"Hace 3d"},
   {n:"Pablo Vega",    e:"pablo.vega@outlook.es", f:"01/04/25",s:"Activo",  a:"Hace 1h"},
-  {n:"Sofía Gil",     e:"sofia.gil@gmail.com",   f:"05/05/25",s:"Activo",  a:"Ahora"},
+  {n:"SofÃ­a Gil",     e:"sofia.gil@gmail.com",   f:"05/05/25",s:"Activo",  a:"Ahora"},
 ];
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    CSS
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -260,22 +260,22 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 .fi{animation:fu .3s ease both;}
 `;
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TOOLTIP
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const Tip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, padding:"10px 14px", fontSize:12, backdropFilter:"blur(20px)", boxShadow:"0 8px 32px rgba(0,0,0,0.5)" }}>
       <p style={{ color:"rgba(255,255,255,0.32)", marginBottom:5, fontWeight:600 }}>{label}</p>
-      {payload.map((p,i) => <p key={i} style={{ color:p.color, fontWeight:700 }}>{p.name}: €{p.value?.toLocaleString()}</p>)}
+      {payload.map((p,i) => <p key={i} style={{ color:p.color, fontWeight:700 }}>{p.name}: â‚¬{p.value?.toLocaleString()}</p>)}
     </div>
   );
 };
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    KPI CARD
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const RGB = { "#34d399":"52,211,153","#38bdf8":"56,189,248","#a78bfa":"167,139,250","#fbbf24":"251,191,36","#f87171":"248,113,113","#818cf8":"129,140,248" };
 
 function KpiCard({ label, value, sub, delta, icon, ac="#38bdf8" }) {
@@ -302,9 +302,9 @@ function KpiCard({ label, value, sub, delta, icon, ac="#38bdf8" }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SECTION HEAD
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function SHead({ title, sub }) {
   return (
     <div style={{ marginBottom:22 }}>
@@ -317,9 +317,9 @@ function SHead({ title, sub }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    DASHBOARD
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function DashboardView({ realData }) {
   // --- Computed from realData ---
   const pagos = (realData && realData.pagos) || [];
@@ -328,7 +328,7 @@ function DashboardView({ realData }) {
   const leads = (realData && realData.leads) || [];
   const leadsCaptacion = (realData && realData.leads_captacion) || [];
 
-  // revData: ingresos mensuales reales (últimos 12 meses)
+  // revData: ingresos mensuales reales (Ãºltimos 12 meses)
   const byMonth = {};
   pagos.forEach(p => {
     if (!p.processed_at) return;
@@ -354,14 +354,14 @@ function DashboardView({ realData }) {
     { n: 'Prospectos',   v: totalProspectos   || funnelData[0].v },
     { n: 'Contactados',  v: totalContactados  || funnelData[1].v },
     { n: 'Respondieron', v: totalRespondieron || funnelData[2].v },
-    { n: 'Reunión',      v: totalReunion      || funnelData[3].v },
+    { n: 'ReuniÃ³n',      v: totalReunion      || funnelData[3].v },
     { n: 'Propuesta',    v: totalPropuesta    || funnelData[4].v },
     { n: 'Clientes',     v: totalClientes     || funnelData[5].v },
   ].filter(d => d.v > 0);
   const chartFunnelData = computedFunnelData.length > 0 ? computedFunnelData : funnelData;
   const funnelMax = chartFunnelData[0]?.v || 1;
 
-  // activity: últimos eventos reales
+  // activity: Ãºltimos eventos reales
   const fmtAgo = d => {
     if (!d) return '';
     const diff = Date.now() - new Date(d).getTime();
@@ -373,16 +373,16 @@ function DashboardView({ realData }) {
   };
   const computedActivity = [
     ...pagos.slice(0, 3).map(p => ({
-      ico: 'dollar', txt: (p.customer_name || p.customer_email || 'Pago') + ' — pago recibido',
-      val: '€' + Number(p.amount || 0).toLocaleString('es-ES'), t: fmtAgo(p.processed_at || p.created_at), c: '#34d399'
+      ico: 'dollar', txt: (p.customer_name || p.customer_email || 'Pago') + ' â€” pago recibido',
+      val: 'â‚¬' + Number(p.amount || 0).toLocaleString('es-ES'), t: fmtAgo(p.processed_at || p.created_at), c: '#34d399'
     })),
     ...reuniones.filter(r => r.status === 'programada').slice(0, 2).map(r => ({
-      ico: 'capture', txt: 'Reunión con ' + (r.guest_name || r.guest_email || 'invitado'),
-      val: r.event_name || 'Reunión', t: fmtAgo(r.created_at), c: '#fbbf24'
+      ico: 'capture', txt: 'ReuniÃ³n con ' + (r.guest_name || r.guest_email || 'invitado'),
+      val: r.event_name || 'ReuniÃ³n', t: fmtAgo(r.created_at), c: '#fbbf24'
     })),
     ...academy.slice(0, 2).map(m => ({
-      ico: 'academy', txt: (m.display_name || m.email || 'Miembro') + ' — Astra Academy',
-      val: '+€' + (m.plan_name === 'Pro' ? '497' : '297'), t: fmtAgo(m.joined_at || m.created_at), c: '#a78bfa'
+      ico: 'academy', txt: (m.display_name || m.email || 'Miembro') + ' â€” Astra Academy',
+      val: '+â‚¬' + (m.plan_name === 'Pro' ? '497' : '297'), t: fmtAgo(m.joined_at || m.created_at), c: '#a78bfa'
     })),
   ].slice(0, 6);
   const chartActivity = computedActivity.length > 0 ? computedActivity : activity;
@@ -390,28 +390,28 @@ function DashboardView({ realData }) {
   return (
     <div className="fi">
       <div style={{ marginBottom:24 }}>
-        <h1 style={{ fontSize:21, fontWeight:700, color:"rgba(255,255,255,0.92)", letterSpacing:"-0.02em", marginBottom:3 }}>Buenos días, Astra</h1>
-        <p style={{ fontSize:12, color:"rgba(255,255,255,0.27)" }}>Centro de operaciones · Jueves, 4 Junio 2026</p>
+        <h1 style={{ fontSize:21, fontWeight:700, color:"rgba(255,255,255,0.92)", letterSpacing:"-0.02em", marginBottom:3 }}>Buenos dÃ­as, Astra</h1>
+        <p style={{ fontSize:12, color:"rgba(255,255,255,0.27)" }}>Centro de operaciones Â· Jueves, 4 Junio 2026</p>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))", gap:11, marginBottom:16 }}>
-        <KpiCard label="Facturación Total" value={realData?("€"+realData.totalRev.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})):"€—"} sub="Supabase · Stripe"   delta="+18.4%" icon="dollar"    ac="#34d399"/>
+        <KpiCard label="FacturaciÃ³n Total" value={realData?("â‚¬"+realData.totalRev.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})):"â‚¬â€”"} sub="Supabase Â· Stripe"   delta="+18.4%" icon="dollar"    ac="#34d399"/>
         <KpiCard label="MRR" value={realData?(()=>{
   const now=new Date();
   const thisMonth=realData.pagos.filter(p=>{const d=new Date(p.processed_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
   const mrr=thisMonth.reduce((s,p)=>s+Number(p.amount||0),0);
-  return "€"+mrr.toLocaleString("es-ES",{minimumFractionDigits:2});
-})():"€—"} sub="Mes actual · real" delta="+12.1%" icon="trend" ac="#38bdf8"/>
+  return "â‚¬"+mrr.toLocaleString("es-ES",{minimumFractionDigits:2});
+})():"â‚¬â€”"} sub="Mes actual Â· real" delta="+12.1%" icon="trend" ac="#38bdf8"/>
         <KpiCard label="Clientes"          value="6"        sub="Contratos activos" delta="+1"    icon="briefcase" ac="#38bdf8"/>
-        <KpiCard label="Academy"           value={realData?String(realData.academyCount):"—"}        sub="Miembros activos" delta="+8"    icon="academy"   ac="#a78bfa"/>
-        <KpiCard label="Reuniones"         value={realData?String(realData.reuniones.filter(r=>r.status==="programada").length):"—"}        sub="Próximas"       delta="+3"    icon="capture"   ac="#fbbf24"/>
-        <KpiCard label="Pagos"             value={realData?String(realData.pagos.length):"—"}      sub="Registrados"    delta="+34%"  icon="target"    ac="#f87171"/>
+        <KpiCard label="Academy"           value={realData?String(realData.academyCount):"â€”"}        sub="Miembros activos" delta="+8"    icon="academy"   ac="#a78bfa"/>
+        <KpiCard label="Reuniones"         value={realData?String(realData.reuniones.filter(r=>r.status==="programada").length):"â€”"}        sub="PrÃ³ximas"       delta="+3"    icon="capture"   ac="#fbbf24"/>
+        <KpiCard label="Pagos"             value={realData?String(realData.pagos.length):"â€”"}      sub="Registrados"    delta="+34%"  icon="target"    ac="#f87171"/>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
             <div>
-              <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>Facturación Mensual</div>
-              <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginTop:2 }}>Stripe + PayPal · 12 meses</div>
+              <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>FacturaciÃ³n Mensual</div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginTop:2 }}>Stripe + PayPal Â· 12 meses</div>
             </div>
             <span className="bd bd-g">+34% YoY</span>
           </div>
@@ -427,7 +427,7 @@ function DashboardView({ realData }) {
               </defs>
               <CartesianGrid strokeDasharray="2 5" stroke="rgba(255,255,255,0.04)"/>
               <XAxis dataKey="m" tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
-              <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`€${(v/1000).toFixed(0)}k`}/>
+              <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`â‚¬${(v/1000).toFixed(0)}k`}/>
               <Tooltip content={<Tip/>}/>
               <Area type="monotone" dataKey="s" name="Stripe" stroke="#38bdf8" strokeWidth={2} fill="url(#gS)"/>
               <Area type="monotone" dataKey="p" name="PayPal" stroke="#818cf8" strokeWidth={1.5} fill="url(#gP)"/>
@@ -435,8 +435,8 @@ function DashboardView({ realData }) {
           </ResponsiveContainer>
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:3 }}>Funnel de Captación</div>
-          <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Conversión mes · 2.3% cierre</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:3 }}>Funnel de CaptaciÃ³n</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>ConversiÃ³n mes Â· 2.3% cierre</div>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
             {chartFunnelData.map((d,i)=>{
               const pct=Math.round((d.v/funnelMax)*100);
@@ -512,20 +512,20 @@ function FinanzasView({ realData, onRefresh }) {
           processed_at: form.processed_at+"T12:00:00+00:00"
         })
       });
-      if(res.ok){ setMsg("✅ Guardado"); setShowForm(false); setForm({customer_name:"",amount:"",plan_name:"Mensualidad",is_expense:false,processed_at:new Date().toISOString().slice(0,10)}); if(onRefresh) onRefresh(); }
-      else { setMsg("❌ Error al guardar"); }
-    } catch(e){ setMsg("❌ Error: "+e.message); }
+      if(res.ok){ setMsg("âœ… Guardado"); setShowForm(false); setForm({customer_name:"",amount:"",plan_name:"Mensualidad",is_expense:false,processed_at:new Date().toISOString().slice(0,10)}); if(onRefresh) onRefresh(); }
+      else { setMsg("âŒ Error al guardar"); }
+    } catch(e){ setMsg("âŒ Error: "+e.message); }
     setSaving(false);
   };
 
   return (
     <div className="fi">
-      <SHead title="Finanzas" sub="Stripe · Manual · Suscripciones activas"/>
+      <SHead title="Finanzas" sub="Stripe Â· Manual Â· Suscripciones activas"/>
       <div style={{ marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <button className="btn" onClick={()=>setShowForm(!showForm)} style={{ fontSize:12 }}>
-          {showForm ? "✕ Cancelar" : "+ Añadir ingreso / gasto"}
+          {showForm ? "âœ• Cancelar" : "+ AÃ±adir ingreso / gasto"}
         </button>
-        {msg && <span style={{ fontSize:12, color: msg.startsWith("✅")?"#34d399":"#f87171" }}>{msg}</span>}
+        {msg && <span style={{ fontSize:12, color: msg.startsWith("âœ…")?"#34d399":"#f87171" }}>{msg}</span>}
       </div>
       {showForm && (
         <div className="gl gc" style={{ marginBottom:14, background:"rgba(56,189,248,0.03)" }}>
@@ -534,7 +534,7 @@ function FinanzasView({ realData, onRefresh }) {
             {[
               { label:"Cliente / Nombre", key:"customer_name", type:"text", placeholder:"Ej: Ebike Guadarrama" },
               { label:"Concepto", key:"plan_name", type:"text", placeholder:"Ej: Mensualidad" },
-              { label:"Importe (€)", key:"amount", type:"number", placeholder:"0.00" },
+              { label:"Importe (â‚¬)", key:"amount", type:"number", placeholder:"0.00" },
               { label:"Fecha", key:"processed_at", type:"date" },
             ].map(f=>(
               <div key={f.key}>
@@ -549,10 +549,10 @@ function FinanzasView({ realData, onRefresh }) {
               <div style={{ fontSize:10, color:"rgba(255,255,255,0.3)", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.06em" }}>Tipo</div>
               <div style={{ display:"flex", gap:6 }}>
                 <button onClick={()=>setForm({...form,is_expense:false})} style={{ flex:1, padding:"7px 0", borderRadius:8, fontSize:11, fontWeight:600, cursor:"pointer", border:"1px solid", borderColor:!form.is_expense?"#34d399":"rgba(255,255,255,0.1)", background:!form.is_expense?"rgba(52,211,153,0.1)":"transparent", color:!form.is_expense?"#34d399":"rgba(255,255,255,0.4)" }}>
-                  ↑ Ingreso
+                  â†‘ Ingreso
                 </button>
                 <button onClick={()=>setForm({...form,is_expense:true})} style={{ flex:1, padding:"7px 0", borderRadius:8, fontSize:11, fontWeight:600, cursor:"pointer", border:"1px solid", borderColor:form.is_expense?"#f87171":"rgba(255,255,255,0.1)", background:form.is_expense?"rgba(248,113,113,0.1)":"transparent", color:form.is_expense?"#f87171":"rgba(255,255,255,0.4)" }}>
-                  ↓ Gasto
+                  â†“ Gasto
                 </button>
               </div>
             </div>
@@ -574,11 +574,11 @@ function FinanzasView({ realData, onRefresh }) {
         <KpiCard label="MRR (mes actual)" value={realData?(()=>{
   const now=new Date();
   const mrr=realData.pagos.filter(p=>{const d=new Date(p.processed_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,p)=>s+Number(p.amount||0),0);
-  return "€"+mrr.toLocaleString("es-ES",{minimumFractionDigits:2});
-})():"€—"} delta="+12.1%" icon="dollar" ac="#34d399"/>
-        <KpiCard label="Pagos este mes" value={realData?(()=>{const now=new Date();const mes=realData.pagos.filter(p=>{const d=new Date(p.processed_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});return String(mes.length)+" (€"+mes.reduce((s,p)=>s+Number(p.amount||0),0).toLocaleString("es-ES")+")"})():"—"} sub="Registros mes actual" icon="trend" ac="#38bdf8"/>
-        <KpiCard label="Pagos registrados" value={realData?String(realData.pagosCount):"—"} sub="Total histórico" icon="card" ac="#818cf8"/>
-        <KpiCard label="PayPal"     value="€5.200"   sub="Jun 2026" icon="globe"  ac="#38bdf8"/>
+  return "â‚¬"+mrr.toLocaleString("es-ES",{minimumFractionDigits:2});
+})():"â‚¬â€”"} delta="+12.1%" icon="dollar" ac="#34d399"/>
+        <KpiCard label="Pagos este mes" value={realData?(()=>{const now=new Date();const mes=realData.pagos.filter(p=>{const d=new Date(p.processed_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});return String(mes.length)+" (â‚¬"+mes.reduce((s,p)=>s+Number(p.amount||0),0).toLocaleString("es-ES")+")"})():"â€”"} sub="Registros mes actual" icon="trend" ac="#38bdf8"/>
+        <KpiCard label="Pagos registrados" value={realData?String(realData.pagosCount):"â€”"} sub="Total histÃ³rico" icon="card" ac="#818cf8"/>
+        <KpiCard label="PayPal"     value="â‚¬5.200"   sub="Jun 2026" icon="globe"  ac="#38bdf8"/>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
@@ -588,7 +588,7 @@ function FinanzasView({ realData, onRefresh }) {
             <BarChart data={revData} barGap={3}>
               <CartesianGrid strokeDasharray="2 5" stroke="rgba(255,255,255,0.04)" vertical={false}/>
               <XAxis dataKey="m" tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
-              <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`€${(v/1000).toFixed(0)}k`}/>
+              <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`â‚¬${(v/1000).toFixed(0)}k`}/>
               <Tooltip content={<Tip/>}/>
               <Bar dataKey="ingresos" name="Ingresos" fill="#38bdf8" radius={[4,4,0,0]}/>
               <Bar dataKey="p" name="PayPal" fill="#818cf8" radius={[4,4,0,0]}/>
@@ -596,7 +596,7 @@ function FinanzasView({ realData, onRefresh }) {
           </ResponsiveContainer>
         </div>
         <div className="gl gc" style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
-          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2, alignSelf:"flex-start" }}>Distribución</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2, alignSelf:"flex-start" }}>DistribuciÃ³n</div>
           <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:8, alignSelf:"flex-start" }}>Por fuente</div>
           <ResponsiveContainer width="100%" height={140}>
             <PieChart>
@@ -614,18 +614,18 @@ function FinanzasView({ realData, onRefresh }) {
         </div>
       </div>
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Últimas Transacciones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Ãšltimas Transacciones</div>
         <table style={{ width:"100%", borderCollapse:"collapse" }}>
           <thead><tr>{["Cliente","Concepto","Fuente","Importe","Fecha","Estado"].map(h=><th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>)}</tr></thead>
           <tbody>
             {(realData?realData.pagos:[]).slice(0,10).map((row,i)=>(
               <tr key={i} className="tr">
-                <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{row.customer_name||row.customer_email||"—"}</td>
+                <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{row.customer_name||row.customer_email||"â€”"}</td>
                 <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{row.plan_name||"Pago"}</td>
                 <td style={{ padding:"10px 8px" }}><span className={`bd ${row.is_academy?"bd-p":"bd-b"}`}>{row.is_academy?"Academy":"Stripe"}</span></td>
-                <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:700, color:"#34d399" }}>€{Number(row.amount||0).toLocaleString("es-ES",{minimumFractionDigits:2})}</td>
-                <td style={{ padding:"10px 0", fontSize:12, color:"rgba(255,255,255,0.24)" }}><span className="mono">{row.processed_at?new Date(row.processed_at).toLocaleDateString("es-ES"):"—"}</span></td>
-                <td style={{ padding:"10px 0" }}><span className={`bd ${row.status==="succeeded"||row.status==="active"?"bd-g":"bd-a"}`}>{row.status||"—"}</span></td>
+                <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:700, color:"#34d399" }}>â‚¬{Number(row.amount||0).toLocaleString("es-ES",{minimumFractionDigits:2})}</td>
+                <td style={{ padding:"10px 0", fontSize:12, color:"rgba(255,255,255,0.24)" }}><span className="mono">{row.processed_at?new Date(row.processed_at).toLocaleDateString("es-ES"):"â€”"}</span></td>
+                <td style={{ padding:"10px 0" }}><span className={`bd ${row.status==="succeeded"||row.status==="active"?"bd-g":"bd-a"}`}>{row.status||"â€”"}</span></td>
               </tr>
             ))}
           </tbody>
@@ -674,13 +674,13 @@ function PanaderiasOutbound({ realData }) {
   };
 
   const porEstado = e => panaderias.filter(p => (p.estado || "sin_contactar") === e);
-  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "â€”";
 
   return (
     <div style={{ marginTop: 24 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
         <div style={{ width: 3, height: 17, borderRadius: 2, background: "linear-gradient(to bottom,#38bdf8,rgba(99,102,241,0.5))" }} />
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>Campaña Panaderías</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>CampaÃ±a PanaderÃ­as</h2>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 11, marginBottom: 16 }}>
@@ -694,9 +694,9 @@ function PanaderiasOutbound({ realData }) {
 
       <div style={{ display: "grid", gridTemplateColumns: sel ? "1fr 1fr" : "1fr", gap: 12 }}>
         <div className="gl gc">
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>Panaderías</div>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>PanaderÃ­as</div>
           {loading ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando...</div> :
-            panaderias.length === 0 ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Sin panaderías cargadas todavía</div> :
+            panaderias.length === 0 ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Sin panaderÃ­as cargadas todavÃ­a</div> :
             Object.entries(estados).map(([k, e]) => {
               const lista = porEstado(k);
               if (lista.length === 0) return null;
@@ -708,7 +708,7 @@ function PanaderiasOutbound({ realData }) {
                       style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 11px", borderRadius: 9, background: sel && sel.id === p.id ? "rgba(56,189,248,0.08)" : "rgba(255,255,255,0.024)", border: "1px solid rgba(255,255,255,0.044)", marginBottom: 6, cursor: "pointer" }}>
                       <div style={{ minWidth: 0, flex: 1 }}>
                         <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.nombre || p.telefono}</div>
-                        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{p.telefono} · {p.zona || "—"} · {p.comercial}</div>
+                        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{p.telefono} Â· {p.zona || "â€”"} Â· {p.comercial}</div>
                       </div>
                       <span style={{ fontSize: 9.5, fontWeight: 700, color: "#fff", padding: "2px 9px", borderRadius: 999, background: e.bg, border: "1px solid " + e.bd, flexShrink: 0 }}>{e.label.slice(0, -1)}</span>
                     </div>
@@ -725,11 +725,11 @@ function PanaderiasOutbound({ realData }) {
                 <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{sel.nombre || sel.telefono}</div>
                 <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{sel.telefono}</div>
               </div>
-              <span onClick={() => setSel(null)} style={{ cursor: "pointer", color: "rgba(255,255,255,0.4)", fontSize: 18 }}>×</span>
+              <span onClick={() => setSel(null)} style={{ cursor: "pointer", color: "rgba(255,255,255,0.4)", fontSize: 18 }}>Ã—</span>
             </div>
             <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, maxHeight: 400 }}>
               {loadingChat ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando chat...</div> :
-                thread.length === 0 ? <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, textAlign: "center", padding: 20 }}>Aún no ha respondido. Cuando responda, la conversación aparecerá aquí.</div> :
+                thread.length === 0 ? <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, textAlign: "center", padding: 20 }}>AÃºn no ha respondido. Cuando responda, la conversaciÃ³n aparecerÃ¡ aquÃ­.</div> :
                 thread.map((m, i) => {
                   const out = m.direction === "outbound";
                   return (
@@ -752,11 +752,11 @@ function PanaderiasOutbound({ realData }) {
 function ClientesView({ realData }) {
   const leads = (realData && realData.leads) || [];
   const setter = (realData && realData.setter) || [];
-  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES") : "—";
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES") : "â€”";
   const estadoColor = { nuevo:"#38bdf8", contactado:"#fbbf24", propuesta:"#f97316", cliente:"#34d399", descartado:"#64748b" };
   return (
     <div className="fi">
-      <SHead title="Leads & Captación" sub="Formulario web · Instagram DMs · AstraSetter"/>
+      <SHead title="Leads & CaptaciÃ³n" sub="Formulario web Â· Instagram DMs Â· AstraSetter"/>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Leads web" value={String(leads.length)} icon="users" ac="#a78bfa"/>
         <KpiCard label="DMs Instagram" value={String(setter.length)} icon="capture" ac="#f97316"/>
@@ -767,16 +767,16 @@ function ClientesView({ realData }) {
         <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Leads formulario web</div>
         {leads.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
-            <thead><tr>{["Nombre","Email","Teléfono","Mensaje","Estado","Fecha"].map(h=>(
+            <thead><tr>{["Nombre","Email","TelÃ©fono","Mensaje","Estado","Fecha"].map(h=>(
               <th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>
             ))}</tr></thead>
             <tbody>
               {leads.slice(0,20).map((l,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"9px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{l.nombre||"—"}</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{l.email||"—"}</span></td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{l.telefono||"—"}</td>
-                  <td style={{ padding:"9px 8px", fontSize:11.5, color:"rgba(255,255,255,0.36)", maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{l.mensaje||"—"}</td>
+                  <td style={{ padding:"9px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{l.nombre||"â€”"}</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{l.email||"â€”"}</span></td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{l.telefono||"â€”"}</td>
+                  <td style={{ padding:"9px 8px", fontSize:11.5, color:"rgba(255,255,255,0.36)", maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{l.mensaje||"â€”"}</td>
                   <td style={{ padding:"9px 8px" }}><span className={`bd ${l.estado==="nuevo"?"bd-b":l.estado==="cliente"?"bd-g":"bd-a"}`}>{l.estado||"nuevo"}</span></td>
                   <td style={{ padding:"9px 0", fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{fmtDate(l.created_at)}</td>
                 </tr>
@@ -786,17 +786,17 @@ function ClientesView({ realData }) {
         ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin leads registrados. Activa el Flujo 5 en n8n.</div>}
       </div>
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Instagram DMs — AstraSetter</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Instagram DMs â€” AstraSetter</div>
         {setter.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
-            <thead><tr>{["Sender ID","Último mensaje","Estado","Actualizado"].map(h=>(
+            <thead><tr>{["Sender ID","Ãšltimo mensaje","Estado","Actualizado"].map(h=>(
               <th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>
             ))}</tr></thead>
             <tbody>
               {setter.slice(0,20).map((s,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"9px 0", fontSize:12, color:"rgba(255,255,255,0.6)" }}>{(s.telegram_id||"—").slice(0,14)}...</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)", maxWidth:220, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{s.ultimo_mensaje||"—"}</td>
+                  <td style={{ padding:"9px 0", fontSize:12, color:"rgba(255,255,255,0.6)" }}>{(s.telegram_id||"â€”").slice(0,14)}...</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)", maxWidth:220, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{s.ultimo_mensaje||"â€”"}</td>
                   <td style={{ padding:"9px 8px" }}><span className={`bd ${s.estado_lead==="interesado"||s.estado_lead==="reunion"?"bd-g":s.estado_lead==="spam"?"bd-r":"bd-a"}`}>{s.estado_lead||"nuevo"}</span></td>
                   <td style={{ padding:"9px 0", fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{fmtDate(s.updated_at||s.created_at)}</td>
                 </tr>
@@ -805,25 +805,25 @@ function ClientesView({ realData }) {
           </table>
         ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin DMs registrados. Activa el Flujo 2 en n8n.</div>}
       </div>
-    </div>
       <PanaderiasOutbound realData={realData} />
+    </div>
   );
 }
 
 function AcademyView({ realData }) {
   return (
     <div className="fi">
-      <SHead title="Astra Academy" sub="Comunidad y mentorías · Miembros activos"/>
+      <SHead title="Astra Academy" sub="Comunidad y mentorÃ­as Â· Miembros activos"/>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
-        <KpiCard label="Miembros Activos" value={realData?String(realData.academyActive):"—"} delta="+8" icon="users" ac="#a78bfa"/>
-        <KpiCard label="Ingresos Academy" value={realData?(()=>{const acRev=realData.pagos.filter(p=>p.is_academy).reduce((s,p)=>s+Number(p.amount||0),0);return "€"+acRev.toLocaleString("es-ES",{minimumFractionDigits:2});})():"€—"} delta="+21%" icon="dollar" ac="#34d399"/>
-        <KpiCard label="Retención"        value="89.4%"   delta="+2.1%" icon="activity" ac="#38bdf8"/>
-        <KpiCard label="Total miembros"   value={realData?String(realData.academyCount):"—"} sub="Registrados" icon="mail" ac="#fbbf24"/>
+        <KpiCard label="Miembros Activos" value={realData?String(realData.academyActive):"â€”"} delta="+8" icon="users" ac="#a78bfa"/>
+        <KpiCard label="Ingresos Academy" value={realData?(()=>{const acRev=realData.pagos.filter(p=>p.is_academy).reduce((s,p)=>s+Number(p.amount||0),0);return "â‚¬"+acRev.toLocaleString("es-ES",{minimumFractionDigits:2});})():"â‚¬â€”"} delta="+21%" icon="dollar" ac="#34d399"/>
+        <KpiCard label="RetenciÃ³n"        value="89.4%"   delta="+2.1%" icon="activity" ac="#38bdf8"/>
+        <KpiCard label="Total miembros"   value={realData?String(realData.academyCount):"â€”"} sub="Registrados" icon="mail" ac="#fbbf24"/>
       </div>
       <div className="gl gc">
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>Miembros</div>
-          <button className="btn">+ Añadir miembro</button>
+          <button className="btn">+ AÃ±adir miembro</button>
         </div>
         {realData && realData.academy.length > 0 ? (
         <table style={{ width:"100%", borderCollapse:"collapse" }}>
@@ -836,13 +836,13 @@ function AcademyView({ realData }) {
                     <div style={{ width:28, height:28, borderRadius:8, background:"linear-gradient(135deg,rgba(56,189,248,0.65),rgba(99,102,241,0.65))", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, color:"white", flexShrink:0 }}>
                       {(m.display_name||m.email||"?").slice(0,2).toUpperCase()}
                     </div>
-                    <span style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{m.display_name||m.username||"—"}</span>
+                    <span style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{m.display_name||m.username||"â€”"}</span>
                   </div>
                 </td>
-                <td style={{ fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{m.email||"—"}</span></td>
-                <td style={{ fontSize:11.5, color:"rgba(255,255,255,0.36)" }}>{m.plan_name||"—"}</td>
-                <td><span className={`bd ${m.status==="active"?"bd-g":"bd-a"}`}>{m.status||"—"}</span></td>
-                <td style={{ fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{m.joined_at?new Date(m.joined_at).toLocaleDateString("es-ES"):"—"}</td>
+                <td style={{ fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{m.email||"â€”"}</span></td>
+                <td style={{ fontSize:11.5, color:"rgba(255,255,255,0.36)" }}>{m.plan_name||"â€”"}</td>
+                <td><span className={`bd ${m.status==="active"?"bd-g":"bd-a"}`}>{m.status||"â€”"}</span></td>
+                <td style={{ fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{m.joined_at?new Date(m.joined_at).toLocaleDateString("es-ES"):"â€”"}</td>
               </tr>
             ))}
           </tbody>
@@ -856,14 +856,14 @@ function AcademyView({ realData }) {
 function SistemasView({ realData }) {
   const chatbot = (realData && realData.chatbot) || [];
   const newsletter = (realData && realData.newsletter) || [];
-  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}) : "—";
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}) : "â€”";
   const handoffs = chatbot.filter(c=>c.handoff_needed).length;
   const intentCount = {};
   chatbot.forEach(c=>{ const k=c.intent||"otros"; intentCount[k]=(intentCount[k]||0)+1; });
   const topIntents = Object.entries(intentCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
   return (
     <div className="fi">
-      <SHead title="Sistemas & Chatbot" sub="Chatbot web · Newsletter · n8n workflows"/>
+      <SHead title="Sistemas & Chatbot" sub="Chatbot web Â· Newsletter Â· n8n workflows"/>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Conversaciones bot" value={String(chatbot.length)} icon="activity" ac="#38bdf8"/>
         <KpiCard label="Escaladas a humano" value={String(handoffs)} icon="zap" ac="#ef4444"/>
@@ -871,20 +871,20 @@ function SistemasView({ realData }) {
         <KpiCard label="Desuscritos" value={String(newsletter.filter(n=>n.status==="unsubscribed").length)} icon="trend" ac="#f87171"/>
       </div>
       <div className="gl gc" style={{ marginBottom:12 }}>
-        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Chatbot web — Últimas conversaciones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Chatbot web â€” Ãšltimas conversaciones</div>
         {chatbot.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
-            <thead><tr>{["Sesión","Mensaje usuario","Respuesta bot","Intent","Escalada","Hora"].map(h=>(
+            <thead><tr>{["SesiÃ³n","Mensaje usuario","Respuesta bot","Intent","Escalada","Hora"].map(h=>(
               <th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>
             ))}</tr></thead>
             <tbody>
               {chatbot.slice(0,20).map((c,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"9px 0", fontSize:11, color:"rgba(255,255,255,0.4)" }}>{(c.session_id||"—").slice(0,10)}</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.6)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.mensaje_usuario||c.chatInput||"—"}</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)", maxWidth:180, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.respuesta_bot||c.reply||"—"}</td>
+                  <td style={{ padding:"9px 0", fontSize:11, color:"rgba(255,255,255,0.4)" }}>{(c.session_id||"â€”").slice(0,10)}</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.6)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.mensaje_usuario||c.chatInput||"â€”"}</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)", maxWidth:180, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.respuesta_bot||c.reply||"â€”"}</td>
                   <td style={{ padding:"9px 8px" }}><span className="bd bd-b">{c.intent||"otros"}</span></td>
-                  <td style={{ padding:"9px 8px" }}>{c.handoff_needed?<span className="bd bd-r">Sí</span>:<span className="bd bd-g">No</span>}</td>
+                  <td style={{ padding:"9px 8px" }}>{c.handoff_needed?<span className="bd bd-r">SÃ­</span>:<span className="bd bd-g">No</span>}</td>
                   <td style={{ padding:"9px 0", fontSize:11, color:"rgba(255,255,255,0.25)" }}>{fmtDate(c.created_at)}</td>
                 </tr>
               ))}
@@ -903,11 +903,11 @@ function SistemasView({ realData }) {
           )) : <div style={{ color:"rgba(255,255,255,0.2)", fontSize:12 }}>Sin datos</div>}
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Newsletter — últimos suscriptores</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Newsletter â€” Ãºltimos suscriptores</div>
           {newsletter.slice(0,8).map((n,i)=>(
             <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-              <span style={{ fontSize:11.5, color:"rgba(255,255,255,0.5)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:160 }}>{n.email||"—"}</span>
-              <span className={`bd ${n.status==="subscribed"?"bd-g":"bd-r"}`}>{n.status||"—"}</span>
+              <span style={{ fontSize:11.5, color:"rgba(255,255,255,0.5)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:160 }}>{n.email||"â€”"}</span>
+              <span className={`bd ${n.status==="subscribed"?"bd-g":"bd-r"}`}>{n.status||"â€”"}</span>
             </div>
           ))}
         </div>
@@ -922,7 +922,7 @@ function AnalyticsView({ realData }) {
   const leads = (realData && realData.leads) || [];
   const setter = (realData && realData.setter) || [];
   const totalRev = (realData && realData.totalRev) || 0;
-  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES",{month:"short",year:"2-digit"}) : "—";
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES",{month:"short",year:"2-digit"}) : "â€”";
 
   // Revenue by month (deduped pagos)
   const byMonth = {};
@@ -937,18 +937,18 @@ function AnalyticsView({ realData }) {
   const academyRev = pagos.filter(p=>p.is_academy).reduce((s,p)=>s+Number(p.amount||0),0);
   const clientRev = totalRev - academyRev;
 
-  // Conversion: leads → clientes (rough)
+  // Conversion: leads â†’ clientes (rough)
   const totalLeads = leads.length + setter.length;
-  const convRate = totalLeads > 0 ? ((academy.length / totalLeads) * 100).toFixed(1) : "—";
+  const convRate = totalLeads > 0 ? ((academy.length / totalLeads) * 100).toFixed(1) : "â€”";
 
   return (
     <div className="fi">
       <SHead title="Analytics" sub="Calculado desde datos reales de Supabase"/>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
-        <KpiCard label="Ingresos totales" value={"€"+totalRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="dollar" ac="#34d399"/>
-        <KpiCard label="Rev. Academy" value={"€"+academyRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="academy" ac="#a78bfa"/>
-        <KpiCard label="Rev. Clientes" value={"€"+clientRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="briefcase" ac="#38bdf8"/>
-        <KpiCard label="Tasa conversión" value={convRate+"%"} sub={`${totalLeads} leads totales`} icon="target" ac="#fbbf24"/>
+        <KpiCard label="Ingresos totales" value={"â‚¬"+totalRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="dollar" ac="#34d399"/>
+        <KpiCard label="Rev. Academy" value={"â‚¬"+academyRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="academy" ac="#a78bfa"/>
+        <KpiCard label="Rev. Clientes" value={"â‚¬"+clientRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="briefcase" ac="#38bdf8"/>
+        <KpiCard label="Tasa conversiÃ³n" value={convRate+"%"} sub={`${totalLeads} leads totales`} icon="target" ac="#fbbf24"/>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
@@ -959,15 +959,15 @@ function AnalyticsView({ realData }) {
               <BarChart data={revChart} barGap={3}>
                 <CartesianGrid strokeDasharray="2 5" stroke="rgba(255,255,255,0.04)" vertical={false}/>
                 <XAxis dataKey="m" tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
-                <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>"€"+v}/>
-                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }} formatter={v=>["€"+Number(v).toLocaleString("es-ES"),"Ingresos"]}/>
+                <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>"â‚¬"+v}/>
+                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }} formatter={v=>["â‚¬"+Number(v).toLocaleString("es-ES"),"Ingresos"]}/>
                 <Bar dataKey="v" name="Ingresos" fill="#38bdf8" radius={[4,4,0,0]}/>
               </BarChart>
             </ResponsiveContainer>
           ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin datos de pagos</div>}
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Distribución ingresos</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>DistribuciÃ³n ingresos</div>
           {totalRev > 0 ? (
             <ResponsiveContainer width="100%" height={160}>
               <PieChart>
@@ -975,23 +975,23 @@ function AnalyticsView({ realData }) {
                   cx="50%" cy="50%" innerRadius={42} outerRadius={68} paddingAngle={4} dataKey="value">
                   <Cell fill="#a78bfa"/><Cell fill="#38bdf8"/>
                 </Pie>
-                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }} formatter={v=>["€"+Number(v).toLocaleString("es-ES")]}/>
+                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }} formatter={v=>["â‚¬"+Number(v).toLocaleString("es-ES")]}/>
               </PieChart>
             </ResponsiveContainer>
           ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"60px 0", fontSize:12 }}>Sin datos</div>}
           <div style={{ display:"flex", gap:16, justifyContent:"center", marginTop:8 }}>
-            <span style={{ fontSize:11, color:"#a78bfa" }}>● Academy €{academyRev.toLocaleString("es-ES")}</span>
-            <span style={{ fontSize:11, color:"#38bdf8" }}>● Clientes €{clientRev.toLocaleString("es-ES")}</span>
+            <span style={{ fontSize:11, color:"#a78bfa" }}>â— Academy â‚¬{academyRev.toLocaleString("es-ES")}</span>
+            <span style={{ fontSize:11, color:"#38bdf8" }}>â— Clientes â‚¬{clientRev.toLocaleString("es-ES")}</span>
           </div>
         </div>
       </div>
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Métricas clave (calculadas)</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>MÃ©tricas clave (calculadas)</div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
           {[
             {l:"Miembros Academy activos",v:String(academy.filter(m=>m.status==="active").length),c:"#a78bfa"},
             {l:"Total pagos (dedup)",v:String(pagos.length),c:"#34d399"},
-            {l:"Ticket medio",v:pagos.length>0?("€"+(totalRev/pagos.length).toFixed(2)):"—",c:"#38bdf8"},
+            {l:"Ticket medio",v:pagos.length>0?("â‚¬"+(totalRev/pagos.length).toFixed(2)):"â€”",c:"#38bdf8"},
             {l:"Leads web",v:String(leads.length),c:"#fbbf24"},
             {l:"DMs Instagram",v:String(setter.length),c:"#f97316"},
             {l:"Interesados setter",v:String(setter.filter(s=>s.estado_lead==="interesado"||s.estado_lead==="reunion").length),c:"#34d399"},
@@ -1007,9 +1007,9 @@ function AnalyticsView({ realData }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    NAV + APP
-══════════════════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 function ReunionesView({ realData }) {
   const all = (realData && realData.reuniones) || [];
@@ -1020,20 +1020,20 @@ function ReunionesView({ realData }) {
     .sort((a,b)=>new Date(b.start_time)-new Date(a.start_time));
   const canceladas = all.filter(r=>r.status==="cancelada").length;
 
-  const fmtDT = d => d ? new Date(d).toLocaleString("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Europe/Madrid"}) : "—";
+  const fmtDT = d => d ? new Date(d).toLocaleString("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Europe/Madrid"}) : "â€”";
 
   return (
     <div className="fi">
-      <SHead title="Reuniones" sub="Calendly · Próximas citas e historial"/>
+      <SHead title="Reuniones" sub="Calendly Â· PrÃ³ximas citas e historial"/>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Total reuniones"  value={String(all.length)}       icon="calendar" ac="#38bdf8"/>
-        <KpiCard label="Próximas"         value={String(proximas.length)}   icon="capture"  ac="#34d399"/>
+        <KpiCard label="PrÃ³ximas"         value={String(proximas.length)}   icon="capture"  ac="#34d399"/>
         <KpiCard label="Canceladas"       value={String(canceladas)}        icon="activity" ac="#f87171"/>
         <KpiCard label="Este mes"         value={String(all.filter(r=>{const d=new Date(r.start_time);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).length)} icon="trend" ac="#fbbf24"/>
       </div>
 
       <div className="gl gc" style={{ marginBottom:12 }}>
-        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Próximas reuniones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>PrÃ³ximas reuniones</div>
         {proximas.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>
@@ -1044,11 +1044,11 @@ function ReunionesView({ realData }) {
             <tbody>
               {proximas.map((r,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.guest_name||"—"}</td>
-                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{r.guest_email||"—"}</span></td>
-                  <td style={{ padding:"10px 8px" }}><span className="bd bd-b">{r.event_name||"—"}</span></td>
+                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.guest_name||"â€”"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{r.guest_email||"â€”"}</span></td>
+                  <td style={{ padding:"10px 8px" }}><span className="bd bd-b">{r.event_name||"â€”"}</span></td>
                   <td style={{ padding:"10px 8px", fontSize:12, fontWeight:700, color:"#34d399" }}>{fmtDT(r.start_time)}</td>
-                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"rgba(255,255,255,0.3)" }}>{r.guest_timezone||"—"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"rgba(255,255,255,0.3)" }}>{r.guest_timezone||"â€”"}</td>
                   <td style={{ padding:"10px 0" }}>
                     {r.join_url
                       ? <a href={r.join_url} target="_blank" rel="noreferrer"
@@ -1063,7 +1063,7 @@ function ReunionesView({ realData }) {
           </table>
         ) : (
           <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>
-            {all.length === 0 ? "No hay reuniones registradas. Activa el Flujo 7 de Calendly en n8n." : "No hay reuniones próximas programadas"}
+            {all.length === 0 ? "No hay reuniones registradas. Activa el Flujo 7 de Calendly en n8n." : "No hay reuniones prÃ³ximas programadas"}
           </div>
         )}
       </div>
@@ -1073,23 +1073,23 @@ function ReunionesView({ realData }) {
         {pasadas.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>
-              {["Invitado","Email","Tipo","Fecha","Estado","Motivo cancelación"].map(h=>(
+              {["Invitado","Email","Tipo","Fecha","Estado","Motivo cancelaciÃ³n"].map(h=>(
                 <th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>
               ))}
             </tr></thead>
             <tbody>
               {pasadas.map((r,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.guest_name||"—"}</td>
-                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{r.guest_email||"—"}</span></td>
-                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"rgba(255,255,255,0.36)" }}>{r.event_name||"—"}</td>
+                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.guest_name||"â€”"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{r.guest_email||"â€”"}</span></td>
+                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"rgba(255,255,255,0.36)" }}>{r.event_name||"â€”"}</td>
                   <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{fmtDT(r.start_time)}</td>
                   <td style={{ padding:"10px 8px" }}>
                     <span className={`bd ${r.status==="cancelada"?"bd-r":r.status==="programada"?"bd-g":"bd-d"}`}>
-                      {r.status||"—"}
+                      {r.status||"â€”"}
                     </span>
                   </td>
-                  <td style={{ padding:"10px 0", fontSize:11, color:"rgba(248,113,113,0.7)" }}>{r.cancel_reason||"—"}</td>
+                  <td style={{ padding:"10px 0", fontSize:11, color:"rgba(248,113,113,0.7)" }}>{r.cancel_reason||"â€”"}</td>
                 </tr>
               ))}
             </tbody>
@@ -1102,7 +1102,7 @@ function ReunionesView({ realData }) {
   );
 }
 
-/* â”€â”€ WhatsAppView â”€â”€ pegar dentro de index.js, antes del NAV â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ WhatsAppView Ã¢â€â‚¬Ã¢â€â‚¬ pegar dentro de index.js, antes del NAV Ã¢â€â‚¬Ã¢â€â‚¬ */
 
 function AudioPlayer({ src, out }) {
   const [playing, setPlaying] = useState(false);
@@ -1130,7 +1130,7 @@ function AudioPlayer({ src, out }) {
 }
 
 function WhatsAppView({ realData, onRefresh }) {
-  // â”€â”€ Avatar con iniciales + color por contacto â”€â”€
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Avatar con iniciales + color por contacto Ã¢â€â‚¬Ã¢â€â‚¬
   const avatarColors = ["#38bdf8","#34d399","#a78bfa","#fbbf24","#f87171","#818cf8","#f97316","#2dd4bf"];
   const initials = (name, phone) => {
     const base = (name || "").trim();
@@ -1170,7 +1170,7 @@ function WhatsAppView({ realData, onRefresh }) {
   const sel = contacts.find(c => c.id === selId) || contacts[0] || null;
   const selKey = sel ? sel.id : null;
 
-  // Mensajes del contacto seleccionado, en orden cronolÃ³gico
+  // Mensajes del contacto seleccionado, en orden cronolÃƒÂ³gico
   const thread = messages
     .filter(m => m.contact_id === selKey)
     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
@@ -1233,11 +1233,11 @@ function WhatsAppView({ realData, onRefresh }) {
                   <Avatar name={c.name} phone={c.phone_e164} size={36} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
-                      <span style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name || c.phone_e164 || "â€”"}</span>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name || c.phone_e164 || "Ã¢â‚¬â€"}</span>
                       {c.bot_activo === false && <span className="bd bd-a" style={{ flexShrink: 0 }}>Manual</span>}
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 3 }}>
-                      <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{c.source || "â€”"}</span>
+                      <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{c.source || "Ã¢â‚¬â€"}</span>
                       {q && <TempBadge t={q.temperatura} />}
                     </div>
                   </div>
@@ -1272,7 +1272,7 @@ function WhatsAppView({ realData, onRefresh }) {
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
                       <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
-                        {m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
+                        {m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>ðŸŽ¤ audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>â€œ{m.body}â€</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
                     </div>
@@ -1282,11 +1282,11 @@ function WhatsAppView({ realData, onRefresh }) {
               <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", gap: 8 }}>
                 <input value={draft} onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === "Enter" && !sending) sendManual(); }}
-                  placeholder={sel.bot_activo ? "Apaga el bot para responder a manoâ€¦" : "Escribe tu respuestaâ€¦"}
+                  placeholder={sel.bot_activo ? "Apaga el bot para responder a manoÃ¢â‚¬Â¦" : "Escribe tu respuestaÃ¢â‚¬Â¦"}
                   disabled={sel.bot_activo}
                   style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 12px", fontSize: 12.5, color: "rgba(255,255,255,0.85)", outline: "none", fontFamily: "inherit", opacity: sel.bot_activo ? 0.4 : 1 }} />
                 <button className="btn" onClick={sendManual} disabled={sending || sel.bot_activo || !draft.trim()} style={{ fontSize: 12 }}>
-                  {sending ? "â€¦" : "Enviar"}
+                  {sending ? "Ã¢â‚¬Â¦" : "Enviar"}
                 </button>
               </div>
             </>
@@ -1300,23 +1300,23 @@ function WhatsAppView({ realData, onRefresh }) {
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Temperatura</div>
-                <span className={`bd ${qual.temperatura === "caliente" ? "bd-r" : qual.temperatura === "tibio" ? "bd-a" : "bd-b"}`}>{qual.temperatura || "â€”"}</span>
+                <span className={`bd ${qual.temperatura === "caliente" ? "bd-r" : qual.temperatura === "tibio" ? "bd-a" : "bd-b"}`}>{qual.temperatura || "Ã¢â‚¬â€"}</span>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Etapa</div>
-                <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.7)" }}>{qual.etapa_funnel || "â€”"}</span>
+                <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.7)" }}>{qual.etapa_funnel || "Ã¢â‚¬â€"}</span>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Objetivo</div>
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.objetivo || "â€”"}</span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.objetivo || "Ã¢â‚¬â€"}</span>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Frenos</div>
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.frenos || "â€”"}</span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.frenos || "Ã¢â‚¬â€"}</span>
               </div>
               <div>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Resumen</div>
-                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{qual.resumen_lead || "â€”"}</span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{qual.resumen_lead || "Ã¢â‚¬â€"}</span>
               </div>
             </div>
           ) : <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Sin datos de cualificacion todavia</div>}
@@ -1332,7 +1332,7 @@ const NAV=[
   {k:"finanzas", l:"Finanzas", i:"finance"},
   {k:"academy",  l:"Academy",  i:"academy"},
   {k:"clientes", l:"Clientes", i:"clients"},
-  {k:"captacion",l:"Captación",i:"capture"},
+  {k:"captacion",l:"CaptaciÃ³n",i:"capture"},
   {k:"whatsapp", l:"WhatsApp", i:"whatsapp"},
   {k:"sistemas", l:"Sistemas", i:"systems"},
   {k:"analytics",l:"Analytics",i:"analytics"},
@@ -1357,19 +1357,19 @@ export default function AstraHQ() {
     if(!realData) return results;
     realData.pagos.forEach(p=>{
       if((p.customer_name||"").toLowerCase().includes(q)||(p.customer_email||"").toLowerCase().includes(q)||(p.plan_name||"").toLowerCase().includes(q))
-        results.push({title:(p.customer_name||p.customer_email||"Pago"), sub:`€${p.amount} · ${p.processed_at?new Date(p.processed_at).toLocaleDateString("es-ES"):"—"}`, section:"finanzas"});
+        results.push({title:(p.customer_name||p.customer_email||"Pago"), sub:`â‚¬${p.amount} Â· ${p.processed_at?new Date(p.processed_at).toLocaleDateString("es-ES"):"â€”"}`, section:"finanzas"});
     });
     realData.academy.forEach(m=>{
       if((m.display_name||"").toLowerCase().includes(q)||(m.email||"").toLowerCase().includes(q))
-        results.push({title:(m.display_name||m.email||"Miembro"), sub:`Academy · ${m.status||"—"}`, section:"academy"});
+        results.push({title:(m.display_name||m.email||"Miembro"), sub:`Academy Â· ${m.status||"â€”"}`, section:"academy"});
     });
     realData.leads.forEach(l=>{
       if((l.nombre||"").toLowerCase().includes(q)||(l.email||"").toLowerCase().includes(q))
-        results.push({title:(l.nombre||l.email||"Lead"), sub:`Lead web · ${l.estado||"nuevo"}`, section:"clientes"});
+        results.push({title:(l.nombre||l.email||"Lead"), sub:`Lead web Â· ${l.estado||"nuevo"}`, section:"clientes"});
     });
     realData.reuniones.forEach(r=>{
       if((r.guest_name||"").toLowerCase().includes(q)||(r.guest_email||"").toLowerCase().includes(q)||(r.event_name||"").toLowerCase().includes(q))
-        results.push({title:(r.guest_name||r.guest_email||"Reunión"), sub:`${r.event_name||"Reunión"} · ${r.start_time?new Date(r.start_time).toLocaleDateString("es-ES"):"—"}`, section:"reuniones"});
+        results.push({title:(r.guest_name||r.guest_email||"ReuniÃ³n"), sub:`${r.event_name||"ReuniÃ³n"} Â· ${r.start_time?new Date(r.start_time).toLocaleDateString("es-ES"):"â€”"}`, section:"reuniones"});
     });
     return results.slice(0,8);
   })();
@@ -1444,7 +1444,7 @@ export default function AstraHQ() {
             )}
           </div>
 
-          {!col && <div style={{ padding:"12px 14px 4px", fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.16)", letterSpacing:"0.14em", textTransform:"uppercase" }}>Módulos</div>}
+          {!col && <div style={{ padding:"12px 14px 4px", fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.16)", letterSpacing:"0.14em", textTransform:"uppercase" }}>MÃ³dulos</div>}
 
           <div style={{ flex:1, overflowY:"auto", padding:"4px 8px" }}>
             {NAV.map(item=>(
@@ -1467,7 +1467,7 @@ export default function AstraHQ() {
                 </div>
                 <div>
                   <div style={{ fontSize:11.5, fontWeight:700, color:"rgba(255,255,255,0.76)" }}>Astra</div>
-                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,0.26)" }}>Founder · Admin</div>
+                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,0.26)" }}>Founder Â· Admin</div>
                 </div>
               </div>
             )}
@@ -1558,8 +1558,8 @@ export default function AstraHQ() {
                 <div style={{ width:48, height:48, borderRadius:12, background:"rgba(255,255,255,0.038)", border:"1px solid rgba(255,255,255,0.068)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <Icon name="layers" size={19} stroke="rgba(255,255,255,0.26)"/>
                 </div>
-                <div style={{ fontSize:14, fontWeight:600, color:"rgba(255,255,255,0.42)" }}>Módulo próximamente</div>
-                <div style={{ fontSize:11.5, color:"rgba(255,255,255,0.18)" }}>Integración n8n en desarrollo</div>
+                <div style={{ fontSize:14, fontWeight:600, color:"rgba(255,255,255,0.42)" }}>MÃ³dulo prÃ³ximamente</div>
+                <div style={{ fontSize:11.5, color:"rgba(255,255,255,0.18)" }}>IntegraciÃ³n n8n en desarrollo</div>
               </div>
             )}
           </div>
