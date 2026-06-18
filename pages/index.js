@@ -635,6 +635,120 @@ function FinanzasView({ realData, onRefresh }) {
   );
 }
 
+
+function PanaderiasOutbound({ realData }) {
+  const [panaderias, setPanaderias] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sel, setSel] = useState(null);
+  const [thread, setThread] = useState([]);
+  const [loadingChat, setLoadingChat] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/panaderias").then(r => r.json()).then(d => {
+      setPanaderias(d.panaderias || []); setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
+  const normTel = t => (t || "").replace(/[^0-9]/g, "");
+
+  const openChat = async (p) => {
+    setSel(p); setLoadingChat(true); setThread([]);
+    try {
+      const tel = normTel(p.telefono);
+      const contacts = (realData && realData.waContacts) || [];
+      const msgs = (realData && realData.waMessages) || [];
+      const contact = contacts.find(c => normTel(c.phone_e164) === tel || normTel(c.wa_id) === tel);
+      if (contact) {
+        const t = msgs.filter(m => m.contact_id === contact.id)
+          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        setThread(t);
+      }
+    } catch (e) { console.error(e); }
+    setLoadingChat(false);
+  };
+
+  const estados = {
+    sin_contactar: { label: "Pendientes", color: "#64748b", bg: "rgba(100,116,139,0.12)", bd: "rgba(100,116,139,0.3)" },
+    contactado: { label: "Contactadas", color: "#38bdf8", bg: "rgba(56,189,248,0.12)", bd: "rgba(56,189,248,0.3)" },
+    respondio: { label: "Respondieron", color: "#34d399", bg: "rgba(52,211,153,0.12)", bd: "rgba(52,211,153,0.3)" },
+  };
+
+  const porEstado = e => panaderias.filter(p => (p.estado || "sin_contactar") === e);
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—";
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+        <div style={{ width: 3, height: 17, borderRadius: 2, background: "linear-gradient(to bottom,#38bdf8,rgba(99,102,241,0.5))" }} />
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>Campaña Panaderías</h2>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 11, marginBottom: 16 }}>
+        {Object.entries(estados).map(([k, e]) => (
+          <div key={k} className="gl gc" style={{ padding: "16px 18px" }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>{e.label}</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: e.color }}>{porEstado(k).length}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: sel ? "1fr 1fr" : "1fr", gap: 12 }}>
+        <div className="gl gc">
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>Panaderías</div>
+          {loading ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando...</div> :
+            panaderias.length === 0 ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Sin panaderías cargadas todavía</div> :
+            Object.entries(estados).map(([k, e]) => {
+              const lista = porEstado(k);
+              if (lista.length === 0) return null;
+              return (
+                <div key={k} style={{ marginBottom: 14 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: e.color, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>{e.label} ({lista.length})</div>
+                  {lista.map(p => (
+                    <div key={p.id} onClick={() => openChat(p)}
+                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 11px", borderRadius: 9, background: sel && sel.id === p.id ? "rgba(56,189,248,0.08)" : "rgba(255,255,255,0.024)", border: "1px solid rgba(255,255,255,0.044)", marginBottom: 6, cursor: "pointer" }}>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.nombre || p.telefono}</div>
+                        <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{p.telefono} · {p.zona || "—"} · {p.comercial}</div>
+                      </div>
+                      <span style={{ fontSize: 9.5, fontWeight: 700, color: "#fff", padding: "2px 9px", borderRadius: 999, background: e.bg, border: "1px solid " + e.bd, flexShrink: 0 }}>{e.label.slice(0, -1)}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+        </div>
+
+        {sel && (
+          <div className="gl gc" style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{sel.nombre || sel.telefono}</div>
+                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{sel.telefono}</div>
+              </div>
+              <span onClick={() => setSel(null)} style={{ cursor: "pointer", color: "rgba(255,255,255,0.4)", fontSize: 18 }}>×</span>
+            </div>
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, maxHeight: 400 }}>
+              {loadingChat ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando chat...</div> :
+                thread.length === 0 ? <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, textAlign: "center", padding: 20 }}>Aún no ha respondido. Cuando responda, la conversación aparecerá aquí.</div> :
+                thread.map((m, i) => {
+                  const out = m.direction === "outbound";
+                  return (
+                    <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "80%" }}>
+                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
+                        {m.body || (m.message_type !== "text" ? "[" + m.message_type + "]" : "")}
+                      </div>
+                      <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtDate(m.created_at)}</div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ClientesView({ realData }) {
   const leads = (realData && realData.leads) || [];
   const setter = (realData && realData.setter) || [];
@@ -692,6 +806,7 @@ function ClientesView({ realData }) {
         ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin DMs registrados. Activa el Flujo 2 en n8n.</div>}
       </div>
     </div>
+      <PanaderiasOutbound realData={realData} />
   );
 }
 
