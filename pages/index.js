@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import {
   AreaChart, Area, BarChart, Bar,
@@ -988,6 +988,32 @@ function ReunionesView({ realData }) {
 }
 
 /* â”€â”€ WhatsAppView â”€â”€ pegar dentro de index.js, antes del NAV â”€â”€ */
+
+function AudioPlayer({ src, out }) {
+  const [playing, setPlaying] = useState(false);
+  const [cur, setCur] = useState(0);
+  const [dur, setDur] = useState(0);
+  const audioRef = useRef(null);
+  const fmt = (s) => { if (!s || isNaN(s)) return "0:00"; const m = Math.floor(s/60); const x = Math.floor(s%60); return m + ":" + (x<10?"0":"") + x; };
+  const toggle = () => { const a = audioRef.current; if (!a) return; if (playing) { a.pause(); } else { a.play(); } setPlaying(!playing); };
+  const seek = (e) => { const a = audioRef.current; if (!a || !dur) return; const rect = e.currentTarget.getBoundingClientRect(); const p = (e.clientX - rect.left) / rect.width; a.currentTime = p * dur; };
+  const pct = dur ? (cur/dur)*100 : 0;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 14, background: out ? "rgba(56,189,248,0.1)" : "rgba(255,255,255,0.05)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.18)" : "rgba(255,255,255,0.07)", minWidth: 200, maxWidth: 250, backdropFilter: "blur(8px) saturate(150%)", WebkitBackdropFilter: "blur(8px) saturate(150%)" }}>
+      <audio ref={audioRef} src={src} onTimeUpdate={(e)=>setCur(e.target.currentTime)} onLoadedMetadata={(e)=>setDur(e.target.duration)} onEnded={()=>{setPlaying(false);setCur(0);}} style={{ display: "none" }} />
+      <button onClick={toggle} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", cursor: "pointer", flexShrink: 0, background: "linear-gradient(135deg, #38bdf8, #818cf8)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 10px rgba(56,189,248,0.35)" }}>
+        {playing ? <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg> : <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>}
+      </button>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div onClick={seek} style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,0.12)", cursor: "pointer", overflow: "hidden" }}>
+          <div style={{ height: "100%", width: pct + "%", background: "linear-gradient(90deg, #38bdf8, #818cf8)", borderRadius: 3, transition: "width 0.1s linear" }} />
+        </div>
+        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 4, fontFamily: "monospace" }}>{fmt(cur)} / {fmt(dur)}</div>
+      </div>
+    </div>
+  );
+}
+
 function WhatsAppView({ realData, onRefresh }) {
   // â”€â”€ Avatar con iniciales + color por contacto â”€â”€
   const avatarColors = ["#38bdf8","#34d399","#a78bfa","#fbbf24","#f87171","#818cf8","#f97316","#2dd4bf"];
@@ -1131,7 +1157,7 @@ function WhatsAppView({ realData, onRefresh }) {
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
                       <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
-                        {m.message_type === "audio" ? (<div>{m.media_url ? <audio controls src={m.media_url} style={{ height: 36, maxWidth: 240, borderRadius: 999, background: out ? "rgba(56,189,248,0.12)" : "rgba(255,255,255,0.06)", filter: "invert(0.92) hue-rotate(170deg) saturate(1.2)", outline: "none" }} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
+                        {m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
                     </div>
