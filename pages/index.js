@@ -258,6 +258,51 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 .mono{font-family:'JetBrains Mono',monospace;font-size:10.5px;}
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .fi{animation:fu .3s ease both;}
+
+/* ===== RESPONSIVE MOVIL ===== */
+.hamburguesa{ display:none; }
+.sb-overlay{ display:none; }
+@media (max-width: 820px){
+  .sb{
+    transform:translateX(-100%);
+    transition:transform .28s ease;
+    width:248px !important; min-width:248px !important;
+    box-shadow:0 0 40px rgba(0,0,0,0.6);
+  }
+  .sb.sb-open{ transform:translateX(0); }
+  .tb{ left:0 !important; padding:0 14px !important; }
+  .main-wrap{ margin-left:0 !important; padding-left:12px !important; padding-right:12px !important; }
+  .hamburguesa{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:9px; cursor:pointer; flex-shrink:0;
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
+    color:rgba(255,255,255,0.7);
+  }
+  .hamburguesa:active{ background:rgba(56,189,248,0.14); }
+  .sb-overlay{
+    display:block; position:fixed; inset:0; z-index:95;
+    background:rgba(0,0,0,0.5); backdrop-filter:blur(2px);
+  }
+  .gc{ padding:16px 16px !important; }
+  .kpi{ padding:15px 15px !important; }
+}
+@media (max-width: 560px){
+  .grid-resp{ grid-template-columns:1fr !important; }
+  .grid-resp2{ grid-template-columns:1fr !important; }
+}
+@media (max-width: 900px){
+  .wa-grid{ grid-template-columns:1fr !important; height:auto !important; min-height:0 !important; }
+  .wa-qual{ display:none !important; }
+  .grid-2{ grid-template-columns:1fr !important; }
+  .grid-3{ grid-template-columns:1fr !important; }
+  .grid-4{ grid-template-columns:1fr 1fr !important; }
+  .grid-filters{ grid-template-columns:1fr 1fr !important; }
+  .split-2{ grid-template-columns:1fr !important; }
+}
+@media (max-width: 560px){
+  .grid-4{ grid-template-columns:1fr 1fr !important; }
+}
+
 `;
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -406,7 +451,7 @@ function DashboardView({ realData }) {
         <KpiCard label="Reuniones"         value={realData?String(realData.reuniones.filter(r=>r.status==="programada").length):"—"}        sub="Próximas"       delta="+3"    icon="capture"   ac="#fbbf24"/>
         <KpiCard label="Pagos"             value={realData?String(realData.pagos.length):"—"}      sub="Registrados"    delta="+34%"  icon="target"    ac="#f87171"/>
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+      <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
             <div>
@@ -456,7 +501,7 @@ function DashboardView({ realData }) {
           </div>
         </div>
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 282px", gap:12 }}>
+      <div className="split-2" style={{ display:"grid", gridTemplateColumns:"1fr 282px", gap:12 }}>
         <div className="gl gc">
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:13 }}>Actividad Reciente</div>
           {chartActivity.map((a,i)=>(
@@ -530,7 +575,7 @@ function FinanzasView({ realData, onRefresh }) {
       {showForm && (
         <div className="gl gc" style={{ marginBottom:14, background:"rgba(56,189,248,0.03)" }}>
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Nuevo registro manual</div>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 120px 120px", gap:10, marginBottom:12, alignItems:"end" }}>
+          <div className="grid-filters" style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 120px 120px", gap:10, marginBottom:12, alignItems:"end" }}>
             {[
               { label:"Cliente / Nombre", key:"customer_name", type:"text", placeholder:"Ej: Ebike Guadarrama" },
               { label:"Concepto", key:"plan_name", type:"text", placeholder:"Ej: Mensualidad" },
@@ -570,7 +615,7 @@ function FinanzasView({ realData, onRefresh }) {
           </div>
         ))}
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
         <KpiCard label="MRR (mes actual)" value={realData?(()=>{
   const now=new Date();
   const mrr=realData.pagos.filter(p=>{const d=new Date(p.processed_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).reduce((s,p)=>s+Number(p.amount||0),0);
@@ -580,7 +625,7 @@ function FinanzasView({ realData, onRefresh }) {
         <KpiCard label="Pagos registrados" value={realData?String(realData.pagosCount):"—"} sub="Total histórico" icon="card" ac="#818cf8"/>
         <KpiCard label="PayPal"     value="€5.200"   sub="Jun 2026" icon="globe"  ac="#38bdf8"/>
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:12, marginBottom:12 }}>
+      <div className="split-2" style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2 }}>Ingresos Mensuales</div>
           <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Stripe vs PayPal</div>
@@ -686,7 +731,7 @@ function PanaderiasOutbound({ realData }) {
         <h2 style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>Campaña Panaderías</h2>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
+      <div className="grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
         <div onClick={() => setFiltro("todos")} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: filtro === "todos" ? "1px solid rgba(255,255,255,0.4)" : "1px solid rgba(255,255,255,0.06)", background: filtro === "todos" ? "rgba(255,255,255,0.05)" : undefined }}>
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>Todos</div>
           <div style={{ fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>{panaderias.length}</div>
@@ -702,7 +747,7 @@ function PanaderiasOutbound({ realData }) {
         })}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: sel ? "1fr 1fr" : "1fr", gap: 12 }}>
+      <div className="split-2" style={{ display: "grid", gridTemplateColumns: sel ? "1fr 1fr" : "1fr", gap: 12 }}>
         <div className="gl gc">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
             <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Panaderías</div>
@@ -766,7 +811,7 @@ function ClientesView({ realData }) {
   return (
     <div className="fi">
       <SHead title="Leads & Captación" sub="Formulario web · Instagram DMs · AstraSetter"/>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Leads web" value={String(leads.length)} icon="users" ac="#a78bfa"/>
         <KpiCard label="DMs Instagram" value={String(setter.length)} icon="capture" ac="#f97316"/>
         <KpiCard label="Interesados" value={String((realData&&realData.setterInteresados)||0)} icon="target" ac="#34d399"/>
@@ -823,7 +868,7 @@ function AcademyView({ realData }) {
   return (
     <div className="fi">
       <SHead title="Astra Academy" sub="Comunidad y mentorías · Miembros activos"/>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
         <KpiCard label="Miembros Activos" value={realData?String(realData.academyActive):"—"} delta="+8" icon="users" ac="#a78bfa"/>
         <KpiCard label="Ingresos Academy" value={realData?(()=>{const acRev=realData.pagos.filter(p=>p.is_academy).reduce((s,p)=>s+Number(p.amount||0),0);return "€"+acRev.toLocaleString("es-ES",{minimumFractionDigits:2});})():"€—"} delta="+21%" icon="dollar" ac="#34d399"/>
         <KpiCard label="Retención"        value="89.4%"   delta="+2.1%" icon="activity" ac="#38bdf8"/>
@@ -873,7 +918,7 @@ function SistemasView({ realData }) {
   return (
     <div className="fi">
       <SHead title="Sistemas & Chatbot" sub="Chatbot web · Newsletter · n8n workflows"/>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Conversaciones bot" value={String(chatbot.length)} icon="activity" ac="#38bdf8"/>
         <KpiCard label="Escaladas a humano" value={String(handoffs)} icon="zap" ac="#ef4444"/>
         <KpiCard label="Newsletter subs" value={String((realData&&realData.newsletterCount)||0)} icon="mail" ac="#34d399"/>
@@ -901,7 +946,7 @@ function SistemasView({ realData }) {
           </table>
         ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin conversaciones. Activa el Flujo 5 en n8n.</div>}
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+      <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
         <div className="gl gc">
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Top intents chatbot</div>
           {topIntents.length > 0 ? topIntents.map(([k,v],i)=>(
@@ -953,13 +998,13 @@ function AnalyticsView({ realData }) {
   return (
     <div className="fi">
       <SHead title="Analytics" sub="Calculado desde datos reales de Supabase"/>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Ingresos totales" value={"€"+totalRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="dollar" ac="#34d399"/>
         <KpiCard label="Rev. Academy" value={"€"+academyRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="academy" ac="#a78bfa"/>
         <KpiCard label="Rev. Clientes" value={"€"+clientRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="briefcase" ac="#38bdf8"/>
         <KpiCard label="Tasa conversión" value={convRate+"%"} sub={`${totalLeads} leads totales`} icon="target" ac="#fbbf24"/>
       </div>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+      <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
           <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2 }}>Ingresos por mes (reales)</div>
           <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Datos reales de Supabase</div>
@@ -996,7 +1041,7 @@ function AnalyticsView({ realData }) {
       </div>
       <div className="gl gc">
         <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Métricas clave (calculadas)</div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
+        <div className="grid-3" style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
           {[
             {l:"Miembros Academy activos",v:String(academy.filter(m=>m.status==="active").length),c:"#a78bfa"},
             {l:"Total pagos (dedup)",v:String(pagos.length),c:"#34d399"},
@@ -1034,7 +1079,7 @@ function ReunionesView({ realData }) {
   return (
     <div className="fi">
       <SHead title="Reuniones" sub="Calendly · Próximas citas e historial"/>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Total reuniones"  value={String(all.length)}       icon="calendar" ac="#38bdf8"/>
         <KpiCard label="Próximas"         value={String(proximas.length)}   icon="capture"  ac="#34d399"/>
         <KpiCard label="Canceladas"       value={String(canceladas)}        icon="activity" ac="#f87171"/>
@@ -1220,14 +1265,14 @@ function WhatsAppView({ realData, onRefresh }) {
   return (
     <div className="fi">
       <SHead title="WhatsApp" sub="Conversaciones del bot - Intervencion manual" />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
+      <div className="grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
         <KpiCard label="Contactos" value={String(contacts.length)} icon="msg" ac="#34d399" />
         <KpiCard label="En modo manual" value={String(contacts.filter(c => c.bot_activo === false).length)} icon="users" ac="#fbbf24" />
         <KpiCard label="Calientes" value={String(leadState.filter(s => s.temperatura === "caliente").length)} icon="target" ac="#f87171" />
         <KpiCard label="Mensajes (recientes)" value={String(messages.length)} icon="activity" ac="#38bdf8" />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: 12, height: "calc(100vh - 280px)", minHeight: 460 }}>
+      <div className="wa-grid" style={{ display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: 12, height: "calc(100vh - 280px)", minHeight: 460 }}>
         {/* COLUMNA 1: contactos */}
         <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Conversaciones</div>
@@ -1303,7 +1348,7 @@ function WhatsAppView({ realData, onRefresh }) {
         </div>
 
         {/* COLUMNA 3: cualificacion */}
-        <div className="gl gc" style={{ overflowY: "auto" }}>
+        <div className="gl gc wa-qual" style={{ overflowY: "auto" }}>
           <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>Cualificacion</div>
           {qual ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -1438,8 +1483,9 @@ export default function AstraHQ() {
           <div key={i} style={{ position:"fixed", top:o.t, bottom:o.b, left:o.l, right:o.r, width:o.w, height:o.w, borderRadius:"50%", background:`radial-gradient(circle,${o.bg} 0%,transparent 65%)`, pointerEvents:"none", zIndex:0 }}/>
         ))}
 
+        {mobileMenu && <div className="sb-overlay" onClick={()=>setMobileMenu(false)} />}
         {/* SIDEBAR */}
-        <div className="sb" style={{ width:sw, minWidth:sw }}>
+        <div className={`sb ${mobileMenu?"sb-open":""}`} style={{ width:sw, minWidth:sw }}>
           {/* Logo */}
           <div style={{ height:56, display:"flex", alignItems:"center", gap:col?0:9, padding:col?"0 18px":"0 14px", borderBottom:"1px solid rgba(255,255,255,0.052)", justifyContent:col?"center":"flex-start" }}>
             <div style={{ flexShrink:0, mixBlendMode:"screen" }}>
@@ -1459,7 +1505,7 @@ export default function AstraHQ() {
             {NAV.map(item=>(
               <div key={item.k}
                 className={`ni ${view===item.k?"on":""}`}
-                onClick={()=>setView(item.k)}
+                onClick={()=>{setView(item.k);setMobileMenu(false);}}
                 style={{ justifyContent:col?"center":"flex-start" }}
               >
                 <Icon name={item.i} size={14} sw={view===item.k?1.8:1.4} stroke={view===item.k?"#38bdf8":"rgba(255,255,255,0.36)"}/>
@@ -1488,6 +1534,11 @@ export default function AstraHQ() {
 
         {/* TOPBAR */}
         <div className="tb" style={{ left:sw }}>
+          <div className="hamburguesa" onClick={()=>setMobileMenu(true)}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </div>
           <div style={{ position:"relative", flex:1, maxWidth:268 }}>
             <div style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", zIndex:3 }}>
               <Icon name="search" size={13} stroke="rgba(255,255,255,0.26)"/>
@@ -1559,7 +1610,7 @@ export default function AstraHQ() {
         </div>
 
         {/* MAIN */}
-        <div style={{ marginLeft:sw, paddingTop:56, minHeight:"100vh", transition:"margin-left .28s ease", position:"relative", zIndex:2 }}
+        <div className="main-wrap" style={{ marginLeft:sw, paddingTop:56, minHeight:"100vh", transition:"margin-left .28s ease", position:"relative", zIndex:2 }}
           onClick={()=>notif&&setNotif(false)}>
           <div style={{ padding:"26px 26px", maxWidth:1380, margin:"0 auto" }}>
             {view==="dashboard" ? <DashboardView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : view==="academy" ? <AcademyView realData={realData}/> : view==="reuniones" ? <ReunionesView realData={realData}/> : view==="clientes" ? <ClientesView realData={realData}/>  : view==="captacion" ? <ClientesView realData={realData}/> : view==="whatsapp" ? <WhatsAppView realData={realData} onRefresh={fetchData}/> : view==="sistemas" ? <SistemasView realData={realData}/> : view==="analytics" ? <AnalyticsView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : (
