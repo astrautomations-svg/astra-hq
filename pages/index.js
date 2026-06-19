@@ -690,9 +690,12 @@ function PanaderiasOutbound({ realData }) {
   const [filtro, setFiltro] = useState("todos");
 
   useEffect(() => {
-    fetch("/api/panaderias").then(r => r.json()).then(d => {
+    const cargar = () => fetch("/api/panaderias").then(r => r.json()).then(d => {
       setPanaderias(d.panaderias || []); setLoading(false);
     }).catch(() => setLoading(false));
+    cargar();
+    const _iv = setInterval(cargar, 30000);
+    return () => clearInterval(_iv);
   }, []);
 
   const normTel = t => (t || "").replace(/[^0-9]/g, "");
@@ -1468,7 +1471,7 @@ export default function AstraHQ() {
     })
     .catch(e=>console.error("Dashboard fetch error:",e));
   };
-  useEffect(()=>{ fetchData(); },[]);
+  useEffect(()=>{ fetchData(); const _iv=setInterval(fetchData,30000); return ()=>clearInterval(_iv); },[]);
 
   return (
     <>
