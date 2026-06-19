@@ -299,6 +299,17 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
   .grid-filters{ grid-template-columns:1fr 1fr !important; }
   .split-2{ grid-template-columns:1fr !important; }
 }
+.solo-movil{ display:none; }
+@media (max-width: 900px){
+  .solo-desktop{ display:none !important; }
+  .solo-movil{ display:block !important; }
+}
+.rcard{ border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; margin-bottom:10px; background:rgba(255,255,255,0.02); }
+.rcard-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+.rcard-name{ font-size:14px; font-weight:700; color:rgba(255,255,255,0.9); }
+.rcard-meta{ font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.rcard-row{ display:flex; align-items:center; gap:8px; margin-top:8px; }
+.rcard-join{ display:inline-block; color:#38bdf8; font-size:12.5px; font-weight:600; border:1px solid rgba(56,189,248,0.35); border-radius:8px; padding:7px 14px; text-decoration:none; }
 @media (max-width: 560px){
   .grid-4{ grid-template-columns:1fr 1fr !important; }
 }
@@ -1092,7 +1103,7 @@ function ReunionesView({ realData }) {
       <div className="gl gc" style={{ marginBottom:12 }}>
         <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Próximas reuniones</div>
         {proximas.length > 0 ? (
-          <table style={{ width:"100%", borderCollapse:"collapse" }}>
+          <table className="solo-desktop" style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>
               {["Invitado","Email","Tipo","Inicio","Zona horaria","Enlace"].map(h=>(
                 <th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>
@@ -1123,12 +1134,33 @@ function ReunionesView({ realData }) {
             {all.length === 0 ? "No hay reuniones registradas. Activa el Flujo 7 de Calendly en n8n." : "No hay reuniones próximas programadas"}
           </div>
         )}
+        {proximas.length > 0 && (
+          <div className="solo-movil">
+            {proximas.map((r,i)=>(
+              <div key={i} className="rcard">
+                <div className="rcard-top">
+                  <div>
+                    <div className="rcard-name">{r.guest_name||"—"}</div>
+                    <div className="rcard-meta">{r.event_name||"—"}</div>
+                  </div>
+                  <span className="bd bd-g">{r.status||"—"}</span>
+                </div>
+                <div style={{ fontSize:13, fontWeight:700, color:"#34d399" }}>{fmtDT(r.start_time)}</div>
+                <div className="rcard-row">
+                  {r.join_url
+                    ? <a href={r.join_url} target="_blank" rel="noreferrer" className="rcard-join">Unirse a la reunión</a>
+                    : <span style={{ color:"rgba(255,255,255,0.25)", fontSize:12 }}>Sin enlace</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="gl gc">
         <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Historial de reuniones</div>
         {pasadas.length > 0 ? (
-          <table style={{ width:"100%", borderCollapse:"collapse" }}>
+          <table className="solo-desktop" style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>
               {["Invitado","Email","Tipo","Fecha","Estado","Motivo cancelación"].map(h=>(
                 <th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>
@@ -1153,6 +1185,25 @@ function ReunionesView({ realData }) {
           </table>
         ) : (
           <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin historial de reuniones</div>
+        )}
+        {pasadas.length > 0 && (
+          <div className="solo-movil">
+            {pasadas.map((r,i)=>(
+              <div key={i} className="rcard">
+                <div className="rcard-top">
+                  <div>
+                    <div className="rcard-name">{r.guest_name||"—"}</div>
+                    <div className="rcard-meta">{r.event_name||"—"}</div>
+                  </div>
+                  <span className={`bd ${r.status==="cancelada"?"bd-r":r.status==="programada"?"bd-g":"bd-d"}`}>{r.status||"—"}</span>
+                </div>
+                <div style={{ fontSize:12.5, color:"rgba(255,255,255,0.45)" }}>{fmtDT(r.start_time)}</div>
+                {r.status==="cancelada" && r.cancel_reason && (
+                  <div style={{ fontSize:11.5, color:"rgba(248,113,113,0.7)", marginTop:6 }}>Motivo: {r.cancel_reason}</div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
@@ -1399,6 +1450,118 @@ const NAV=[
 ];
 const VIEWS={clientes:<ClientesView/>,sistemas:<SistemasView/>,analytics:<AnalyticsView/>};
 
+// ===== Fondo animado (mismo que login) =====
+function FlowBackground() {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let W = canvas.width = window.innerWidth;
+    let H = canvas.height = window.innerHeight;
+    let animId;
+    const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
+    window.addEventListener("resize", resize);
+    const N = 80;
+    const particles = Array.from({ length: N }, () => ({
+      x: Math.random()*W, y: Math.random()*H, r: Math.random()*2.5+0.5,
+      vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+      opacity: Math.random()*0.6+0.1, hue: Math.random()<0.5?200:240,
+    }));
+    const lines = Array.from({ length: 12 }, (_, i) => ({
+      y: (H/12)*i, offset: Math.random()*Math.PI*2, speed: 0.0005+Math.random()*0.001,
+      amp: 60+Math.random()*80, freq: 0.003+Math.random()*0.002, opacity: 0.03+Math.random()*0.05,
+    }));
+    const orbs = [
+      { x: W*0.15, y: H*0.3, r: 280, color: "56,189,248", speed: 0.0003 },
+      { x: W*0.85, y: H*0.7, r: 240, color: "99,102,241", speed: 0.0004 },
+      { x: W*0.5, y: H*0.15, r: 180, color: "14,165,233", speed: 0.0005 },
+    ];
+    let t = 0;
+    const draw = () => {
+      ctx.clearRect(0,0,W,H); t += 1;
+      const bg = ctx.createLinearGradient(0,0,W,H);
+      bg.addColorStop(0,"#020510"); bg.addColorStop(0.5,"#04060e"); bg.addColorStop(1,"#020814");
+      ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+      orbs.forEach(orb => {
+        orb.x += Math.sin(t*orb.speed)*0.8; orb.y += Math.cos(t*orb.speed*0.7)*0.6;
+        const g = ctx.createRadialGradient(orb.x,orb.y,0,orb.x,orb.y,orb.r);
+        g.addColorStop(0,`rgba(${orb.color},0.12)`); g.addColorStop(0.5,`rgba(${orb.color},0.05)`); g.addColorStop(1,`rgba(${orb.color},0)`);
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(orb.x,orb.y,orb.r,0,Math.PI*2); ctx.fill();
+      });
+      lines.forEach(line => {
+        line.offset += line.speed; ctx.beginPath(); ctx.moveTo(0,line.y);
+        for (let x=0;x<=W;x+=4){ const y=line.y+Math.sin(x*line.freq+line.offset)*line.amp+Math.sin(x*line.freq*0.5+line.offset*1.3)*line.amp*0.4; ctx.lineTo(x,y); }
+        const grad = ctx.createLinearGradient(0,0,W,0);
+        grad.addColorStop(0,`rgba(56,189,248,0)`); grad.addColorStop(0.3,`rgba(56,189,248,${line.opacity})`);
+        grad.addColorStop(0.7,`rgba(99,102,241,${line.opacity})`); grad.addColorStop(1,`rgba(99,102,241,0)`);
+        ctx.strokeStyle = grad; ctx.lineWidth = 1; ctx.stroke();
+      });
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x<0) p.x=W; if (p.x>W) p.x=0; if (p.y<0) p.y=H; if (p.y>H) p.y=0;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle = `hsla(${p.hue},90%,70%,${p.opacity})`; ctx.fill();
+      });
+      for (let i=0;i<particles.length;i++){ for (let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, dist=Math.sqrt(dx*dx+dy*dy);
+        if (dist<100){ ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(56,189,248,${0.08*(1-dist/100)})`; ctx.lineWidth=0.5; ctx.stroke(); }
+      }}
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+  }, []);
+  return <canvas ref={canvasRef} style={{ position:"fixed", inset:0, zIndex:0, pointerEvents:"none" }}/>;
+}
+
+// ===== Pantalla de carga (fondo dinámico + barra animada) =====
+function LoadingScreen() {
+  return (
+    <div style={{
+      minHeight:"100vh", background:"#04060e", display:"flex", flexDirection:"column",
+      alignItems:"center", justifyContent:"center", fontFamily:"'Outfit',sans-serif",
+      position:"relative", overflow:"hidden", padding:"24px 16px",
+    }}>
+      <FlowBackground/>
+      <div style={{ position:"relative", zIndex:10, width:"100%", maxWidth:420, display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center" }}>
+        <div style={{
+          width:72, height:72, borderRadius:20, background:"#ffffff",
+          display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 18px", padding:6,
+          boxShadow:"0 0 0 1px rgba(56,189,248,0.3), 0 0 60px rgba(56,189,248,0.25), 0 20px 40px rgba(0,0,0,0.4)",
+        }}>
+          <img src={LOGO_SRC} style={{ width:58, height:58, objectFit:"contain" }} alt="Astra"/>
+        </div>
+        <div style={{ fontSize:28, fontWeight:800, color:"white", letterSpacing:"-0.03em", lineHeight:1.1 }}>Astra HQ</div>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,0.35)", marginTop:6, letterSpacing:"0.12em", textTransform:"uppercase", fontWeight:500 }}>
+          Panel Operativo · Astra Automations
+        </div>
+        <div style={{
+          width:"100%", maxWidth:280, height:4, marginTop:26, borderRadius:999,
+          background:"rgba(255,255,255,0.08)", overflow:"hidden", position:"relative",
+        }}>
+          <div style={{
+            position:"absolute", top:0, left:0, height:"100%", width:"40%", borderRadius:999,
+            background:"linear-gradient(90deg, rgba(56,189,248,0), #38bdf8, #6366f1, rgba(99,102,241,0))",
+            animation:"astraLoadBar 1.3s ease-in-out infinite",
+          }}/>
+        </div>
+        <div style={{ marginTop:22, fontSize:11, color:"rgba(255,255,255,0.18)", textAlign:"center", lineHeight:1.6 }}>
+          Acceso restringido · Solo personal autorizado<br/>
+          © 2026 Astra Automations
+        </div>
+      </div>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+        @keyframes astraLoadBar {
+          0%   { left:-40%; }
+          100% { left:100%; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function AstraHQ() {
   const { user } = useUser();
   const [view,setView]=useState("dashboard");
@@ -1472,6 +1635,8 @@ export default function AstraHQ() {
     .catch(e=>console.error("Dashboard fetch error:",e));
   };
   useEffect(()=>{ fetchData(); const _iv=setInterval(fetchData,30000); return ()=>clearInterval(_iv); },[]);
+
+  if(!realData) return <LoadingScreen/>;
 
   return (
     <>
