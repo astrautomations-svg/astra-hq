@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     if (webhook) {
       await fetch(webhook, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ wa_id, text }) });
     }
-    await supabase.from("whatsapp_messages").insert({ contact_id, wa_id, direction: "outbound", body: text, message_type: "text", is_manual: true, created_at: new Date().toISOString() });
+    await supabase.from("whatsapp_messages").insert({ contact_id, direction: "outbound", body: text, message_type: "text", is_manual: true, created_at: new Date().toISOString() });
     res.status(200).json({ ok: true, sent: !!webhook });
   } catch (err) { console.error("wa-send error:", err); res.status(500).json({ error: err.message }); }
 }
