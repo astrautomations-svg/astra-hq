@@ -699,6 +699,10 @@ function PanaderiasOutbound({ realData }) {
   const [thread, setThread] = useState([]);
   const [loadingChat, setLoadingChat] = useState(false);
   const [filtro, setFiltro] = useState("todos");
+  const chatEndRef = useRef(null);
+  useEffect(() => {
+    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+  }, [thread, loadingChat]);
 
   useEffect(() => {
     const cargar = () => fetch("/api/panaderias").then(r => r.json()).then(d => {
@@ -808,6 +812,7 @@ function PanaderiasOutbound({ realData }) {
                     </div>
                   );
                 })}
+              <div ref={chatEndRef} />
             </div>
           </div>
         )}
@@ -1275,6 +1280,7 @@ function WhatsAppView({ realData, onRefresh }) {
   const [selId, setSelId] = useState(null);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const chatEndRef2 = useRef(null);
 
   const sel = contacts.find(c => c.id === selId) || contacts[0] || null;
   const selKey = sel ? sel.id : null;
@@ -1283,6 +1289,9 @@ function WhatsAppView({ realData, onRefresh }) {
   const thread = messages
     .filter(m => m.contact_id === selKey)
     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  useEffect(() => {
+    if (chatEndRef2.current) chatEndRef2.current.scrollIntoView({ behavior: "auto", block: "end" });
+  }, [selKey, thread.length]);
 
   // Cualificacion del contacto seleccionado
   const qual = leadState.find(s => s.contact_id === selKey) || null;
@@ -1388,6 +1397,7 @@ function WhatsAppView({ realData, onRefresh }) {
                     </div>
                   );
                 })}
+                <div ref={chatEndRef2} />
               </div>
               <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", gap: 8 }}>
                 <input value={draft} onChange={e => setDraft(e.target.value)}
