@@ -806,7 +806,7 @@ function PanaderiasOutbound({ realData }) {
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "80%" }}>
                       <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)"), color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)") }}>
-                        {m.body || (m.message_type !== "text" ? "[" + m.message_type + "]" : "")}
+                        {m.message_type === "video" ? <LoomBadge /> : (m.body || (m.message_type !== "text" ? "[" + m.message_type + "]" : ""))}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtDate(m.created_at)}</div>
                     </div>
@@ -1305,6 +1305,19 @@ function ReunionesView({ realData }) {
 
 /* â”€â”€ WhatsAppView â”€â”€ pegar dentro de index.js, antes del NAV â”€â”€ */
 
+function LoomBadge() {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:10, background:"rgba(56,189,248,0.08)", border:"1px solid rgba(56,189,248,0.25)", minWidth:180 }}>
+      <div style={{ width:34, height:34, borderRadius:8, background:"rgba(56,189,248,0.18)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#38bdf8"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <div style={{ fontSize:12.5, fontStyle:"italic", color:"rgba(255,255,255,0.7)", display:"flex", alignItems:"center", gap:5 }}>
+        <span>🎥</span><span>Loom enviado</span><span style={{ color:"#22c55e" }}>✓</span>
+      </div>
+    </div>
+  );
+}
+
 function AudioPlayer({ src, out }) {
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
@@ -1478,7 +1491,7 @@ function WhatsAppView({ realData, onRefresh }) {
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
                       <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)"), color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)") }}>
-                        {m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
+                        {m.message_type === "video" ? <LoomBadge /> : m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
                     </div>
