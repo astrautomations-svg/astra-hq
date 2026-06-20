@@ -1,4 +1,4 @@
-﻿import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 // Service role key - only used server-side in API routes, never exposed to browser
 const supabase = createClient(
   "https://aryognsfjvbywqrhtwim.supabase.co",
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET");
   try {
     const [pagos, academy, reuniones, leads, newsletter, chatbot, setter, leadsCaptacion,
-           waContacts, waMessages, waLeadState] = await Promise.all([
+           waContacts, waMessages, waLeadState, panaderiasOutbound] = await Promise.all([
       supabase.from("pagos").select("*").order("processed_at", { ascending: false }),
       supabase.from("academy_members").select("*").order("joined_at", { ascending: false }),
       supabase.from("reuniones").select("*").order("start_time", { ascending: false }),
@@ -23,10 +23,11 @@ export default async function handler(req, res) {
       supabase.from("whatsapp_contacts").select("*").order("last_message_at", { ascending: false }).limit(200),
       supabase.from("whatsapp_messages").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("whatsapp_lead_state").select("*"),
+      supabase.from("panaderias_outbound").select("*"),
     ]);
     // Log any errors
     [pagos, academy, reuniones, leads, newsletter, chatbot, setter,
-     waContacts, waMessages, waLeadState].forEach((r, i) => {
+     waContacts, waMessages, waLeadState, panaderiasOutbound].forEach((r, i) => {
       if (r.error) console.error(`Table ${i} error:`, r.error);
     });
     res.status(200).json({
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
       waContacts:  waContacts.data  || [],
       waMessages:  waMessages.data  || [],
       waLeadState: waLeadState.data || [],
+      panaderiasOutbound: panaderiasOutbound.data || [],
     });
   } catch (err) {
     console.error("Dashboard API error:", err);

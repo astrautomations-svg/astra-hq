@@ -1015,6 +1015,37 @@ function AnalyticsView({ realData }) {
   const totalLeads = leads.length + setter.length;
   const convRate = totalLeads > 0 ? ((academy.length / totalLeads) * 100).toFixed(1) : "—";
 
+  // ===== Conversión WhatsApp · Campaña Panaderías =====
+  const pan = (realData && realData.panaderiasOutbound) || [];
+  const waState = (realData && realData.waLeadState) || [];
+  const panTotal = pan.length;
+  const panContactadas = pan.filter(p => p.estado && p.estado !== "sin_contactar").length;
+  const panRespondio = pan.filter(p => p.respondio === true || p.estado === "respondio" || p.estado === "descartado").length;
+  const panDescartadas = pan.filter(p => p.estado === "descartado").length;
+  // Temperaturas (de whatsapp_lead_state)
+  const tFrio = waState.filter(s => s.temperatura === "frio").length;
+  const tTibio = waState.filter(s => s.temperatura === "tibio").length;
+  const tCaliente = waState.filter(s => s.temperatura === "caliente").length;
+  const tDescartado = waState.filter(s => s.temperatura === "descartado").length;
+  // Reuniones agendadas desde WhatsApp (aprox: todas las próximas/históricas)
+  const waReuniones = ((realData && realData.reuniones) || []).length;
+  // Embudo
+  const funnelWA = [
+    { fase: "Contactadas", v: panContactadas, c: "#38bdf8" },
+    { fase: "Respondieron", v: panRespondio, c: "#22d3ee" },
+    { fase: "Tibios", v: tTibio, c: "#fbbf24" },
+    { fase: "Calientes", v: tCaliente, c: "#f87171" },
+  ];
+  const funnelWAMax = funnelWA[0].v || 1;
+  const pieTemp = [
+    { name: "Frío", value: tFrio, c: "#38bdf8" },
+    { name: "Tibio", value: tTibio, c: "#fbbf24" },
+    { name: "Caliente", value: tCaliente, c: "#f87171" },
+    { name: "Descartado", value: tDescartado, c: "#6b7280" },
+  ].filter(x => x.value > 0);
+  const tasaRespuesta = panContactadas > 0 ? ((panRespondio / panContactadas) * 100).toFixed(1) : "—";
+  const tasaCaliente = panContactadas > 0 ? ((tCaliente / panContactadas) * 100).toFixed(1) : "—";
+
   return (
     <div className="fi">
       <SHead title="Analytics" sub="Calculado desde datos reales de Supabase"/>
@@ -1075,6 +1106,62 @@ function AnalyticsView({ realData }) {
               <div style={{ fontSize:22, fontWeight:700, color:m.c }}>{m.v}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ===== Conversión WhatsApp · Campaña Panaderías ===== */}
+      <div style={{ marginTop:20, marginBottom:10 }}>
+        <div style={{ fontSize:15, fontWeight:700, color:"white", display:"flex", alignItems:"center", gap:8 }}>
+          <span style={{ width:3, height:16, background:"#22c55e", borderRadius:2, display:"inline-block" }}/>
+          Conversión WhatsApp · Campaña Panaderías
+        </div>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,0.3)", marginTop:2, marginLeft:11 }}>Embudo de captación por WhatsApp</div>
+      </div>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
+        <KpiCard label="Contactadas" value={String(panContactadas)} sub={`de ${panTotal} totales`} icon="target" ac="#38bdf8"/>
+        <KpiCard label="Respondieron" value={String(panRespondio)} sub={`${tasaRespuesta}% tasa respuesta`} icon="target" ac="#22d3ee"/>
+        <KpiCard label="Calientes" value={String(tCaliente)} sub={`${tasaCaliente}% del total`} icon="target" ac="#f87171"/>
+        <KpiCard label="Descartadas" value={String(tDescartado || panDescartadas)} sub="no interesados" icon="target" ac="#6b7280"/>
+      </div>
+      <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+        <div className="gl gc">
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Embudo de conversión</div>
+          {panContactadas > 0 ? (
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              {funnelWA.map((d,i)=>{
+                const pct = funnelWAMax > 0 ? (d.v / funnelWAMax) * 100 : 0;
+                return (
+                  <div key={i}>
+                    <div style={{ display:"flex", justifyContent:"space-between", fontSize:11.5, marginBottom:4 }}>
+                      <span style={{ color:"rgba(255,255,255,0.6)" }}>{d.fase}</span>
+                      <span style={{ color:d.c, fontWeight:700 }}>{d.v}</span>
+                    </div>
+                    <div style={{ height:14, background:"rgba(255,255,255,0.05)", borderRadius:7, overflow:"hidden" }}>
+                      <div style={{ width:`${Math.max(pct,2)}%`, height:"100%", background:d.c, borderRadius:7, transition:"width 0.4s" }}/>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"40px 0", fontSize:12 }}>Aún no hay datos de campaña</div>}
+        </div>
+        <div className="gl gc">
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Reparto por temperatura</div>
+          {pieTemp.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={160}>
+                <PieChart>
+                  <Pie data={pieTemp} cx="50%" cy="50%" innerRadius={42} outerRadius={68} paddingAngle={4} dataKey="value">
+                    {pieTemp.map((e,i)=><Cell key={i} fill={e.c}/>)}
+                  </Pie>
+                  <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }}/>
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ display:"flex", gap:12, justifyContent:"center", marginTop:8, flexWrap:"wrap" }}>
+                {pieTemp.map((e,i)=><span key={i} style={{ fontSize:11, color:e.c }}>● {e.name} {e.value}</span>)}
+              </div>
+            </>
+          ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"60px 0", fontSize:12 }}>Sin clasificaciones aún</div>}
         </div>
       </div>
     </div>
