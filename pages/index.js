@@ -798,9 +798,10 @@ function PanaderiasOutbound({ realData }) {
                 thread.length === 0 ? <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, textAlign: "center", padding: 20 }}>Aún no ha respondido. Cuando responda, la conversación aparecerá aquí.</div> :
                 thread.map((m, i) => {
                   const out = m.direction === "outbound";
+                  const manual = m.is_manual === true;
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "80%" }}>
-                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
+                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)"), color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)") }}>
                         {m.body || (m.message_type !== "text" ? "[" + m.message_type + "]" : "")}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtDate(m.created_at)}</div>
@@ -1377,9 +1378,10 @@ function WhatsAppView({ realData, onRefresh }) {
                 {thread.length === 0 && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 30 }}>Sin mensajes</div>}
                 {thread.map((m, i) => {
                   const out = m.direction === "outbound";
+                  const manual = m.is_manual === true;
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
-                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)" }}>
+                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)"), color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)") }}>
                         {m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
                       </div>
                       <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
