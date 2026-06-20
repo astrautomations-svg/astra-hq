@@ -1696,7 +1696,7 @@ export default function AstraHQ() {
   const fetchData = () => {
     fetch("/api/dashboard")
       .then(r=>r.json())
-      .then(({pagos,academy,reuniones,leads,newsletter,chatbot,setter,waContacts,waMessages,waLeadState})=>{
+      .then(({pagos,academy,reuniones,leads,newsletter,chatbot,setter,waContacts,waMessages,waLeadState,panaderiasOutbound})=>{
       const p = pagos||[], ac = academy||[], re_ = reuniones||[];
       // Deduplicar pagos: mismo email+importe+fecha = mismo pago Stripe duplicado
       const seen = new Set();
@@ -1729,6 +1729,7 @@ export default function AstraHQ() {
         waContacts: waContacts||[],
         waMessages: waMessages||[],
         waLeadState: waLeadState||[],
+        panaderiasOutbound: panaderiasOutbound||[],
       });
     })
     .catch(e=>console.error("Dashboard fetch error:",e));
