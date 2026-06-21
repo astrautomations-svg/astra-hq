@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
+import MapaLeadsEspana from "../components/MapaLeadsEspana";
 import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -1049,6 +1050,9 @@ function AnalyticsView({ realData }) {
   return (
     <div className="fi">
       <SHead title="Analytics" sub="Calculado desde datos reales de Supabase"/>
+      <div style={{ marginBottom: 16 }}>
+        <MapaLeadsEspana />
+      </div>
       <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
         <KpiCard label="Ingresos totales" value={"€"+totalRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="dollar" ac="#34d399"/>
         <KpiCard label="Rev. Academy" value={"€"+academyRev.toLocaleString("es-ES",{minimumFractionDigits:2})} icon="academy" ac="#a78bfa"/>
