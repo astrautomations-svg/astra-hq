@@ -86,35 +86,16 @@ export default function MapaLeadsEspana() {
   const [hover, setHover] = useState(null);
   const [modo, setModo] = useState("dark");
 
-  // Al montar: leer modo guardado y aplicarlo al <html> (afecta a todo el panel).
+  // El control del modo vive en la topbar del panel. Aqui solo OBSERVAMOS
+  // la clase del <html> para pintar el mapa en el tono correcto.
   useEffect(() => {
-    let guardado = "dark";
-    try {
-      guardado = window.localStorage.getItem("astra-modo") || "dark";
-    } catch (e) {
-      guardado = "dark";
-    }
-    aplicarModo(guardado);
-    setModo(guardado);
+    const sync = () =>
+      setModo(document.documentElement.classList.contains("light") ? "light" : "dark");
+    sync();
+    const obs = new MutationObserver(sync);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
   }, []);
-
-  function aplicarModo(m) {
-    if (typeof document === "undefined") return;
-    const html = document.documentElement;
-    if (m === "light") html.classList.add("light");
-    else html.classList.remove("light");
-  }
-
-  function toggleModo() {
-    const nuevo = modo === "dark" ? "light" : "dark";
-    aplicarModo(nuevo);
-    setModo(nuevo);
-    try {
-      window.localStorage.setItem("astra-modo", nuevo);
-    } catch (e) {
-      /* almacenamiento no disponible, no pasa nada */
-    }
-  }
 
   const claro = modo === "light";
   const T = claro ? TEMA.light : TEMA.dark;
@@ -312,14 +293,6 @@ export default function MapaLeadsEspana() {
           <h2 style={S.title(T)}>Leads por provincia</h2>
         </div>
         <div style={S.headRight}>
-          <button
-            style={S.toggle(T)}
-            onClick={toggleModo}
-            title={claro ? "Cambiar a modo oscuro" : "Cambiar a modo claro"}
-            aria-label="Cambiar modo claro u oscuro"
-          >
-            {claro ? "🌙" : "☀️"}
-          </button>
           <div style={S.total(T)}>
             {rows ? rows.length : "—"}
             <span style={S.totalLabel(T)}>leads totales</span>
