@@ -169,8 +169,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 .light .tb{ background:rgba(255,255,255,0.85) !important; border-bottom:1px solid rgba(15,23,42,0.08) !important; }
 .light .sb *{ color:var(--t1); }
 .light .sb img, .light .sb svg{ mix-blend-mode:normal !important; }
-.light [style*="mix-blend-mode"]{ mix-blend-mode:normal !important; }
-.light .sb > div:first-child > div{ mix-blend-mode:normal !important; }
+.light [style*="mixBlendMode"]{ mix-blend-mode:normal !important; }
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.16);border-radius:2px;}
 
@@ -1895,7 +1894,7 @@ export default function AstraHQ() {
               ))}
             </div>
             <div style={{ position:"relative" }}>
-              <button onClick={toggleTema} title="Cambiar modo claro/oscuro" style={{ background:"var(--ink-fill)", border:"1px solid var(--ink-line)", borderRadius:8, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, marginRight:8 }}>{tema==="light" ? String.fromCodePoint(0x1F319) : String.fromCodePoint(0x2600,0xFE0F)}</button><button onClick={()=>setNotif(!notif)} style={{ background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", borderRadius:8, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
+              <button onClick={toggleTema} title="Cambiar modo claro/oscuro" style={{ background:"var(--ink-fill)", border:"1px solid var(--ink-line)", borderRadius:8, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, marginRight:8 }}>{tema==="light" ? "ðŸŒ™" : "â˜€ï¸"}</button><button onClick={()=>setNotif(!notif)} style={{ background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", borderRadius:8, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
                 <Icon name="bell" size={14} stroke="var(--ink-2)"/>
                 <span style={{ position:"absolute", top:6, right:6, width:6, height:6, background:"#f87171", borderRadius:"50%", border:"1.5px solid var(--bg)" }}/>
               </button>

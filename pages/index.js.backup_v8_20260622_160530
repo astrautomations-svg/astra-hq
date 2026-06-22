@@ -169,8 +169,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 .light .tb{ background:rgba(255,255,255,0.85) !important; border-bottom:1px solid rgba(15,23,42,0.08) !important; }
 .light .sb *{ color:var(--t1); }
 .light .sb img, .light .sb svg{ mix-blend-mode:normal !important; }
-.light [style*="mix-blend-mode"]{ mix-blend-mode:normal !important; }
-.light .sb > div:first-child > div{ mix-blend-mode:normal !important; }
+.light [style*="mixBlendMode"]{ mix-blend-mode:normal !important; }
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.16);border-radius:2px;}
 
