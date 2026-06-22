@@ -4,19 +4,17 @@ import * as d3 from "d3";
 /**
  * MapaLeadsEspana — Mapa coroplético de España por provincias para Astra HQ.
  *
- * Pinta los leads de `panaderias_outbound` agrupados por provincia (derivada de
- * la columna `zona`, que en la tabla son ciudades). Al clicar una provincia se
- * abre un panel con el desglose por estado y las ciudades de esa provincia.
+ * Fase 1:
+ *  - Mapa más grande (la península llena mejor el marco).
+ *  - Canarias en su recuadro (inset), no a 1.000 km.
+ *  - Soporte de modo claro/oscuro: lee la clase del <html> (light/dark) y un
+ *    botón sol/luna que la cambia y guarda la preferencia.
  *
  * Uso:
  *   <MapaLeadsEspana />
  *
- * Requisitos: d3 instalado (npm i d3). El GeoJSON de provincias se carga de un
- * CDN público en runtime, así que no pesa en tu bundle.
- *
- * Mete las credenciales en variables de entorno de tu proyecto Next.js:
- *   NEXT_PUBLIC_SUPABASE_URL
- *   NEXT_PUBLIC_SUPABASE_ANON_KEY   (usa la ANON, nunca la service_role en cliente)
+ * Requisitos: d3 instalado (npm i d3).
+ * Env vars: NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY (clave anon).
  */
 
 const SUPABASE_URL =
@@ -24,7 +22,6 @@ const SUPABASE_URL =
   "https://aryognsfjvbywqrhtwim.supabase.co";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-// GeoJSON de provincias de España (CDN público).
 const GEOJSON_URL =
   "https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson";
 
@@ -53,8 +50,6 @@ const CIUDAD_PROVINCIA = {
   Cuenca: "Cuenca", Teruel: "Teruel", Madrid: "Madrid",
 };
 
-// Normaliza el nombre que viene del GeoJSON para casarlo con nuestras claves.
-// Distintos GeoJSON usan grafías diferentes (Vizcaya/Bizkaia, Álava/Araba…).
 const ALIAS_PROVINCIA = {
   "Bizkaia": "Vizcaya", "Araba": "Álava", "Araba/Álava": "Álava", "Álava": "Álava",
   "Gipuzkoa": "Guipúzcoa", "A Coruña": "La Coruña", "Ourense": "Orense",
@@ -65,6 +60,9 @@ const ALIAS_PROVINCIA = {
   "Alacant/Alicante": "Alicante", "Alicante/Alacant": "Alicante",
 };
 
+// Provincias canarias (para separarlas e insertarlas en su recuadro).
+const PROV_CANARIAS = new Set(["Las Palmas", "Santa Cruz de Tenerife"]);
+
 const ESTADOS = [
   { key: "sin_contactar", label: "Sin contactar", color: "#8b93a7" },
   { key: "contactado", label: "Contactado", color: "#3b82f6" },
@@ -73,7 +71,6 @@ const ESTADOS = [
 ];
 
 function nombreGeo(props) {
-  // Probar las claves típicas donde los GeoJSON guardan el nombre.
   const raw =
     props.name || props.NAME_2 || props.provincia || props.PROVINCIA ||
     props.nombre || props.NAME || "";
@@ -85,10 +82,44 @@ export default function MapaLeadsEspana() {
   const [geo, setGeo] = useState(null);
   const [rows, setRows] = useState(null);
   const [error, setError] = useState(null);
-  const [seleccion, setSeleccion] = useState(null); // provincia seleccionada
+  const [seleccion, setSeleccion] = useState(null);
   const [hover, setHover] = useState(null);
+  const [modo, setModo] = useState("dark");
 
-  // 1) Cargar GeoJSON de provincias
+  // Al montar: leer modo guardado y aplicarlo al <html> (afecta a todo el panel).
+  useEffect(() => {
+    let guardado = "dark";
+    try {
+      guardado = window.localStorage.getItem("astra-modo") || "dark";
+    } catch (e) {
+      guardado = "dark";
+    }
+    aplicarModo(guardado);
+    setModo(guardado);
+  }, []);
+
+  function aplicarModo(m) {
+    if (typeof document === "undefined") return;
+    const html = document.documentElement;
+    if (m === "light") html.classList.add("light");
+    else html.classList.remove("light");
+  }
+
+  function toggleModo() {
+    const nuevo = modo === "dark" ? "light" : "dark";
+    aplicarModo(nuevo);
+    setModo(nuevo);
+    try {
+      window.localStorage.setItem("astra-modo", nuevo);
+    } catch (e) {
+      /* almacenamiento no disponible, no pasa nada */
+    }
+  }
+
+  const claro = modo === "light";
+  const T = claro ? TEMA.light : TEMA.dark;
+
+  // 1) GeoJSON
   useEffect(() => {
     let vivo = true;
     fetch(GEOJSON_URL)
@@ -101,7 +132,7 @@ export default function MapaLeadsEspana() {
     return () => (vivo = false);
   }, []);
 
-  // 2) Cargar leads de Supabase
+  // 2) Leads de Supabase
   useEffect(() => {
     let vivo = true;
     const url =
@@ -122,13 +153,13 @@ export default function MapaLeadsEspana() {
     return () => (vivo = false);
   }, []);
 
-  // 3) Agregar leads por provincia
+  // 3) Agregar por provincia
   const porProvincia = useMemo(() => {
     if (!rows) return {};
     const acc = {};
     for (const r of rows) {
       const prov = CIUDAD_PROVINCIA[r.zona];
-      if (!prov) continue; // zona sin mapear → no se pinta (revisa el diccionario)
+      if (!prov) continue;
       if (!acc[prov]) {
         acc[prov] = {
           total: 0,
@@ -149,13 +180,15 @@ export default function MapaLeadsEspana() {
     [porProvincia]
   );
 
-  // Escala de color secuencial sobre el verde de marca de Astra (#6FEC7F).
+  // Escala de color verde Astra. El extremo bajo se adapta al modo.
   const color = useMemo(
-    () => d3.scaleSequential(d3.interpolate("#10241a", "#6FEC7F")).domain([0, maxTotal]),
-    [maxTotal]
+    () =>
+      d3
+        .scaleSequential(d3.interpolate(claro ? "#d6f5dc" : "#10241a", "#6FEC7F"))
+        .domain([0, maxTotal]),
+    [maxTotal, claro]
   );
 
-  // Tramos para la leyenda
   const tramos = useMemo(() => {
     const t = [];
     const pasos = 5;
@@ -166,107 +199,166 @@ export default function MapaLeadsEspana() {
     return t;
   }, [maxTotal, color]);
 
-  // 4) Render del mapa con d3
+  // 4) Render del mapa: península+Baleares grande, Canarias en recuadro.
   useEffect(() => {
     if (!geo || !svgRef.current) return;
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const W = 760, H = 560;
-    const proj = d3.geoMercator().fitSize([W, H], geo);
-    const path = d3.geoPath().projection(proj);
+    const W = 900, H = 660;
 
-    svg
-      .append("g")
-      .selectAll("path")
-      .data(geo.features)
-      .join("path")
-      .attr("d", path)
-      .attr("fill", (d) => {
-        const prov = nombreGeo(d.properties);
-        const info = porProvincia[prov];
-        return info ? color(info.total) : "#1a2233";
-      })
-      .attr("stroke", "#0b0f1a")
-      .attr("stroke-width", 0.6)
-      .attr("cursor", "pointer")
-      .on("mousemove", (event, d) => {
-        const prov = nombreGeo(d.properties);
-        const info = porProvincia[prov];
-        setHover({
-          x: event.offsetX,
-          y: event.offsetY,
-          prov,
-          total: info ? info.total : 0,
+    // Separar features: Canarias vs resto.
+    const canarias = geo.features.filter((f) => PROV_CANARIAS.has(nombreGeo(f.properties)));
+    const peninsula = geo.features.filter((f) => !PROV_CANARIAS.has(nombreGeo(f.properties)));
+
+    const fcPen = { type: "FeatureCollection", features: peninsula };
+    const fcCan = { type: "FeatureCollection", features: canarias };
+
+    const pintar = (d) => {
+      const prov = nombreGeo(d.properties);
+      const info = porProvincia[prov];
+      return info ? color(info.total) : T.provVacia;
+    };
+
+    const wireEvents = (selection) => {
+      selection
+        .attr("stroke", T.provBorde)
+        .attr("stroke-width", 0.6)
+        .attr("cursor", "pointer")
+        .on("mousemove", (event, d) => {
+          const prov = nombreGeo(d.properties);
+          const info = porProvincia[prov];
+          setHover({ x: event.offsetX, y: event.offsetY, prov, total: info ? info.total : 0 });
+        })
+        .on("mouseleave", () => setHover(null))
+        .on("click", (_e, d) => {
+          const prov = nombreGeo(d.properties);
+          setSeleccion({ prov, info: porProvincia[prov] || null });
         });
-      })
-      .on("mouseleave", () => setHover(null))
-      .on("click", (_e, d) => {
-        const prov = nombreGeo(d.properties);
-        setSeleccion({ prov, info: porProvincia[prov] || null });
-      })
-      .append("title")
-      .text((d) => {
+      selection.append("title").text((d) => {
         const prov = nombreGeo(d.properties);
         const info = porProvincia[prov];
         return `${prov}: ${info ? info.total : 0} leads`;
       });
-  }, [geo, porProvincia, color]);
+      return selection;
+    };
+
+    // ── Península + Baleares: ocupa casi todo el lienzo ──
+    const projPen = d3.geoMercator().fitSize([W, H - 30], fcPen);
+    const pathPen = d3.geoPath().projection(projPen);
+    wireEvents(
+      svg
+        .append("g")
+        .selectAll("path")
+        .data(peninsula)
+        .join("path")
+        .attr("d", pathPen)
+        .attr("fill", (d) => pintar(d))
+    );
+
+    // ── Canarias en recuadro abajo-izquierda ──
+    if (canarias.length) {
+      const boxW = 200, boxH = 96, boxX = 8, boxY = H - boxH - 8;
+
+      svg
+        .append("rect")
+        .attr("x", boxX)
+        .attr("y", boxY)
+        .attr("width", boxW)
+        .attr("height", boxH)
+        .attr("rx", 8)
+        .attr("fill", "none")
+        .attr("stroke", T.insetBorde)
+        .attr("stroke-width", 1);
+
+      svg
+        .append("text")
+        .attr("x", boxX + 8)
+        .attr("y", boxY + 16)
+        .attr("fill", T.insetLabel)
+        .attr("font-size", 10)
+        .attr("font-family", "Inter, system-ui, sans-serif")
+        .text("Canarias");
+
+      const projCan = d3
+        .geoMercator()
+        .fitExtent(
+          [
+            [boxX + 8, boxY + 22],
+            [boxX + boxW - 8, boxY + boxH - 8],
+          ],
+          fcCan
+        );
+      const pathCan = d3.geoPath().projection(projCan);
+
+      const gCan = svg
+        .append("g")
+        .selectAll("path")
+        .data(canarias)
+        .join("path")
+        .attr("d", pathCan)
+        .attr("fill", (d) => pintar(d));
+      wireEvents(gCan);
+    }
+  }, [geo, porProvincia, color, T]);
 
   const cargando = !geo || !rows;
 
   return (
-    <div style={S.wrap}>
+    <div style={S.wrap(T)}>
       <header style={S.head}>
         <div>
-          <div style={S.eyebrow}>Astra · Outbound panaderías</div>
-          <h2 style={S.title}>Leads por provincia</h2>
+          <div style={S.eyebrow(T)}>Astra · Outbound panaderías</div>
+          <h2 style={S.title(T)}>Leads por provincia</h2>
         </div>
-        <div style={S.total}>
-          {rows ? rows.length : "—"}
-          <span style={S.totalLabel}>leads totales</span>
+        <div style={S.headRight}>
+          <button
+            style={S.toggle(T)}
+            onClick={toggleModo}
+            title={claro ? "Cambiar a modo oscuro" : "Cambiar a modo claro"}
+            aria-label="Cambiar modo claro u oscuro"
+          >
+            {claro ? "🌙" : "☀️"}
+          </button>
+          <div style={S.total(T)}>
+            {rows ? rows.length : "—"}
+            <span style={S.totalLabel(T)}>leads totales</span>
+          </div>
         </div>
       </header>
 
       {error && <div style={S.error}>No se pudo cargar: {error}</div>}
 
       <div style={S.grid}>
-        {/* Mapa */}
-        <div style={S.mapBox}>
-          {cargando && <div style={S.loading}>Cargando mapa…</div>}
+        <div style={S.mapBox(T)}>
+          {cargando && <div style={S.loading(T)}>Cargando mapa…</div>}
           <svg
             ref={svgRef}
-            viewBox="0 0 760 560"
+            viewBox="0 0 900 660"
             style={{ width: "100%", height: "auto", display: cargando ? "none" : "block" }}
             role="img"
             aria-label="Mapa de leads por provincia"
           />
           {hover && (
-            <div style={{ ...S.tip, left: hover.x + 14, top: hover.y + 14 }}>
+            <div style={{ ...S.tip(T), left: hover.x + 14, top: hover.y + 14 }}>
               <strong>{hover.prov}</strong>
               <br />
               {hover.total} {hover.total === 1 ? "lead" : "leads"}
             </div>
           )}
 
-          {/* Leyenda */}
           <div style={S.legend}>
-            <span style={S.legendLabel}>Menos</span>
+            <span style={S.legendLabel(T)}>Menos</span>
             {tramos.map((t, i) => (
-              <span
-                key={i}
-                title={`~${t.v}`}
-                style={{ ...S.legendChip, background: t.color }}
-              />
+              <span key={i} title={`~${t.v}`} style={{ ...S.legendChip, background: t.color }} />
             ))}
-            <span style={S.legendLabel}>Más</span>
+            <span style={S.legendLabel(T)}>Más</span>
           </div>
         </div>
 
-        {/* Panel de detalle */}
-        <aside style={S.panel}>
+        <aside style={S.panel(T)}>
           {!seleccion && (
-            <div style={S.empty}>
+            <div style={S.empty(T)}>
               Toca una provincia en el mapa para ver el desglose de sus leads.
             </div>
           )}
@@ -274,27 +366,24 @@ export default function MapaLeadsEspana() {
           {seleccion && (
             <>
               <div style={S.panelHead}>
-                <h3 style={S.panelTitle}>{seleccion.prov}</h3>
-                <button style={S.close} onClick={() => setSeleccion(null)}>
+                <h3 style={S.panelTitle(T)}>{seleccion.prov}</h3>
+                <button style={S.close(T)} onClick={() => setSeleccion(null)}>
                   Cerrar
                 </button>
               </div>
 
               {!seleccion.info && (
-                <div style={S.empty}>
-                  Sin leads en esta provincia todavía.
-                </div>
+                <div style={S.empty(T)}>Sin leads en esta provincia todavía.</div>
               )}
 
               {seleccion.info && (
                 <>
-                  <div style={S.big}>
+                  <div style={S.big(T)}>
                     {seleccion.info.total}
-                    <span style={S.bigLabel}>leads</span>
+                    <span style={S.bigLabel(T)}>leads</span>
                   </div>
 
-                  {/* Barra de estados */}
-                  <div style={S.bar}>
+                  <div style={S.bar(T)}>
                     {ESTADOS.map((e) => {
                       const n = seleccion.info.estados[e.key] || 0;
                       const pct = (n / seleccion.info.total) * 100;
@@ -311,24 +400,22 @@ export default function MapaLeadsEspana() {
 
                   <ul style={S.estList}>
                     {ESTADOS.map((e) => (
-                      <li key={e.key} style={S.estItem}>
+                      <li key={e.key} style={S.estItem(T)}>
                         <span style={{ ...S.dot, background: e.color }} />
-                        <span style={S.estLabel}>{e.label}</span>
-                        <span style={S.estNum}>
-                          {seleccion.info.estados[e.key] || 0}
-                        </span>
+                        <span style={S.estLabel(T)}>{e.label}</span>
+                        <span style={S.estNum(T)}>{seleccion.info.estados[e.key] || 0}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <div style={S.subhead}>Ciudades</div>
+                  <div style={S.subhead(T)}>Ciudades</div>
                   <ul style={S.cityList}>
                     {Object.entries(seleccion.info.ciudades)
                       .sort((a, b) => b[1] - a[1])
                       .map(([c, n]) => (
-                        <li key={c} style={S.cityItem}>
+                        <li key={c} style={S.cityItem(T)}>
                           <span>{c}</span>
-                          <span style={S.cityNum}>{n}</span>
+                          <span style={S.cityNum(T)}>{n}</span>
                         </li>
                       ))}
                   </ul>
@@ -342,40 +429,65 @@ export default function MapaLeadsEspana() {
   );
 }
 
-// ── Estilos (objeto inline para que sea pegar-y-listo, sin CSS externo) ───────
-const S = {
-  wrap: {
-    background: "#0b0f1a", color: "#e7ecf3", borderRadius: 18, padding: 24,
-    fontFamily: "Inter, system-ui, -apple-system, sans-serif", border: "1px solid #1a2233",
+// ── Paletas por modo ──────────────────────────────────────────────────────────
+const TEMA = {
+  dark: {
+    bg: "#0b0f1a", card: "#0d1320", borde: "#1a2233",
+    texto: "#e7ecf3", textoSec: "#8b93a7", textoSuave: "#c4ccd8",
+    azul: "#38bdf8", verde: "#6FEC7F",
+    provVacia: "#1a2233", provBorde: "#0b0f1a",
+    insetBorde: "#2a3650", insetLabel: "#8b93a7",
+    rowBorde: "#141b2b", tipBg: "#0b0f1a", tipBorde: "#2a3650",
   },
+  light: {
+    bg: "#ffffff", card: "#f6f8fb", borde: "#e2e8f0",
+    texto: "#0b1220", textoSec: "#5b6472", textoSuave: "#1e293b",
+    azul: "#0c7ec2", verde: "#2fae46",
+    provVacia: "#e6eaf0", provBorde: "#ffffff",
+    insetBorde: "#cbd5e1", insetLabel: "#5b6472",
+    rowBorde: "#e8edf3", tipBg: "#ffffff", tipBorde: "#cbd5e1",
+  },
+};
+
+// ── Estilos (funciones que reciben el tema T) ─────────────────────────────────
+const S = {
+  wrap: (T) => ({
+    background: T.bg, color: T.texto, borderRadius: 18, padding: 24,
+    fontFamily: "Inter, system-ui, -apple-system, sans-serif", border: `1px solid ${T.borde}`,
+  }),
   head: { display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 20 },
-  eyebrow: { fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: "#6FEC7F", fontWeight: 600 },
-  title: { margin: "4px 0 0", fontSize: 26, fontWeight: 700, letterSpacing: -0.5 },
-  total: { fontSize: 34, fontWeight: 800, lineHeight: 1, textAlign: "right" },
-  totalLabel: { display: "block", fontSize: 11, fontWeight: 500, color: "#8b93a7", textTransform: "uppercase", letterSpacing: 1, marginTop: 4 },
+  headRight: { display: "flex", alignItems: "center", gap: 14 },
+  eyebrow: (T) => ({ fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", color: T.verde, fontWeight: 600 }),
+  title: (T) => ({ margin: "4px 0 0", fontSize: 26, fontWeight: 700, letterSpacing: -0.5, color: T.texto }),
+  toggle: (T) => ({
+    background: "transparent", border: `1px solid ${T.borde}`, borderRadius: 10,
+    width: 38, height: 38, fontSize: 18, cursor: "pointer", lineHeight: 1,
+  }),
+  total: (T) => ({ fontSize: 34, fontWeight: 800, lineHeight: 1, textAlign: "right", color: T.azul }),
+  totalLabel: (T) => ({ display: "block", fontSize: 11, fontWeight: 500, color: T.textoSec, textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }),
   error: { background: "#2a1212", border: "1px solid #5a1d1d", color: "#fca5a5", padding: "10px 14px", borderRadius: 10, marginBottom: 16, fontSize: 14 },
-  grid: { display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 20, alignItems: "start" },
-  mapBox: { position: "relative", background: "#0d1320", borderRadius: 14, padding: 8, border: "1px solid #1a2233" },
-  loading: { padding: 60, textAlign: "center", color: "#8b93a7" },
-  tip: { position: "absolute", pointerEvents: "none", background: "#0b0f1a", border: "1px solid #2a3650", padding: "6px 10px", borderRadius: 8, fontSize: 13, whiteSpace: "nowrap", boxShadow: "0 6px 20px rgba(0,0,0,.5)" },
+  grid: { display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 20, alignItems: "start" },
+  mapBox: (T) => ({ position: "relative", background: T.card, borderRadius: 14, padding: 8, border: `1px solid ${T.borde}` }),
+  loading: (T) => ({ padding: 60, textAlign: "center", color: T.textoSec }),
+  tip: (T) => ({ position: "absolute", pointerEvents: "none", background: T.tipBg, color: T.texto, border: `1px solid ${T.tipBorde}`, padding: "6px 10px", borderRadius: 8, fontSize: 13, whiteSpace: "nowrap", boxShadow: "0 6px 20px rgba(0,0,0,.35)" }),
   legend: { display: "flex", alignItems: "center", gap: 6, padding: "10px 8px 4px", justifyContent: "center" },
   legendChip: { width: 26, height: 12, borderRadius: 2 },
-  legendLabel: { fontSize: 11, color: "#8b93a7" },
-  panel: { background: "#0d1320", borderRadius: 14, padding: 18, border: "1px solid #1a2233", minHeight: 360 },
-  empty: { color: "#8b93a7", fontSize: 14, lineHeight: 1.5, padding: "30px 6px" },
+  legendLabel: (T) => ({ fontSize: 11, color: T.textoSec }),
+  panel: (T) => ({ background: T.card, borderRadius: 14, padding: 18, border: `1px solid ${T.borde}`, minHeight: 360 }),
+  empty: (T) => ({ color: T.textoSec, fontSize: 14, lineHeight: 1.5, padding: "30px 6px" }),
   panelHead: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
-  panelTitle: { margin: 0, fontSize: 20, fontWeight: 700 },
-  close: { background: "transparent", border: "1px solid #2a3650", color: "#8b93a7", borderRadius: 8, padding: "4px 10px", fontSize: 12, cursor: "pointer" },
-  big: { fontSize: 42, fontWeight: 800, lineHeight: 1, marginBottom: 16 },
-  bigLabel: { fontSize: 13, fontWeight: 500, color: "#8b93a7", marginLeft: 8 },
-  bar: { display: "flex", height: 10, borderRadius: 6, overflow: "hidden", background: "#1a2233", marginBottom: 16 },
+  panelTitle: (T) => ({ margin: 0, fontSize: 20, fontWeight: 700, color: T.texto }),
+  close: (T) => ({ background: "transparent", border: `1px solid ${T.insetBorde}`, color: T.textoSec, borderRadius: 8, padding: "4px 10px", fontSize: 12, cursor: "pointer" }),
+  big: (T) => ({ fontSize: 42, fontWeight: 800, lineHeight: 1, marginBottom: 16, color: T.azul }),
+  bigLabel: (T) => ({ fontSize: 13, fontWeight: 500, color: T.textoSec, marginLeft: 8 }),
+  bar: (T) => ({ display: "flex", height: 10, borderRadius: 6, overflow: "hidden", background: T.borde, marginBottom: 16 }),
   estList: { listStyle: "none", margin: 0, padding: 0, marginBottom: 20 },
-  estItem: { display: "flex", alignItems: "center", gap: 10, padding: "6px 0", fontSize: 14, borderBottom: "1px solid #141b2b" },
+  estItem: (T) => ({ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", fontSize: 14, borderBottom: `1px solid ${T.rowBorde}` }),
   dot: { width: 10, height: 10, borderRadius: 3, flexShrink: 0 },
-  estLabel: { flex: 1, color: "#c4ccd8" },
-  estNum: { fontWeight: 700 },
-  subhead: { fontSize: 11, textTransform: "uppercase", letterSpacing: 1.2, color: "#6FEC7F", fontWeight: 600, marginBottom: 8 },
+  estLabel: (T) => ({ flex: 1, color: T.textoSuave }),
+  estNum: (T) => ({ fontWeight: 700, color: T.texto }),
+  subhead: (T) => ({ fontSize: 11, textTransform: "uppercase", letterSpacing: 1.2, color: T.verde, fontWeight: 600, marginBottom: 8 }),
   cityList: { listStyle: "none", margin: 0, padding: 0 },
-  cityItem: { display: "flex", justifyContent: "space-between", fontSize: 14, padding: "5px 0", color: "#c4ccd8", borderBottom: "1px solid #141b2b" },
-  cityNum: { fontWeight: 700, color: "#e7ecf3" },
+  cityItem: (T) => ({ display: "flex", justifyContent: "space-between", fontSize: 14, padding: "5px 0", color: T.textoSuave, borderBottom: `1px solid ${T.rowBorde}` }),
+  cityNum: (T) => ({ fontWeight: 700, color: T.texto }),
 };

@@ -148,23 +148,8 @@ const CSS = `
   --t3:rgba(255,255,255,0.25); --t4:rgba(255,255,255,0.09);
   --blue:#38bdf8; --indigo:#818cf8; --green:#34d399;
   --amber:#fbbf24; --red:#f87171; --purple:#a78bfa;
-  --ink-1:rgba(255,255,255,0.9); --ink-2:rgba(255,255,255,0.5); --ink-3:rgba(255,255,255,0.28);
-  --ink-line:rgba(255,255,255,0.12); --ink-fill:rgba(255,255,255,0.05); --bg-solid:#05080f;
 }
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
-:root.light{
-  --bg:#ffffff; --bg2:#f6f8fb; --bg-solid:#ffffff;
-  --gb:rgba(15,23,42,0.03); --gbh:rgba(15,23,42,0.05);
-  --bdr:rgba(15,23,42,0.1); --bdrh:rgba(15,23,42,0.18);
-  --shine:rgba(15,23,42,0.06);
-  --t1:rgba(11,18,32,0.92); --t2:rgba(11,18,32,0.55);
-  --t3:rgba(11,18,32,0.3); --t4:rgba(11,18,32,0.1);
-  --ink-1:rgba(11,18,32,0.92); --ink-2:rgba(11,18,32,0.55); --ink-3:rgba(11,18,32,0.32);
-  --ink-line:rgba(11,18,32,0.14); --ink-fill:rgba(11,18,32,0.04);
-  --blue:#0c7ec2; --indigo:#5b54d6; --green:#1f9d57;
-  --amber:#b5790a; --red:#dc4444; --purple:#7c5fd3;
-}
-.light body{background:#ffffff;}
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.16);border-radius:2px;}
 
@@ -180,16 +165,16 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 }
 .gl::before{
   content:'';position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(140deg,var(--ink-fill) 0%,var(--ink-fill) 45%,transparent 65%,var(--ink-fill) 100%);
+  background:linear-gradient(140deg,rgba(255,255,255,0.052) 0%,rgba(255,255,255,0.008) 45%,transparent 65%,rgba(255,255,255,0.016) 100%);
   pointer-events:none;z-index:0;
 }
 .gl::after{
   content:'';position:absolute;top:0;left:12%;right:12%;height:1px;
-  background:linear-gradient(90deg,transparent,var(--ink-line),rgba(56,189,248,0.16),var(--ink-line),transparent);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.14),rgba(56,189,248,0.16),rgba(255,255,255,0.14),transparent);
   pointer-events:none;z-index:1;
 }
 .gl>*{position:relative;z-index:2;}
-.gl:hover{border-color:var(--bdrh);border-top-color:var(--ink-line);}
+.gl:hover{border-color:var(--bdrh);border-top-color:rgba(255,255,255,0.19);}
 .gc{border-radius:16px;padding:22px 24px;}
 
 /* SIDEBAR */
@@ -198,7 +183,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
   display:flex;flex-direction:column;
   background:rgba(4,6,14,0.9);
   backdrop-filter:blur(40px);
-  border-right:1px solid var(--ink-fill);
+  border-right:1px solid rgba(255,255,255,0.055);
 }
 .sb::after{
   content:'';position:absolute;top:0;right:-1px;width:1px;height:100%;
@@ -212,7 +197,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
   white-space:nowrap;overflow:hidden;
   transition:color .18s,background .18s;position:relative;
 }
-.ni:hover{color:var(--t2);background:var(--ink-fill);}
+.ni:hover{color:var(--t2);background:rgba(255,255,255,0.04);}
 .ni.on{
   color:var(--blue);
   background:linear-gradient(90deg,rgba(56,189,248,0.09),rgba(56,189,248,0.03),transparent);
@@ -228,7 +213,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
   height:56px;position:fixed;top:0;right:0;z-index:90;
   display:flex;align-items:center;padding:0 24px;gap:12px;
   background:rgba(4,6,14,0.78);backdrop-filter:blur(36px);
-  border-bottom:1px solid var(--ink-fill);
+  border-bottom:1px solid rgba(255,255,255,0.05);
 }
 .tb::after{
   content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
@@ -236,7 +221,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 }
 /* KPI */
 .kpi{border-radius:16px;padding:20px 22px;transition:transform .2s,border-color .2s;}
-.kpi:hover{transform:translateY(-2px);border-top-color:var(--ink-3);}
+.kpi:hover{transform:translateY(-2px);border-top-color:rgba(255,255,255,0.2);}
 /* DOTS */
 .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .op{background:var(--green);box-shadow:0 0 7px rgba(52,211,153,0.6);animation:blink 2.2s infinite;}
@@ -250,14 +235,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 .bd-a{background:rgba(251,191,36,0.09);color:#fbbf24;border:1px solid rgba(251,191,36,0.18);}
 .bd-p{background:rgba(167,139,250,0.1);color:#a78bfa;border:1px solid rgba(167,139,250,0.2);}
 .bd-r{background:rgba(248,113,113,0.09);color:#f87171;border:1px solid rgba(248,113,113,0.18);}
-.bd-d{background:var(--ink-fill);color:var(--t2);border:1px solid var(--t4);}
+.bd-d{background:rgba(255,255,255,0.05);color:var(--t2);border:1px solid var(--t4);}
 /* TABLE */
-.tr{border-bottom:1px solid var(--ink-fill);}
-.tr:hover{background:var(--ink-fill);}
+.tr{border-bottom:1px solid rgba(255,255,255,0.038);}
+.tr:hover{background:rgba(255,255,255,0.02);}
 .th{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--t3);text-transform:uppercase;padding-bottom:10px;}
 /* INPUT */
 .inp{
-  background:var(--ink-fill);border:1px solid var(--bdr);border-radius:8px;
+  background:rgba(255,255,255,0.034);border:1px solid var(--bdr);border-radius:8px;
   padding:7px 12px 7px 33px;font-size:12.5px;color:var(--t1);outline:none;
   transition:all .2s;font-family:'Outfit',sans-serif;width:230px;
 }
@@ -291,8 +276,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
   .hamburguesa{
     display:flex; align-items:center; justify-content:center;
     width:38px; height:38px; border-radius:9px; cursor:pointer; flex-shrink:0;
-    background:var(--ink-fill); border:1px solid var(--ink-fill);
-    color:var(--ink-1);
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09);
+    color:rgba(255,255,255,0.7);
   }
   .hamburguesa:active{ background:rgba(56,189,248,0.14); }
   .sb-overlay{
@@ -320,10 +305,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
   .solo-desktop{ display:none !important; }
   .solo-movil{ display:block !important; }
 }
-.rcard{ border:1px solid var(--ink-fill); border-radius:12px; padding:14px; margin-bottom:10px; background:var(--ink-fill); }
+.rcard{ border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px; margin-bottom:10px; background:rgba(255,255,255,0.02); }
 .rcard-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
-.rcard-name{ font-size:14px; font-weight:700; color:var(--ink-1); }
-.rcard-meta{ font-size:12px; color:var(--ink-2); margin-top:2px; }
+.rcard-name{ font-size:14px; font-weight:700; color:rgba(255,255,255,0.9); }
+.rcard-meta{ font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px; }
 .rcard-row{ display:flex; align-items:center; gap:8px; margin-top:8px; }
 .rcard-join{ display:inline-block; color:#38bdf8; font-size:12.5px; font-weight:600; border:1px solid rgba(56,189,248,0.35); border-radius:8px; padding:7px 14px; text-decoration:none; }
 @media (max-width: 560px){
@@ -338,8 +323,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);}
 const Tip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background:"rgba(4,6,14,0.96)", border:"1px solid var(--ink-line)", borderRadius:10, padding:"10px 14px", fontSize:12, backdropFilter:"blur(20px)", boxShadow:"0 8px 32px rgba(0,0,0,0.5)" }}>
-      <p style={{ color:"var(--ink-3)", marginBottom:5, fontWeight:600 }}>{label}</p>
+    <div style={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, padding:"10px 14px", fontSize:12, backdropFilter:"blur(20px)", boxShadow:"0 8px 32px rgba(0,0,0,0.5)" }}>
+      <p style={{ color:"rgba(255,255,255,0.32)", marginBottom:5, fontWeight:600 }}>{label}</p>
       {payload.map((p,i) => <p key={i} style={{ color:p.color, fontWeight:700 }}>{p.name}: €{p.value?.toLocaleString()}</p>)}
     </div>
   );
@@ -356,18 +341,18 @@ function KpiCard({ label, value, sub, delta, icon, ac="#38bdf8" }) {
   return (
     <div className="gl kpi fi">
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:13 }}>
-        <span style={{ fontSize:10, fontWeight:700, letterSpacing:"0.1em", color:"var(--ink-3)", textTransform:"uppercase" }}>{label}</span>
+        <span style={{ fontSize:10, fontWeight:700, letterSpacing:"0.1em", color:"rgba(255,255,255,0.27)", textTransform:"uppercase" }}>{label}</span>
         <div style={{ width:31, height:31, borderRadius:9, display:"flex", alignItems:"center", justifyContent:"center", background:`rgba(${rgb},0.1)`, border:`1px solid rgba(${rgb},0.2)` }}>
           <Icon name={icon} size={14} stroke={ac} sw={1.6}/>
         </div>
       </div>
-      <div style={{ fontSize:25, fontWeight:700, color:"var(--ink-1)", letterSpacing:"-0.025em", marginBottom:3 }}>{value}</div>
-      {sub && <div style={{ fontSize:11, color:"var(--ink-3)" }}>{sub}</div>}
+      <div style={{ fontSize:25, fontWeight:700, color:"rgba(255,255,255,0.93)", letterSpacing:"-0.025em", marginBottom:3 }}>{value}</div>
+      {sub && <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)" }}>{sub}</div>}
       {delta && (
         <div style={{ display:"flex", alignItems:"center", gap:4, marginTop:9 }}>
           <Icon name="trend" size={10} stroke={pos?"#34d399":"#f87171"} sw={2}/>
           <span style={{ fontSize:10.5, fontWeight:700, color:pos?"#34d399":"#f87171" }}>{delta}</span>
-          <span style={{ fontSize:10, color:"var(--ink-3)" }}>vs mes ant.</span>
+          <span style={{ fontSize:10, color:"rgba(255,255,255,0.2)" }}>vs mes ant.</span>
         </div>
       )}
     </div>
@@ -382,9 +367,9 @@ function SHead({ title, sub }) {
     <div style={{ marginBottom:22 }}>
       <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
         <div style={{ width:3, height:17, borderRadius:2, background:"linear-gradient(to bottom,#38bdf8,rgba(99,102,241,0.5))", flexShrink:0 }}/>
-        <h2 style={{ fontSize:18, fontWeight:700, color:"var(--ink-1)", letterSpacing:"-0.014em" }}>{title}</h2>
+        <h2 style={{ fontSize:18, fontWeight:700, color:"rgba(255,255,255,0.92)", letterSpacing:"-0.014em" }}>{title}</h2>
       </div>
-      {sub && <p style={{ fontSize:11.5, color:"var(--ink-3)", paddingLeft:11, marginTop:2 }}>{sub}</p>}
+      {sub && <p style={{ fontSize:11.5, color:"rgba(255,255,255,0.28)", paddingLeft:11, marginTop:2 }}>{sub}</p>}
     </div>
   );
 }
@@ -462,8 +447,8 @@ function DashboardView({ realData }) {
   return (
     <div className="fi">
       <div style={{ marginBottom:24 }}>
-        <h1 style={{ fontSize:21, fontWeight:700, color:"var(--ink-1)", letterSpacing:"-0.02em", marginBottom:3 }}>Buenos días, Astra</h1>
-        <p style={{ fontSize:12, color:"var(--ink-3)" }}>Centro de operaciones · Jueves, 4 Junio 2026</p>
+        <h1 style={{ fontSize:21, fontWeight:700, color:"rgba(255,255,255,0.92)", letterSpacing:"-0.02em", marginBottom:3 }}>Buenos días, Astra</h1>
+        <p style={{ fontSize:12, color:"rgba(255,255,255,0.27)" }}>Centro de operaciones · Jueves, 4 Junio 2026</p>
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))", gap:11, marginBottom:16 }}>
         <KpiCard label="Facturación Total" value={realData?("€"+realData.totalRev.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})):"€—"} sub="Supabase · Stripe"   delta="+18.4%" icon="dollar"    ac="#34d399"/>
@@ -482,8 +467,8 @@ function DashboardView({ realData }) {
         <div className="gl gc">
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
             <div>
-              <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)" }}>Facturación Mensual</div>
-              <div style={{ fontSize:11, color:"var(--ink-3)", marginTop:2 }}>Stripe + PayPal · 12 meses</div>
+              <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>Facturación Mensual</div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginTop:2 }}>Stripe + PayPal · 12 meses</div>
             </div>
             <span className="bd bd-g">+34% YoY</span>
           </div>
@@ -497,9 +482,9 @@ function DashboardView({ realData }) {
                   <stop offset="5%" stopColor="#818cf8" stopOpacity={0.13}/><stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="2 5" stroke="var(--ink-fill)"/>
-              <XAxis dataKey="m" tick={{ fill:"var(--ink-3)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
-              <YAxis tick={{ fill:"var(--ink-3)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`€${(v/1000).toFixed(0)}k`}/>
+              <CartesianGrid strokeDasharray="2 5" stroke="rgba(255,255,255,0.04)"/>
+              <XAxis dataKey="m" tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
+              <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`€${(v/1000).toFixed(0)}k`}/>
               <Tooltip content={<Tip/>}/>
               <Area type="monotone" dataKey="s" name="Stripe" stroke="#38bdf8" strokeWidth={2} fill="url(#gS)"/>
               <Area type="monotone" dataKey="p" name="PayPal" stroke="#818cf8" strokeWidth={1.5} fill="url(#gP)"/>
@@ -507,21 +492,21 @@ function DashboardView({ realData }) {
           </ResponsiveContainer>
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:3 }}>Funnel de Captación</div>
-          <div style={{ fontSize:11, color:"var(--ink-3)", marginBottom:14 }}>Conversión mes · 2.3% cierre</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:3 }}>Funnel de Captación</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Conversión mes · 2.3% cierre</div>
           <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
             {chartFunnelData.map((d,i)=>{
               const pct=Math.round((d.v/funnelMax)*100);
               const a=1-i*0.14;
               return (
                 <div key={i} style={{ display:"flex", alignItems:"center", gap:9 }}>
-                  <span style={{ fontSize:10.5, color:"var(--ink-3)", width:86, flexShrink:0 }}>{d.n}</span>
-                  <div style={{ flex:1, height:18, background:"var(--ink-fill)", borderRadius:5, overflow:"hidden", border:"1px solid var(--ink-fill)" }}>
+                  <span style={{ fontSize:10.5, color:"rgba(255,255,255,0.28)", width:86, flexShrink:0 }}>{d.n}</span>
+                  <div style={{ flex:1, height:18, background:"rgba(255,255,255,0.038)", borderRadius:5, overflow:"hidden", border:"1px solid rgba(255,255,255,0.038)" }}>
                     <div style={{ height:"100%", width:`${pct}%`, borderRadius:4, background:`rgba(56,189,248,${a})`, boxShadow:`0 0 8px rgba(56,189,248,${a*0.22})`, display:"flex", alignItems:"center", paddingLeft:6, minWidth:24 }}>
-                      <span style={{ fontSize:10, fontWeight:700, color:i<2?"rgba(4,6,14,0.9)":"var(--ink-1)" }}>{d.v}</span>
+                      <span style={{ fontSize:10, fontWeight:700, color:i<2?"rgba(4,6,14,0.9)":"rgba(255,255,255,0.9)" }}>{d.v}</span>
                     </div>
                   </div>
-                  <span style={{ fontSize:10, color:"var(--ink-3)", width:24, textAlign:"right" }}>{pct}%</span>
+                  <span style={{ fontSize:10, color:"rgba(255,255,255,0.2)", width:24, textAlign:"right" }}>{pct}%</span>
                 </div>
               );
             })}
@@ -530,30 +515,30 @@ function DashboardView({ realData }) {
       </div>
       <div className="split-2" style={{ display:"grid", gridTemplateColumns:"1fr 282px", gap:12 }}>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:13 }}>Actividad Reciente</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:13 }}>Actividad Reciente</div>
           {chartActivity.map((a,i)=>(
-            <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:i<chartActivity.length-1?"1px solid var(--ink-fill)":"none" }}>
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:i<chartActivity.length-1?"1px solid rgba(255,255,255,0.036)":"none" }}>
               <div style={{ width:29, height:29, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", background:`${a.c}12`, border:`1px solid ${a.c}22`, flexShrink:0 }}>
                 <Icon name={a.ico} size={13} stroke={a.c} sw={1.6}/>
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ fontSize:12, color:"var(--ink-1)", fontWeight:500 }}>{a.txt}</div>
-                <div style={{ fontSize:10.5, color:"var(--ink-3)", marginTop:1 }}>Hace {a.t}</div>
+                <div style={{ fontSize:12, color:"rgba(255,255,255,0.74)", fontWeight:500 }}>{a.txt}</div>
+                <div style={{ fontSize:10.5, color:"rgba(255,255,255,0.22)", marginTop:1 }}>Hace {a.t}</div>
               </div>
               <span style={{ fontSize:11, fontWeight:700, color:a.c, flexShrink:0 }}>{a.val}</span>
             </div>
           ))}
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:11 }}>Sistemas</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:11 }}>Sistemas</div>
           {systems.map((s,i)=>(
-            <div key={i} style={{ display:"flex", alignItems:"center", gap:9, padding:"9px 10px", borderRadius:9, background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", marginBottom:7 }}>
-              <div style={{ width:27, height:27, borderRadius:7, background:"var(--ink-fill)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                <Icon name={s.ico} size={13} stroke="var(--ink-2)" sw={1.5}/>
+            <div key={i} style={{ display:"flex", alignItems:"center", gap:9, padding:"9px 10px", borderRadius:9, background:"rgba(255,255,255,0.024)", border:"1px solid rgba(255,255,255,0.044)", marginBottom:7 }}>
+              <div style={{ width:27, height:27, borderRadius:7, background:"rgba(255,255,255,0.044)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                <Icon name={s.ico} size={13} stroke="rgba(255,255,255,0.46)" sw={1.5}/>
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ fontSize:11.5, fontWeight:600, color:"var(--ink-1)" }}>{s.n}</div>
-                <div style={{ fontSize:10, color:"var(--ink-3)", marginTop:1 }}>{s.a}</div>
+                <div style={{ fontSize:11.5, fontWeight:600, color:"rgba(255,255,255,0.74)" }}>{s.n}</div>
+                <div style={{ fontSize:10, color:"rgba(255,255,255,0.24)", marginTop:1 }}>{s.a}</div>
               </div>
               <span className={`dot ${s.s==="op"?"op":s.s==="warn"?"wn":"er"}`}/>
             </div>
@@ -601,7 +586,7 @@ function FinanzasView({ realData, onRefresh }) {
       </div>
       {showForm && (
         <div className="gl gc" style={{ marginBottom:14, background:"rgba(56,189,248,0.03)" }}>
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Nuevo registro manual</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Nuevo registro manual</div>
           <div className="grid-filters" style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 120px 120px", gap:10, marginBottom:12, alignItems:"end" }}>
             {[
               { label:"Cliente / Nombre", key:"customer_name", type:"text", placeholder:"Ej: Ebike Guadarrama" },
@@ -610,20 +595,20 @@ function FinanzasView({ realData, onRefresh }) {
               { label:"Fecha", key:"processed_at", type:"date" },
             ].map(f=>(
               <div key={f.key}>
-                <div style={{ fontSize:10, color:"var(--ink-3)", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.06em" }}>{f.label}</div>
+                <div style={{ fontSize:10, color:"rgba(255,255,255,0.3)", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.06em" }}>{f.label}</div>
                 <input type={f.type} placeholder={f.placeholder||""} value={form[f.key]}
                   onChange={e=>setForm({...form,[f.key]:e.target.value})}
-                  style={{ width:"100%", background:"var(--ink-fill)", border:"1px solid var(--ink-line)", borderRadius:8, padding:"7px 10px", fontSize:12, color:"var(--ink-1)", outline:"none", fontFamily:"inherit" }}
+                  style={{ width:"100%", background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, padding:"7px 10px", fontSize:12, color:"rgba(255,255,255,0.8)", outline:"none", fontFamily:"inherit" }}
                 />
               </div>
             ))}
             <div>
-              <div style={{ fontSize:10, color:"var(--ink-3)", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.06em" }}>Tipo</div>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,0.3)", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.06em" }}>Tipo</div>
               <div style={{ display:"flex", gap:6 }}>
-                <button onClick={()=>setForm({...form,is_expense:false})} style={{ flex:1, padding:"7px 0", borderRadius:8, fontSize:11, fontWeight:600, cursor:"pointer", border:"1px solid", borderColor:!form.is_expense?"#34d399":"var(--ink-line)", background:!form.is_expense?"rgba(52,211,153,0.1)":"transparent", color:!form.is_expense?"#34d399":"var(--ink-2)" }}>
+                <button onClick={()=>setForm({...form,is_expense:false})} style={{ flex:1, padding:"7px 0", borderRadius:8, fontSize:11, fontWeight:600, cursor:"pointer", border:"1px solid", borderColor:!form.is_expense?"#34d399":"rgba(255,255,255,0.1)", background:!form.is_expense?"rgba(52,211,153,0.1)":"transparent", color:!form.is_expense?"#34d399":"rgba(255,255,255,0.4)" }}>
                   ↑ Ingreso
                 </button>
-                <button onClick={()=>setForm({...form,is_expense:true})} style={{ flex:1, padding:"7px 0", borderRadius:8, fontSize:11, fontWeight:600, cursor:"pointer", border:"1px solid", borderColor:form.is_expense?"#f87171":"var(--ink-line)", background:form.is_expense?"rgba(248,113,113,0.1)":"transparent", color:form.is_expense?"#f87171":"var(--ink-2)" }}>
+                <button onClick={()=>setForm({...form,is_expense:true})} style={{ flex:1, padding:"7px 0", borderRadius:8, fontSize:11, fontWeight:600, cursor:"pointer", border:"1px solid", borderColor:form.is_expense?"#f87171":"rgba(255,255,255,0.1)", background:form.is_expense?"rgba(248,113,113,0.1)":"transparent", color:form.is_expense?"#f87171":"rgba(255,255,255,0.4)" }}>
                   ↓ Gasto
                 </button>
               </div>
@@ -636,7 +621,7 @@ function FinanzasView({ realData, onRefresh }) {
       )}
       <div style={{ display:"flex", gap:7, marginBottom:14, flexWrap:"wrap" }}>
         {[{l:"Stripe",c:"#635bff"},{l:"PayPal",c:"#009cde"},{l:"Supabase",c:"#34d399"},{l:"n8n webhook",c:"#ea6c2a"}].map((chip,i)=>(
-          <div key={i} style={{ display:"flex", alignItems:"center", gap:5, padding:"4px 11px", borderRadius:20, background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", fontSize:11, color:"var(--ink-2)" }}>
+          <div key={i} style={{ display:"flex", alignItems:"center", gap:5, padding:"4px 11px", borderRadius:20, background:"rgba(255,255,255,0.034)", border:"1px solid rgba(255,255,255,0.06)", fontSize:11, color:"rgba(255,255,255,0.44)" }}>
             <span style={{ width:5, height:5, borderRadius:"50%", background:chip.c, boxShadow:`0 0 5px ${chip.c}`, display:"inline-block" }}/>
             {chip.l}
           </div>
@@ -654,13 +639,13 @@ function FinanzasView({ realData, onRefresh }) {
       </div>
       <div className="split-2" style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:2 }}>Ingresos Mensuales</div>
-          <div style={{ fontSize:11, color:"var(--ink-3)", marginBottom:14 }}>Stripe vs PayPal</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2 }}>Ingresos Mensuales</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Stripe vs PayPal</div>
           <ResponsiveContainer width="100%" height={192}>
             <BarChart data={revData} barGap={3}>
-              <CartesianGrid strokeDasharray="2 5" stroke="var(--ink-fill)" vertical={false}/>
-              <XAxis dataKey="m" tick={{ fill:"var(--ink-3)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
-              <YAxis tick={{ fill:"var(--ink-3)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`€${(v/1000).toFixed(0)}k`}/>
+              <CartesianGrid strokeDasharray="2 5" stroke="rgba(255,255,255,0.04)" vertical={false}/>
+              <XAxis dataKey="m" tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
+              <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>`€${(v/1000).toFixed(0)}k`}/>
               <Tooltip content={<Tip/>}/>
               <Bar dataKey="ingresos" name="Ingresos" fill="#38bdf8" radius={[4,4,0,0]}/>
               <Bar dataKey="p" name="PayPal" fill="#818cf8" radius={[4,4,0,0]}/>
@@ -668,35 +653,35 @@ function FinanzasView({ realData, onRefresh }) {
           </ResponsiveContainer>
         </div>
         <div className="gl gc" style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:2, alignSelf:"flex-start" }}>Distribución</div>
-          <div style={{ fontSize:11, color:"var(--ink-3)", marginBottom:8, alignSelf:"flex-start" }}>Por fuente</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2, alignSelf:"flex-start" }}>Distribución</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:8, alignSelf:"flex-start" }}>Por fuente</div>
           <ResponsiveContainer width="100%" height={140}>
             <PieChart>
               <Pie data={[{v:82},{v:18}]} dataKey="v" cx="50%" cy="50%" innerRadius={42} outerRadius={60} paddingAngle={4}>
                 <Cell fill="#38bdf8"/><Cell fill="#818cf8"/>
               </Pie>
-              <Tooltip formatter={v=>`${v}%`} contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid var(--ink-line)", borderRadius:8, fontSize:12 }}/>
+              <Tooltip formatter={v=>`${v}%`} contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:12 }}/>
             </PieChart>
           </ResponsiveContainer>
           {[{c:"#38bdf8",l:"Stripe 82%"},{c:"#818cf8",l:"PayPal 18%"}].map((x,i)=>(
             <div key={i} style={{ display:"flex", alignItems:"center", gap:5, marginTop:i?3:0 }}>
-              <div style={{ width:8, height:8, borderRadius:2, background:x.c }}/><span style={{ fontSize:11, color:"var(--ink-3)" }}>{x.l}</span>
+              <div style={{ width:8, height:8, borderRadius:2, background:x.c }}/><span style={{ fontSize:11, color:"rgba(255,255,255,0.36)" }}>{x.l}</span>
             </div>
           ))}
         </div>
       </div>
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Últimas Transacciones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Últimas Transacciones</div>
         <table style={{ width:"100%", borderCollapse:"collapse" }}>
           <thead><tr>{["Cliente","Concepto","Fuente","Importe","Fecha","Estado"].map(h=><th key={h} className="th" style={{ textAlign:"left" }}>{h}</th>)}</tr></thead>
           <tbody>
             {(realData?realData.pagos:[]).slice(0,10).map((row,i)=>(
               <tr key={i} className="tr">
-                <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"var(--ink-1)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{row.customer_name||row.customer_email||"—"}</td>
-                <td style={{ padding:"10px 8px", fontSize:12, color:"var(--ink-3)" }}>{row.plan_name||"Pago"}</td>
+                <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{row.customer_name||row.customer_email||"—"}</td>
+                <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{row.plan_name||"Pago"}</td>
                 <td style={{ padding:"10px 8px" }}><span className={`bd ${row.is_academy?"bd-p":"bd-b"}`}>{row.is_academy?"Academy":"Stripe"}</span></td>
                 <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:700, color:"#34d399" }}>€{Number(row.amount||0).toLocaleString("es-ES",{minimumFractionDigits:2})}</td>
-                <td style={{ padding:"10px 0", fontSize:12, color:"var(--ink-3)" }}><span className="mono">{row.processed_at?new Date(row.processed_at).toLocaleDateString("es-ES"):"—"}</span></td>
+                <td style={{ padding:"10px 0", fontSize:12, color:"rgba(255,255,255,0.24)" }}><span className="mono">{row.processed_at?new Date(row.processed_at).toLocaleDateString("es-ES"):"—"}</span></td>
                 <td style={{ padding:"10px 0" }}><span className={`bd ${row.status==="succeeded"||row.status==="active"?"bd-g":"bd-a"}`}>{row.status||"—"}</span></td>
               </tr>
             ))}
@@ -762,19 +747,19 @@ function PanaderiasOutbound({ realData }) {
     <div style={{ marginTop: 24 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
         <div style={{ width: 3, height: 17, borderRadius: 2, background: "linear-gradient(to bottom,#38bdf8,rgba(99,102,241,0.5))" }} />
-        <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--ink-1)" }}>Campaña Panaderías</h2>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>Campaña Panaderías</h2>
       </div>
 
       <div className="grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 11, marginBottom: 16 }}>
-        <div onClick={() => setFiltro("todos")} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: filtro === "todos" ? "1px solid var(--ink-2)" : "1px solid var(--ink-fill)", background: filtro === "todos" ? "var(--ink-fill)" : undefined }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "var(--ink-3)", textTransform: "uppercase", marginBottom: 8 }}>Todos</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: "var(--ink-1)" }}>{panaderias.length}</div>
+        <div onClick={() => setFiltro("todos")} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: filtro === "todos" ? "1px solid rgba(255,255,255,0.4)" : "1px solid rgba(255,255,255,0.06)", background: filtro === "todos" ? "rgba(255,255,255,0.05)" : undefined }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>Todos</div>
+          <div style={{ fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.92)" }}>{panaderias.length}</div>
         </div>
         {Object.entries(estados).map(([k, e]) => {
           const activo = filtro === k;
           return (
-            <div key={k} onClick={() => setFiltro(k)} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: activo ? "1px solid " + e.color : "1px solid var(--ink-fill)", background: activo ? e.bg : undefined }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "var(--ink-3)", textTransform: "uppercase", marginBottom: 8 }}>{e.label}</div>
+            <div key={k} onClick={() => setFiltro(k)} className="gl gc" style={{ padding: "16px 18px", cursor: "pointer", border: activo ? "1px solid " + e.color : "1px solid rgba(255,255,255,0.06)", background: activo ? e.bg : undefined }}>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: "rgba(255,255,255,0.27)", textTransform: "uppercase", marginBottom: 8 }}>{e.label}</div>
               <div style={{ fontSize: 24, fontWeight: 700, color: e.color }}>{porEstado(k).length}</div>
             </div>
           );
@@ -784,19 +769,19 @@ function PanaderiasOutbound({ realData }) {
       <div className="split-2" style={{ display: "grid", gridTemplateColumns: sel ? "1fr 1fr" : "1fr", gap: 12 }}>
         <div className="gl gc">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)" }}>Panaderías</div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--ink-2)" }}>{filtro === "todos" ? "Todas" : estados[filtro].label} · {visibles.length}</div>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Panaderías</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)" }}>{filtro === "todos" ? "Todas" : estados[filtro].label} · {visibles.length}</div>
           </div>
-          {loading ? <div style={{ color: "var(--ink-3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando...</div> :
-            visibles.length === 0 ? <div style={{ color: "var(--ink-3)", fontSize: 12, textAlign: "center", padding: 20 }}>No hay panaderías en este estado</div> :
+          {loading ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando...</div> :
+            visibles.length === 0 ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>No hay panaderías en este estado</div> :
             visibles.map(p => {
               const e = estados[p.estado || "sin_contactar"] || estados.sin_contactar;
               return (
                 <div key={p.id} onClick={() => openChat(p)}
-                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 11px", borderRadius: 9, background: sel && sel.id === p.id ? "rgba(56,189,248,0.08)" : "var(--ink-fill)", border: "1px solid var(--ink-fill)", marginBottom: 6, cursor: "pointer" }}>
+                  style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 11px", borderRadius: 9, background: sel && sel.id === p.id ? "rgba(56,189,248,0.08)" : "rgba(255,255,255,0.024)", border: "1px solid rgba(255,255,255,0.044)", marginBottom: 6, cursor: "pointer" }}>
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.nombre || p.telefono}</div>
-                    <div style={{ fontSize: 10.5, color: "var(--ink-3)", marginTop: 2 }}>{p.telefono} · {p.zona || "—"} · {p.comercial}</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.nombre || p.telefono}</div>
+                    <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{p.telefono} · {p.zona || "—"} · {p.comercial}</div>
                   </div>
                   <span style={{ fontSize: 9.5, fontWeight: 700, color: "#fff", padding: "2px 9px", borderRadius: 999, background: e.bg, border: "1px solid " + e.bd, flexShrink: 0 }}>{e.label.slice(0, -1)}</span>
                 </div>
@@ -806,25 +791,25 @@ function PanaderiasOutbound({ realData }) {
 
         {sel && (
           <div className="gl gc" style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid var(--ink-fill)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ink-1)" }}>{sel.nombre || sel.telefono}</div>
-                <div style={{ fontSize: 10.5, color: "var(--ink-3)" }}>{sel.telefono}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{sel.nombre || sel.telefono}</div>
+                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{sel.telefono}</div>
               </div>
-              <span onClick={() => setSel(null)} style={{ cursor: "pointer", color: "var(--ink-2)", fontSize: 18 }}>×</span>
+              <span onClick={() => setSel(null)} style={{ cursor: "pointer", color: "rgba(255,255,255,0.4)", fontSize: 18 }}>×</span>
             </div>
             <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8, maxHeight: 400 }}>
-              {loadingChat ? <div style={{ color: "var(--ink-3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando chat...</div> :
-                thread.length === 0 ? <div style={{ color: "var(--ink-3)", fontSize: 12, textAlign: "center", padding: 20 }}>Aún no ha respondido. Cuando responda, la conversación aparecerá aquí.</div> :
+              {loadingChat ? <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, textAlign: "center", padding: 20 }}>Cargando chat...</div> :
+                thread.length === 0 ? <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, textAlign: "center", padding: 20 }}>Aún no ha respondido. Cuando responda, la conversación aparecerá aquí.</div> :
                 thread.map((m, i) => {
                   const out = m.direction === "outbound";
                   const manual = m.is_manual === true;
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "80%" }}>
-                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "var(--ink-fill)"), color: "var(--ink-1)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "var(--ink-fill)") }}>
+                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)"), color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)") }}>
                         {m.message_type === "video" ? <LoomBadge /> : (m.body || (m.message_type !== "text" ? "[" + m.message_type + "]" : ""))}
                       </div>
-                      <div style={{ fontSize: 9.5, color: "var(--ink-3)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtDate(m.created_at)}</div>
+                      <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtDate(m.created_at)}</div>
                     </div>
                   );
                 })}
@@ -854,7 +839,7 @@ function ClientesView({ realData }) {
         <KpiCard label="Newsletter" value={String((realData&&realData.newsletterCount)||0)} icon="mail" ac="#38bdf8"/>
       </div>
       <div className="gl gc" style={{ marginBottom:12 }}>
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Leads formulario web</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Leads formulario web</div>
         {leads.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>{["Nombre","Email","Teléfono","Mensaje","Estado","Fecha"].map(h=>(
@@ -863,20 +848,20 @@ function ClientesView({ realData }) {
             <tbody>
               {leads.slice(0,20).map((l,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"9px 0", fontSize:12.5, fontWeight:600, color:"var(--ink-1)" }}>{l.nombre||"—"}</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"var(--ink-3)" }}><span className="mono">{l.email||"—"}</span></td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"var(--ink-3)" }}>{l.telefono||"—"}</td>
-                  <td style={{ padding:"9px 8px", fontSize:11.5, color:"var(--ink-3)", maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{l.mensaje||"—"}</td>
+                  <td style={{ padding:"9px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{l.nombre||"—"}</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{l.email||"—"}</span></td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{l.telefono||"—"}</td>
+                  <td style={{ padding:"9px 8px", fontSize:11.5, color:"rgba(255,255,255,0.36)", maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{l.mensaje||"—"}</td>
                   <td style={{ padding:"9px 8px" }}><span className={`bd ${l.estado==="nuevo"?"bd-b":l.estado==="cliente"?"bd-g":"bd-a"}`}>{l.estado||"nuevo"}</span></td>
-                  <td style={{ padding:"9px 0", fontSize:11.5, color:"var(--ink-3)" }}>{fmtDate(l.created_at)}</td>
+                  <td style={{ padding:"9px 0", fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{fmtDate(l.created_at)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"32px 0", fontSize:12 }}>Sin leads registrados. Activa el Flujo 5 en n8n.</div>}
+        ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin leads registrados. Activa el Flujo 5 en n8n.</div>}
       </div>
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Instagram DMs — AstraSetter</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Instagram DMs — AstraSetter</div>
         {setter.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>{["Sender ID","Último mensaje","Estado","Actualizado"].map(h=>(
@@ -885,15 +870,15 @@ function ClientesView({ realData }) {
             <tbody>
               {setter.slice(0,20).map((s,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"9px 0", fontSize:12, color:"var(--ink-2)" }}>{(s.telegram_id||"—").slice(0,14)}...</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"var(--ink-3)", maxWidth:220, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{s.ultimo_mensaje||"—"}</td>
+                  <td style={{ padding:"9px 0", fontSize:12, color:"rgba(255,255,255,0.6)" }}>{(s.telegram_id||"—").slice(0,14)}...</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)", maxWidth:220, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{s.ultimo_mensaje||"—"}</td>
                   <td style={{ padding:"9px 8px" }}><span className={`bd ${s.estado_lead==="interesado"||s.estado_lead==="reunion"?"bd-g":s.estado_lead==="spam"?"bd-r":"bd-a"}`}>{s.estado_lead||"nuevo"}</span></td>
-                  <td style={{ padding:"9px 0", fontSize:11.5, color:"var(--ink-3)" }}>{fmtDate(s.updated_at||s.created_at)}</td>
+                  <td style={{ padding:"9px 0", fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{fmtDate(s.updated_at||s.created_at)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"32px 0", fontSize:12 }}>Sin DMs registrados. Activa el Flujo 2 en n8n.</div>}
+        ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin DMs registrados. Activa el Flujo 2 en n8n.</div>}
       </div>
       <PanaderiasOutbound realData={realData} />
     </div>
@@ -912,7 +897,7 @@ function AcademyView({ realData }) {
       </div>
       <div className="gl gc">
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)" }}>Miembros</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>Miembros</div>
           <button className="btn">+ Añadir miembro</button>
         </div>
         {realData && realData.academy.length > 0 ? (
@@ -926,18 +911,18 @@ function AcademyView({ realData }) {
                     <div style={{ width:28, height:28, borderRadius:8, background:"linear-gradient(135deg,rgba(56,189,248,0.65),rgba(99,102,241,0.65))", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, color:"white", flexShrink:0 }}>
                       {(m.display_name||m.email||"?").slice(0,2).toUpperCase()}
                     </div>
-                    <span style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)" }}>{m.display_name||m.username||"—"}</span>
+                    <span style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{m.display_name||m.username||"—"}</span>
                   </div>
                 </td>
-                <td style={{ fontSize:12, color:"var(--ink-3)" }}><span className="mono">{m.email||"—"}</span></td>
-                <td style={{ fontSize:11.5, color:"var(--ink-3)" }}>{m.plan_name||"—"}</td>
+                <td style={{ fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{m.email||"—"}</span></td>
+                <td style={{ fontSize:11.5, color:"rgba(255,255,255,0.36)" }}>{m.plan_name||"—"}</td>
                 <td><span className={`bd ${m.status==="active"?"bd-g":"bd-a"}`}>{m.status||"—"}</span></td>
-                <td style={{ fontSize:11.5, color:"var(--ink-3)" }}>{m.joined_at?new Date(m.joined_at).toLocaleDateString("es-ES"):"—"}</td>
+                <td style={{ fontSize:11.5, color:"rgba(255,255,255,0.25)" }}>{m.joined_at?new Date(m.joined_at).toLocaleDateString("es-ES"):"—"}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        ) : <div style={{textAlign:"center",color:"var(--ink-3)",padding:"32px 0",fontSize:12}}>Cargando miembros...</div>}
+        ) : <div style={{textAlign:"center",color:"rgba(255,255,255,0.25)",padding:"32px 0",fontSize:12}}>Cargando miembros...</div>}
       </div>
     </div>
   );
@@ -961,7 +946,7 @@ function SistemasView({ realData }) {
         <KpiCard label="Desuscritos" value={String(newsletter.filter(n=>n.status==="unsubscribed").length)} icon="trend" ac="#f87171"/>
       </div>
       <div className="gl gc" style={{ marginBottom:12 }}>
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Chatbot web — Últimas conversaciones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Chatbot web — Últimas conversaciones</div>
         {chatbot.length > 0 ? (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>{["Sesión","Mensaje usuario","Respuesta bot","Intent","Escalada","Hora"].map(h=>(
@@ -970,33 +955,33 @@ function SistemasView({ realData }) {
             <tbody>
               {chatbot.slice(0,20).map((c,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"9px 0", fontSize:11, color:"var(--ink-2)" }}>{(c.session_id||"—").slice(0,10)}</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"var(--ink-2)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.mensaje_usuario||c.chatInput||"—"}</td>
-                  <td style={{ padding:"9px 8px", fontSize:12, color:"var(--ink-3)", maxWidth:180, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.respuesta_bot||c.reply||"—"}</td>
+                  <td style={{ padding:"9px 0", fontSize:11, color:"rgba(255,255,255,0.4)" }}>{(c.session_id||"—").slice(0,10)}</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.6)", maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.mensaje_usuario||c.chatInput||"—"}</td>
+                  <td style={{ padding:"9px 8px", fontSize:12, color:"rgba(255,255,255,0.36)", maxWidth:180, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.respuesta_bot||c.reply||"—"}</td>
                   <td style={{ padding:"9px 8px" }}><span className="bd bd-b">{c.intent||"otros"}</span></td>
                   <td style={{ padding:"9px 8px" }}>{c.handoff_needed?<span className="bd bd-r">Sí</span>:<span className="bd bd-g">No</span>}</td>
-                  <td style={{ padding:"9px 0", fontSize:11, color:"var(--ink-3)" }}>{fmtDate(c.created_at)}</td>
+                  <td style={{ padding:"9px 0", fontSize:11, color:"rgba(255,255,255,0.25)" }}>{fmtDate(c.created_at)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"32px 0", fontSize:12 }}>Sin conversaciones. Activa el Flujo 5 en n8n.</div>}
+        ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin conversaciones. Activa el Flujo 5 en n8n.</div>}
       </div>
       <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Top intents chatbot</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Top intents chatbot</div>
           {topIntents.length > 0 ? topIntents.map(([k,v],i)=>(
-            <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0", borderBottom:"1px solid var(--ink-fill)" }}>
+            <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
               <span className="bd bd-b">{k}</span>
               <span style={{ fontSize:13, fontWeight:700, color:"#38bdf8" }}>{v}</span>
             </div>
-          )) : <div style={{ color:"var(--ink-3)", fontSize:12 }}>Sin datos</div>}
+          )) : <div style={{ color:"rgba(255,255,255,0.2)", fontSize:12 }}>Sin datos</div>}
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Newsletter — últimos suscriptores</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Newsletter — últimos suscriptores</div>
           {newsletter.slice(0,8).map((n,i)=>(
-            <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid var(--ink-fill)" }}>
-              <span style={{ fontSize:11.5, color:"var(--ink-2)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:160 }}>{n.email||"—"}</span>
+            <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
+              <span style={{ fontSize:11.5, color:"rgba(255,255,255,0.5)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", maxWidth:160 }}>{n.email||"—"}</span>
               <span className={`bd ${n.status==="subscribed"?"bd-g":"bd-r"}`}>{n.status||"—"}</span>
             </div>
           ))}
@@ -1076,22 +1061,22 @@ function AnalyticsView({ realData }) {
       </div>
       <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:2 }}>Ingresos por mes (reales)</div>
-          <div style={{ fontSize:11, color:"var(--ink-3)", marginBottom:14 }}>Datos reales de Supabase</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:2 }}>Ingresos por mes (reales)</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.25)", marginBottom:14 }}>Datos reales de Supabase</div>
           {revChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={192}>
               <BarChart data={revChart} barGap={3}>
-                <CartesianGrid strokeDasharray="2 5" stroke="var(--ink-fill)" vertical={false}/>
-                <XAxis dataKey="m" tick={{ fill:"var(--ink-3)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
-                <YAxis tick={{ fill:"var(--ink-3)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>"€"+v}/>
-                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid var(--ink-line)", borderRadius:8, fontSize:11 }} formatter={v=>["€"+Number(v).toLocaleString("es-ES"),"Ingresos"]}/>
+                <CartesianGrid strokeDasharray="2 5" stroke="rgba(255,255,255,0.04)" vertical={false}/>
+                <XAxis dataKey="m" tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false}/>
+                <YAxis tick={{ fill:"rgba(255,255,255,0.2)", fontSize:10.5 }} axisLine={false} tickLine={false} tickFormatter={v=>"€"+v}/>
+                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }} formatter={v=>["€"+Number(v).toLocaleString("es-ES"),"Ingresos"]}/>
                 <Bar dataKey="v" name="Ingresos" fill="#38bdf8" radius={[4,4,0,0]}/>
               </BarChart>
             </ResponsiveContainer>
-          ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"32px 0", fontSize:12 }}>Sin datos de pagos</div>}
+          ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin datos de pagos</div>}
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Distribución ingresos</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Distribución ingresos</div>
           {totalRev > 0 ? (
             <ResponsiveContainer width="100%" height={160}>
               <PieChart>
@@ -1099,10 +1084,10 @@ function AnalyticsView({ realData }) {
                   cx="50%" cy="50%" innerRadius={42} outerRadius={68} paddingAngle={4} dataKey="value">
                   <Cell fill="#a78bfa"/><Cell fill="#38bdf8"/>
                 </Pie>
-                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid var(--ink-line)", borderRadius:8, fontSize:11 }} formatter={v=>["€"+Number(v).toLocaleString("es-ES")]}/>
+                <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }} formatter={v=>["€"+Number(v).toLocaleString("es-ES")]}/>
               </PieChart>
             </ResponsiveContainer>
-          ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"60px 0", fontSize:12 }}>Sin datos</div>}
+          ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"60px 0", fontSize:12 }}>Sin datos</div>}
           <div style={{ display:"flex", gap:16, justifyContent:"center", marginTop:8 }}>
             <span style={{ fontSize:11, color:"#a78bfa" }}>● Academy €{academyRev.toLocaleString("es-ES")}</span>
             <span style={{ fontSize:11, color:"#38bdf8" }}>● Clientes €{clientRev.toLocaleString("es-ES")}</span>
@@ -1110,7 +1095,7 @@ function AnalyticsView({ realData }) {
         </div>
       </div>
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Métricas clave (calculadas)</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Métricas clave (calculadas)</div>
         <div className="grid-3" style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
           {[
             {l:"Miembros Academy activos",v:String(academy.filter(m=>m.status==="active").length),c:"#a78bfa"},
@@ -1120,8 +1105,8 @@ function AnalyticsView({ realData }) {
             {l:"DMs Instagram",v:String(setter.length),c:"#f97316"},
             {l:"Interesados setter",v:String(setter.filter(s=>s.estado_lead==="interesado"||s.estado_lead==="reunion").length),c:"#34d399"},
           ].map((m,i)=>(
-            <div key={i} style={{ padding:"14px", borderRadius:10, background:"var(--ink-fill)", border:"1px solid var(--ink-fill)" }}>
-              <div style={{ fontSize:10.5, color:"var(--ink-3)", marginBottom:6, textTransform:"uppercase", letterSpacing:"0.06em" }}>{m.l}</div>
+            <div key={i} style={{ padding:"14px", borderRadius:10, background:"rgba(255,255,255,0.024)", border:"1px solid rgba(255,255,255,0.04)" }}>
+              <div style={{ fontSize:10.5, color:"rgba(255,255,255,0.3)", marginBottom:6, textTransform:"uppercase", letterSpacing:"0.06em" }}>{m.l}</div>
               <div style={{ fontSize:22, fontWeight:700, color:m.c }}>{m.v}</div>
             </div>
           ))}
@@ -1134,7 +1119,7 @@ function AnalyticsView({ realData }) {
           <span style={{ width:3, height:16, background:"#22c55e", borderRadius:2, display:"inline-block" }}/>
           Conversión WhatsApp · Campaña Panaderías
         </div>
-        <div style={{ fontSize:11, color:"var(--ink-3)", marginTop:2, marginLeft:11 }}>Embudo de captación por WhatsApp</div>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,0.3)", marginTop:2, marginLeft:11 }}>Embudo de captación por WhatsApp</div>
       </div>
       <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:14 }}>
         <KpiCard label="Contactadas" value={String(panContactadas)} sub={`de ${panTotal} totales`} icon="target" ac="#38bdf8"/>
@@ -1144,7 +1129,7 @@ function AnalyticsView({ realData }) {
       </div>
       <div className="grid-2" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Embudo de conversión</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Embudo de conversión</div>
           {panContactadas > 0 ? (
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               {funnelWA.map((d,i)=>{
@@ -1152,20 +1137,20 @@ function AnalyticsView({ realData }) {
                 return (
                   <div key={i}>
                     <div style={{ display:"flex", justifyContent:"space-between", fontSize:11.5, marginBottom:4 }}>
-                      <span style={{ color:"var(--ink-2)" }}>{d.fase}</span>
+                      <span style={{ color:"rgba(255,255,255,0.6)" }}>{d.fase}</span>
                       <span style={{ color:d.c, fontWeight:700 }}>{d.v}</span>
                     </div>
-                    <div style={{ height:14, background:"var(--ink-fill)", borderRadius:7, overflow:"hidden" }}>
+                    <div style={{ height:14, background:"rgba(255,255,255,0.05)", borderRadius:7, overflow:"hidden" }}>
                       <div style={{ width:`${Math.max(pct,2)}%`, height:"100%", background:d.c, borderRadius:7, transition:"width 0.4s" }}/>
                     </div>
                   </div>
                 );
               })}
             </div>
-          ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Aún no hay datos de campaña</div>}
+          ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"40px 0", fontSize:12 }}>Aún no hay datos de campaña</div>}
         </div>
         <div className="gl gc">
-          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Reparto por temperatura</div>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Reparto por temperatura</div>
           {pieTemp.length > 0 ? (
             <>
               <ResponsiveContainer width="100%" height={160}>
@@ -1173,14 +1158,14 @@ function AnalyticsView({ realData }) {
                   <Pie data={pieTemp} cx="50%" cy="50%" innerRadius={42} outerRadius={68} paddingAngle={4} dataKey="value">
                     {pieTemp.map((e,i)=><Cell key={i} fill={e.c}/>)}
                   </Pie>
-                  <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid var(--ink-line)", borderRadius:8, fontSize:11 }}/>
+                  <Tooltip contentStyle={{ background:"rgba(4,6,14,0.96)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:11 }}/>
                 </PieChart>
               </ResponsiveContainer>
               <div style={{ display:"flex", gap:12, justifyContent:"center", marginTop:8, flexWrap:"wrap" }}>
                 {pieTemp.map((e,i)=><span key={i} style={{ fontSize:11, color:e.c }}>● {e.name} {e.value}</span>)}
               </div>
             </>
-          ) : <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"60px 0", fontSize:12 }}>Sin clasificaciones aún</div>}
+          ) : <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"60px 0", fontSize:12 }}>Sin clasificaciones aún</div>}
         </div>
       </div>
     </div>
@@ -1213,7 +1198,7 @@ function ReunionesView({ realData }) {
       </div>
 
       <div className="gl gc" style={{ marginBottom:12 }}>
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Próximas reuniones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Próximas reuniones</div>
         {proximas.length > 0 ? (
           <table className="solo-desktop" style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>
@@ -1224,25 +1209,25 @@ function ReunionesView({ realData }) {
             <tbody>
               {proximas.map((r,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"var(--ink-1)" }}>{r.guest_name||"—"}</td>
-                  <td style={{ padding:"10px 8px", fontSize:12, color:"var(--ink-3)" }}><span className="mono">{r.guest_email||"—"}</span></td>
+                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.guest_name||"—"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{r.guest_email||"—"}</span></td>
                   <td style={{ padding:"10px 8px" }}><span className="bd bd-b">{r.event_name||"—"}</span></td>
                   <td style={{ padding:"10px 8px", fontSize:12, fontWeight:700, color:"#34d399" }}>{fmtDT(r.start_time)}</td>
-                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"var(--ink-3)" }}>{r.guest_timezone||"—"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"rgba(255,255,255,0.3)" }}>{r.guest_timezone||"—"}</td>
                   <td style={{ padding:"10px 0" }}>
                     {r.join_url
                       ? <a href={r.join_url} target="_blank" rel="noreferrer"
                           style={{ color:"#38bdf8", fontSize:11, border:"1px solid rgba(56,189,248,0.3)", borderRadius:6, padding:"3px 10px", textDecoration:"none" }}>
                           Unirse
                         </a>
-                      : <span style={{ color:"var(--ink-3)", fontSize:11 }}>Sin enlace</span>}
+                      : <span style={{ color:"rgba(255,255,255,0.2)", fontSize:11 }}>Sin enlace</span>}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"32px 0", fontSize:12 }}>
+          <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>
             {all.length === 0 ? "No hay reuniones registradas. Activa el Flujo 7 de Calendly en n8n." : "No hay reuniones próximas programadas"}
           </div>
         )}
@@ -1261,7 +1246,7 @@ function ReunionesView({ realData }) {
                 <div className="rcard-row">
                   {r.join_url
                     ? <a href={r.join_url} target="_blank" rel="noreferrer" className="rcard-join">Unirse a la reunión</a>
-                    : <span style={{ color:"var(--ink-3)", fontSize:12 }}>Sin enlace</span>}
+                    : <span style={{ color:"rgba(255,255,255,0.25)", fontSize:12 }}>Sin enlace</span>}
                 </div>
               </div>
             ))}
@@ -1270,7 +1255,7 @@ function ReunionesView({ realData }) {
       </div>
 
       <div className="gl gc">
-        <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>Historial de reuniones</div>
+        <div style={{ fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)", marginBottom:14 }}>Historial de reuniones</div>
         {pasadas.length > 0 ? (
           <table className="solo-desktop" style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead><tr>
@@ -1281,10 +1266,10 @@ function ReunionesView({ realData }) {
             <tbody>
               {pasadas.map((r,i)=>(
                 <tr key={i} className="tr">
-                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"var(--ink-1)" }}>{r.guest_name||"—"}</td>
-                  <td style={{ padding:"10px 8px", fontSize:12, color:"var(--ink-3)" }}><span className="mono">{r.guest_email||"—"}</span></td>
-                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"var(--ink-3)" }}>{r.event_name||"—"}</td>
-                  <td style={{ padding:"10px 8px", fontSize:12, color:"var(--ink-3)" }}>{fmtDT(r.start_time)}</td>
+                  <td style={{ padding:"10px 0", fontSize:12.5, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.guest_name||"—"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.3)" }}><span className="mono">{r.guest_email||"—"}</span></td>
+                  <td style={{ padding:"10px 8px", fontSize:11.5, color:"rgba(255,255,255,0.36)" }}>{r.event_name||"—"}</td>
+                  <td style={{ padding:"10px 8px", fontSize:12, color:"rgba(255,255,255,0.36)" }}>{fmtDT(r.start_time)}</td>
                   <td style={{ padding:"10px 8px" }}>
                     <span className={`bd ${r.status==="cancelada"?"bd-r":r.status==="programada"?"bd-g":"bd-d"}`}>
                       {r.status||"—"}
@@ -1296,7 +1281,7 @@ function ReunionesView({ realData }) {
             </tbody>
           </table>
         ) : (
-          <div style={{ textAlign:"center", color:"var(--ink-3)", padding:"32px 0", fontSize:12 }}>Sin historial de reuniones</div>
+          <div style={{ textAlign:"center", color:"rgba(255,255,255,0.2)", padding:"32px 0", fontSize:12 }}>Sin historial de reuniones</div>
         )}
         {pasadas.length > 0 && (
           <div className="solo-movil">
@@ -1309,7 +1294,7 @@ function ReunionesView({ realData }) {
                   </div>
                   <span className={`bd ${r.status==="cancelada"?"bd-r":r.status==="programada"?"bd-g":"bd-d"}`}>{r.status||"—"}</span>
                 </div>
-                <div style={{ fontSize:12.5, color:"var(--ink-2)" }}>{fmtDT(r.start_time)}</div>
+                <div style={{ fontSize:12.5, color:"rgba(255,255,255,0.45)" }}>{fmtDT(r.start_time)}</div>
                 {r.status==="cancelada" && r.cancel_reason && (
                   <div style={{ fontSize:11.5, color:"rgba(248,113,113,0.7)", marginTop:6 }}>Motivo: {r.cancel_reason}</div>
                 )}
@@ -1330,7 +1315,7 @@ function LoomBadge() {
       <div style={{ width:34, height:34, borderRadius:8, background:"rgba(56,189,248,0.18)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#38bdf8"><path d="M8 5v14l11-7z"/></svg>
       </div>
-      <div style={{ fontSize:12.5, fontStyle:"italic", color:"var(--ink-1)", display:"flex", alignItems:"center", gap:5 }}>
+      <div style={{ fontSize:12.5, fontStyle:"italic", color:"rgba(255,255,255,0.7)", display:"flex", alignItems:"center", gap:5 }}>
         <span>🎥</span><span>Loom enviado</span><span style={{ color:"#22c55e" }}>✓</span>
       </div>
     </div>
@@ -1347,16 +1332,16 @@ function AudioPlayer({ src, out }) {
   const seek = (e) => { const a = audioRef.current; if (!a || !dur) return; const rect = e.currentTarget.getBoundingClientRect(); const p = (e.clientX - rect.left) / rect.width; a.currentTime = p * dur; };
   const pct = dur ? (cur/dur)*100 : 0;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 14, background: out ? "rgba(56,189,248,0.1)" : "var(--ink-fill)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.18)" : "var(--ink-fill)", minWidth: 200, maxWidth: 250, backdropFilter: "blur(8px) saturate(150%)", WebkitBackdropFilter: "blur(8px) saturate(150%)" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 14, background: out ? "rgba(56,189,248,0.1)" : "rgba(255,255,255,0.05)", border: "1px solid", borderColor: out ? "rgba(56,189,248,0.18)" : "rgba(255,255,255,0.07)", minWidth: 200, maxWidth: 250, backdropFilter: "blur(8px) saturate(150%)", WebkitBackdropFilter: "blur(8px) saturate(150%)" }}>
       <audio ref={audioRef} src={src} onTimeUpdate={(e)=>setCur(e.target.currentTime)} onLoadedMetadata={(e)=>setDur(e.target.duration)} onEnded={()=>{setPlaying(false);setCur(0);}} style={{ display: "none" }} />
       <button onClick={toggle} style={{ width: 34, height: 34, borderRadius: "50%", border: "none", cursor: "pointer", flexShrink: 0, background: "linear-gradient(135deg, #38bdf8, #818cf8)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 10px rgba(56,189,248,0.35)" }}>
         {playing ? <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg> : <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>}
       </button>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div onClick={seek} style={{ height: 5, borderRadius: 3, background: "var(--ink-line)", cursor: "pointer", overflow: "hidden" }}>
+        <div onClick={seek} style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,0.12)", cursor: "pointer", overflow: "hidden" }}>
           <div style={{ height: "100%", width: pct + "%", background: "linear-gradient(90deg, #38bdf8, #818cf8)", borderRadius: 3, transition: "width 0.1s linear" }} />
         </div>
-        <div style={{ fontSize: 10, color: "var(--ink-2)", marginTop: 4, fontFamily: "monospace" }}>{fmt(cur)} / {fmt(dur)}</div>
+        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 4, fontFamily: "monospace" }}>{fmt(cur)} / {fmt(dur)}</div>
       </div>
     </div>
   );
@@ -1419,7 +1404,7 @@ function WhatsAppView({ realData, onRefresh }) {
   const tempColor = { caliente: "#34d399", tibio: "#fbbf24", frio: "#38bdf8", descartado: "#f87171" };
   const tempGrad = { frio: "linear-gradient(135deg, rgba(56,189,248,0.55), rgba(56,189,248,0.18))", tibio: "linear-gradient(135deg, rgba(251,191,36,0.55), rgba(251,191,36,0.18))", caliente: "linear-gradient(135deg, rgba(52,211,153,0.55), rgba(52,211,153,0.18))", descartado: "linear-gradient(135deg, rgba(248,113,113,0.55), rgba(248,113,113,0.18))" };
   const tempBorder = { frio: "rgba(56,189,248,0.5)", tibio: "rgba(251,191,36,0.5)", caliente: "rgba(52,211,153,0.5)", descartado: "rgba(248,113,113,0.5)" };
-  const TempBadge = ({ t, size = "sm" }) => { if (!t) return null; const grad = tempGrad[t] || "linear-gradient(135deg, rgba(148,163,184,0.5), rgba(148,163,184,0.15))"; const bd = tempBorder[t] || "rgba(148,163,184,0.45)"; const pad = size === "lg" ? "4px 12px" : "2px 9px"; const fs = size === "lg" ? 11.5 : 9.5; return (<span style={{ display: "inline-flex", alignItems: "center", padding: pad, borderRadius: 999, fontSize: fs, fontWeight: 700, color: "#fff", letterSpacing: "0.02em", textTransform: "capitalize", background: grad, border: "1px solid " + bd, backdropFilter: "blur(8px) saturate(160%)", WebkitBackdropFilter: "blur(8px) saturate(160%)", boxShadow: "inset 0 1px 0 var(--ink-3), 0 2px 8px rgba(0,0,0,0.25)", flexShrink: 0, whiteSpace: "nowrap" }}>{t}</span>); };
+  const TempBadge = ({ t, size = "sm" }) => { if (!t) return null; const grad = tempGrad[t] || "linear-gradient(135deg, rgba(148,163,184,0.5), rgba(148,163,184,0.15))"; const bd = tempBorder[t] || "rgba(148,163,184,0.45)"; const pad = size === "lg" ? "4px 12px" : "2px 9px"; const fs = size === "lg" ? 11.5 : 9.5; return (<span style={{ display: "inline-flex", alignItems: "center", padding: pad, borderRadius: 999, fontSize: fs, fontWeight: 700, color: "#fff", letterSpacing: "0.02em", textTransform: "capitalize", background: grad, border: "1px solid " + bd, backdropFilter: "blur(8px) saturate(160%)", WebkitBackdropFilter: "blur(8px) saturate(160%)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.25)", flexShrink: 0, whiteSpace: "nowrap" }}>{t}</span>); };
 
   const sendManual = async () => {
     if (!draft.trim() || !sel) return;
@@ -1458,23 +1443,23 @@ function WhatsAppView({ realData, onRefresh }) {
       <div className="wa-grid" style={{ display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: 12, height: "calc(100vh - 280px)", minHeight: 460 }}>
         {/* COLUMNA 1: contactos */}
         <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--ink-fill)", fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)" }}>Conversaciones</div>
+          <div style={{ padding: "14px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>Conversaciones</div>
           <div style={{ overflowY: "auto", flex: 1 }}>
-            {contacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "var(--ink-3)", textAlign: "center" }}>Sin conversaciones todavia</div>}
+            {contacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center" }}>Sin conversaciones todavia</div>}
             {contacts.map(c => {
               const q = leadState.find(s => s.contact_id === c.id);
               const active = c.id === selKey;
               return (
                 <div key={c.id} onClick={() => setSelId(c.id)}
-                  style={{ padding: "11px 16px", borderBottom: "1px solid var(--ink-fill)", cursor: "pointer", background: active ? "rgba(56,189,248,0.08)" : "transparent", borderLeft: active ? "2px solid #38bdf8" : "2px solid transparent", display: "flex", gap: 10, alignItems: "center" }}>
+                  style={{ padding: "11px 16px", borderBottom: "1px solid rgba(255,255,255,0.03)", cursor: "pointer", background: active ? "rgba(56,189,248,0.08)" : "transparent", borderLeft: active ? "2px solid #38bdf8" : "2px solid transparent", display: "flex", gap: 10, alignItems: "center" }}>
                   <Avatar name={c.name} phone={c.phone_e164} size={36} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6 }}>
-                      <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name || c.phone_e164 || "â€”"}</span>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.82)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name || c.phone_e164 || "â€”"}</span>
                       {c.bot_activo === false && <span className="bd bd-a" style={{ flexShrink: 0 }}>Manual</span>}
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 3 }}>
-                      <span style={{ fontSize: 10.5, color: "var(--ink-3)" }}>{c.source || "â€”"}</span>
+                      <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{c.source || "â€”"}</span>
                       {q && <TempBadge t={q.temperatura} />}
                     </div>
                   </div>
@@ -1488,12 +1473,12 @@ function WhatsAppView({ realData, onRefresh }) {
         <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           {sel ? (
             <>
-              <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--ink-fill)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <Avatar name={sel.name} phone={sel.phone_e164} size={38} />
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ink-1)" }}>{sel.name || sel.phone_e164}</div>
-                    <div style={{ fontSize: 10.5, color: "var(--ink-3)" }}>{sel.phone_e164}</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>{sel.name || sel.phone_e164}</div>
+                    <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.3)" }}>{sel.phone_e164}</div>
                     {qual && <div style={{ marginTop: 5 }}><TempBadge t={qual.temperatura} size="lg" /></div>}
                   </div>
                 </div>
@@ -1503,62 +1488,62 @@ function WhatsAppView({ realData, onRefresh }) {
                 </button>
               </div>
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
-                {thread.length === 0 && <div style={{ fontSize: 12, color: "var(--ink-3)", textAlign: "center", marginTop: 30 }}>Sin mensajes</div>}
+                {thread.length === 0 && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 30 }}>Sin mensajes</div>}
                 {thread.map((m, i) => {
                   const out = m.direction === "outbound";
                   const manual = m.is_manual === true;
                   return (
                     <div key={i} style={{ alignSelf: out ? "flex-end" : "flex-start", maxWidth: "75%" }}>
-                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "var(--ink-fill)"), color: "var(--ink-1)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "var(--ink-fill)") }}>
+                      <div style={{ padding: "8px 12px", borderRadius: 12, fontSize: 12.5, lineHeight: 1.4, background: manual ? "rgba(251,146,60,0.18)" : (out ? "rgba(56,189,248,0.16)" : "rgba(255,255,255,0.05)"), color: "rgba(255,255,255,0.85)", border: "1px solid", borderColor: manual ? "rgba(251,146,60,0.35)" : (out ? "rgba(56,189,248,0.2)" : "rgba(255,255,255,0.06)") }}>
                         {m.message_type === "video" ? <LoomBadge /> : m.message_type === "audio" ? (<div>{m.media_url ? <AudioPlayer src={m.media_url} out={out} /> : <span style={{ opacity: 0.5 }}>🎤 audio (no guardado)</span>}{m.body && <div style={{ fontSize: 11, opacity: 0.6, marginTop: 4, fontStyle: "italic" }}>“{m.body}”</div>}</div>) : (m.body || (m.message_type !== "text" ? `[${m.message_type}]` : ""))}
                       </div>
-                      <div style={{ fontSize: 9.5, color: "var(--ink-3)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
+                      <div style={{ fontSize: 9.5, color: "rgba(255,255,255,0.22)", marginTop: 2, textAlign: out ? "right" : "left" }}>{fmtTime(m.created_at)}</div>
                     </div>
                   );
                 })}
                 <div ref={chatEndRef2} />
               </div>
-              <div style={{ padding: "12px 16px", borderTop: "1px solid var(--ink-fill)", display: "flex", gap: 8 }}>
+              <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", gap: 8 }}>
                 <input value={draft} onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === "Enter" && !sending) sendManual(); }}
                   placeholder={sel.bot_activo ? "Apaga el bot para responder a manoâ€¦" : "Escribe tu respuestaâ€¦"}
                   disabled={sel.bot_activo}
-                  style={{ flex: 1, background: "var(--ink-fill)", border: "1px solid var(--ink-line)", borderRadius: 8, padding: "8px 12px", fontSize: 12.5, color: "var(--ink-1)", outline: "none", fontFamily: "inherit", opacity: sel.bot_activo ? 0.4 : 1 }} />
+                  style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 12px", fontSize: 12.5, color: "rgba(255,255,255,0.85)", outline: "none", fontFamily: "inherit", opacity: sel.bot_activo ? 0.4 : 1 }} />
                 <button className="btn" onClick={sendManual} disabled={sending || sel.bot_activo || !draft.trim()} style={{ fontSize: 12 }}>
                   {sending ? "â€¦" : "Enviar"}
                 </button>
               </div>
             </>
-          ) : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: 12.5, color: "var(--ink-3)" }}>Selecciona una conversacion</div>}
+          ) : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: 12.5, color: "rgba(255,255,255,0.25)" }}>Selecciona una conversacion</div>}
         </div>
 
         {/* COLUMNA 3: cualificacion */}
         <div className="gl gc wa-qual" style={{ overflowY: "auto" }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)", marginBottom: 14 }}>Cualificacion</div>
+          <div style={{ fontSize: 12.5, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 14 }}>Cualificacion</div>
           {qual ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <div>
-                <div style={{ fontSize: 10, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Temperatura</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Temperatura</div>
                 <span className={`bd ${qual.temperatura === "caliente" ? "bd-r" : qual.temperatura === "tibio" ? "bd-a" : "bd-b"}`}>{qual.temperatura || "â€”"}</span>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Etapa</div>
-                <span style={{ fontSize: 12.5, color: "var(--ink-1)" }}>{qual.etapa_funnel || "â€”"}</span>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Etapa</div>
+                <span style={{ fontSize: 12.5, color: "rgba(255,255,255,0.7)" }}>{qual.etapa_funnel || "â€”"}</span>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Objetivo</div>
-                <span style={{ fontSize: 12, color: "var(--ink-2)" }}>{qual.objetivo || "â€”"}</span>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Objetivo</div>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.objetivo || "â€”"}</span>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Frenos</div>
-                <span style={{ fontSize: 12, color: "var(--ink-2)" }}>{qual.frenos || "â€”"}</span>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Frenos</div>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{qual.frenos || "â€”"}</span>
               </div>
               <div>
-                <div style={{ fontSize: 10, color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Resumen</div>
-                <span style={{ fontSize: 12, color: "var(--ink-2)", lineHeight: 1.5 }}>{qual.resumen_lead || "â€”"}</span>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Resumen</div>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{qual.resumen_lead || "â€”"}</span>
               </div>
             </div>
-          ) : <div style={{ fontSize: 12, color: "var(--ink-3)" }}>Sin datos de cualificacion todavia</div>}
+          ) : <div style={{ fontSize: 12, color: "rgba(255,255,255,0.25)" }}>Sin datos de cualificacion todavia</div>}
         </div>
       </div>
     </div>
@@ -1612,7 +1597,7 @@ function FlowBackground() {
     const draw = () => {
       ctx.clearRect(0,0,W,H); t += 1;
       const bg = ctx.createLinearGradient(0,0,W,H);
-      bg.addColorStop(0,"var(--bg-solid)"); bg.addColorStop(0.5,"var(--bg-solid)"); bg.addColorStop(1,"var(--bg-solid)");
+      bg.addColorStop(0,"#020510"); bg.addColorStop(0.5,"#04060e"); bg.addColorStop(1,"#020814");
       ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
       orbs.forEach(orb => {
         orb.x += Math.sin(t*orb.speed)*0.8; orb.y += Math.cos(t*orb.speed*0.7)*0.6;
@@ -1650,7 +1635,7 @@ function FlowBackground() {
 function LoadingScreen() {
   return (
     <div style={{
-      minHeight:"100vh", background:"var(--bg-solid)", display:"flex", flexDirection:"column",
+      minHeight:"100vh", background:"#04060e", display:"flex", flexDirection:"column",
       alignItems:"center", justifyContent:"center", fontFamily:"'Outfit',sans-serif",
       position:"relative", overflow:"hidden", padding:"24px 16px",
     }}>
@@ -1664,12 +1649,12 @@ function LoadingScreen() {
           <img src={LOGO_SRC} style={{ width:58, height:58, objectFit:"contain" }} alt="Astra"/>
         </div>
         <div style={{ fontSize:28, fontWeight:800, color:"white", letterSpacing:"-0.03em", lineHeight:1.1 }}>Astra HQ</div>
-        <div style={{ fontSize:12, color:"var(--ink-3)", marginTop:6, letterSpacing:"0.12em", textTransform:"uppercase", fontWeight:500 }}>
+        <div style={{ fontSize:12, color:"rgba(255,255,255,0.35)", marginTop:6, letterSpacing:"0.12em", textTransform:"uppercase", fontWeight:500 }}>
           Panel Operativo · Astra Automations
         </div>
         <div style={{
           width:"100%", maxWidth:280, height:4, marginTop:26, borderRadius:999,
-          background:"var(--ink-fill)", overflow:"hidden", position:"relative",
+          background:"rgba(255,255,255,0.08)", overflow:"hidden", position:"relative",
         }}>
           <div style={{
             position:"absolute", top:0, left:0, height:"100%", width:"40%", borderRadius:999,
@@ -1677,7 +1662,7 @@ function LoadingScreen() {
             animation:"astraLoadBar 1.3s ease-in-out infinite",
           }}/>
         </div>
-        <div style={{ marginTop:22, fontSize:11, color:"var(--ink-line)", textAlign:"center", lineHeight:1.6 }}>
+        <div style={{ marginTop:22, fontSize:11, color:"rgba(255,255,255,0.18)", textAlign:"center", lineHeight:1.6 }}>
           Acceso restringido · Solo personal autorizado<br/>
           © 2026 Astra Automations
         </div>
@@ -1787,19 +1772,19 @@ export default function AstraHQ() {
         {/* SIDEBAR */}
         <div className={`sb ${mobileMenu?"sb-open":""}`} style={{ width:sw, minWidth:sw }}>
           {/* Logo */}
-          <div style={{ height:56, display:"flex", alignItems:"center", gap:col?0:9, padding:col?"0 18px":"0 14px", borderBottom:"1px solid var(--ink-fill)", justifyContent:col?"center":"flex-start" }}>
+          <div style={{ height:56, display:"flex", alignItems:"center", gap:col?0:9, padding:col?"0 18px":"0 14px", borderBottom:"1px solid rgba(255,255,255,0.052)", justifyContent:col?"center":"flex-start" }}>
             <div style={{ flexShrink:0, mixBlendMode:"screen" }}>
               <AstraLogo size={col?28:26} mode="white"/>
             </div>
             {!col && (
               <div style={{ overflow:"hidden", paddingTop:2 }}>
-                <div style={{ fontSize:13.5, fontWeight:700, color:"var(--ink-1)", letterSpacing:"-0.01em", lineHeight:1.15 }}>Astra HQ</div>
-                <div style={{ fontSize:9, color:"var(--ink-3)", letterSpacing:"0.15em", textTransform:"uppercase", marginTop:1 }}>Operations</div>
+                <div style={{ fontSize:13.5, fontWeight:700, color:"rgba(255,255,255,0.88)", letterSpacing:"-0.01em", lineHeight:1.15 }}>Astra HQ</div>
+                <div style={{ fontSize:9, color:"rgba(255,255,255,0.2)", letterSpacing:"0.15em", textTransform:"uppercase", marginTop:1 }}>Operations</div>
               </div>
             )}
           </div>
 
-          {!col && <div style={{ padding:"12px 14px 4px", fontSize:9, fontWeight:700, color:"var(--ink-line)", letterSpacing:"0.14em", textTransform:"uppercase" }}>Módulos</div>}
+          {!col && <div style={{ padding:"12px 14px 4px", fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.16)", letterSpacing:"0.14em", textTransform:"uppercase" }}>Módulos</div>}
 
           <div style={{ flex:1, overflowY:"auto", padding:"4px 8px" }}>
             {NAV.map(item=>(
@@ -1808,26 +1793,26 @@ export default function AstraHQ() {
                 onClick={()=>{setView(item.k);setMobileMenu(false);}}
                 style={{ justifyContent:col?"center":"flex-start" }}
               >
-                <Icon name={item.i} size={14} sw={view===item.k?1.8:1.4} stroke={view===item.k?"#38bdf8":"var(--ink-3)"}/>
+                <Icon name={item.i} size={14} sw={view===item.k?1.8:1.4} stroke={view===item.k?"#38bdf8":"rgba(255,255,255,0.36)"}/>
                 {!col&&<span>{item.l}</span>}
               </div>
             ))}
           </div>
 
-          <div style={{ padding:"8px 8px 10px", borderTop:"1px solid var(--ink-fill)" }}>
+          <div style={{ padding:"8px 8px 10px", borderTop:"1px solid rgba(255,255,255,0.044)" }}>
             {!col&&(
-              <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 10px", borderRadius:8, background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", marginBottom:5 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 10px", borderRadius:8, background:"rgba(255,255,255,0.026)", border:"1px solid rgba(255,255,255,0.04)", marginBottom:5 }}>
                 <div style={{ width:27, height:27, borderRadius:"50%", background:"linear-gradient(135deg,rgba(56,189,248,0.22),rgba(99,102,241,0.18))", border:"1.5px solid rgba(56,189,248,0.28)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                   <AstraLogo size={15} mode="white"/>
                 </div>
                 <div>
-                  <div style={{ fontSize:11.5, fontWeight:700, color:"var(--ink-1)" }}>Astra</div>
-                  <div style={{ fontSize:9.5, color:"var(--ink-3)" }}>Founder · Admin</div>
+                  <div style={{ fontSize:11.5, fontWeight:700, color:"rgba(255,255,255,0.76)" }}>Astra</div>
+                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,0.26)" }}>Founder · Admin</div>
                 </div>
               </div>
             )}
             <div className="ni" onClick={()=>setCol(!col)} style={{ justifyContent:"center", opacity:0.38 }}>
-              <Icon name={col?"chevR":"chevL"} size={13} stroke="var(--ink-2)"/>
+              <Icon name={col?"chevR":"chevL"} size={13} stroke="rgba(255,255,255,0.6)"/>
             </div>
           </div>
         </div>
@@ -1841,27 +1826,27 @@ export default function AstraHQ() {
           </div>
           <div style={{ position:"relative", flex:1, maxWidth:268 }}>
             <div style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", zIndex:3 }}>
-              <Icon name="search" size={13} stroke="var(--ink-3)"/>
+              <Icon name="search" size={13} stroke="rgba(255,255,255,0.26)"/>
             </div>
             <input className="inp" placeholder="Buscar pagos, leads, miembros..."
               value={searchQ} onChange={e=>setSearchQ(e.target.value)}
               onKeyDown={e=>{ if(e.key==="Escape") setSearchQ(""); }}
             />
             {searchQ && searchResults.length > 0 && (
-              <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"rgba(4,6,14,0.98)", border:"1px solid var(--ink-line)", borderRadius:12, zIndex:300, maxHeight:320, overflowY:"auto", backdropFilter:"blur(30px)", boxShadow:"0 20px 60px rgba(0,0,0,0.6)" }}>
+              <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"rgba(4,6,14,0.98)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, zIndex:300, maxHeight:320, overflowY:"auto", backdropFilter:"blur(30px)", boxShadow:"0 20px 60px rgba(0,0,0,0.6)" }}>
                 {searchResults.map((r,i)=>(
                   <div key={i} onClick={()=>{ setView(r.section); setSearchQ(""); }}
-                    style={{ padding:"10px 14px", borderBottom:"1px solid var(--ink-fill)", cursor:"pointer", transition:"background .15s" }}
-                    onMouseEnter={e=>e.currentTarget.style.background="var(--ink-fill)"}
+                    style={{ padding:"10px 14px", borderBottom:"1px solid rgba(255,255,255,0.05)", cursor:"pointer", transition:"background .15s" }}
+                    onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.04)"}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                    <div style={{ fontSize:12, fontWeight:600, color:"var(--ink-1)" }}>{r.title}</div>
-                    <div style={{ fontSize:11, color:"var(--ink-3)", marginTop:2 }}>{r.sub}</div>
+                    <div style={{ fontSize:12, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>{r.title}</div>
+                    <div style={{ fontSize:11, color:"rgba(255,255,255,0.3)", marginTop:2 }}>{r.sub}</div>
                   </div>
                 ))}
               </div>
             )}
             {searchQ && searchResults.length === 0 && (
-              <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"rgba(4,6,14,0.98)", border:"1px solid var(--ink-line)", borderRadius:12, zIndex:300, padding:"14px", textAlign:"center", fontSize:12, color:"var(--ink-3)" }}>
+              <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:"rgba(4,6,14,0.98)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, zIndex:300, padding:"14px", textAlign:"center", fontSize:12, color:"rgba(255,255,255,0.3)" }}>
                 Sin resultados para "{searchQ}"
               </div>
             )}
@@ -1876,26 +1861,26 @@ export default function AstraHQ() {
               ))}
             </div>
             <div style={{ position:"relative" }}>
-              <button onClick={()=>setNotif(!notif)} style={{ background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", borderRadius:8, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
-                <Icon name="bell" size={14} stroke="var(--ink-2)"/>
+              <button onClick={()=>setNotif(!notif)} style={{ background:"rgba(255,255,255,0.032)", border:"1px solid rgba(255,255,255,0.068)", borderRadius:8, width:32, height:32, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", position:"relative" }}>
+                <Icon name="bell" size={14} stroke="rgba(255,255,255,0.44)"/>
                 <span style={{ position:"absolute", top:6, right:6, width:6, height:6, background:"#f87171", borderRadius:"50%", border:"1.5px solid var(--bg)" }}/>
               </button>
               {notif&&(
-                <div style={{ position:"absolute", right:0, top:"calc(100% + 7px)", width:282, background:"rgba(4,6,14,0.97)", border:"1px solid var(--ink-fill)", borderRadius:13, boxShadow:"0 22px 60px rgba(0,0,0,0.55)", backdropFilter:"blur(30px)", zIndex:200, overflow:"hidden" }}>
-                  <div style={{ padding:"12px 15px", borderBottom:"1px solid var(--ink-fill)" }}>
-                    <div style={{ fontSize:13, fontWeight:600, color:"var(--ink-1)" }}>Notificaciones</div>
-                    <div style={{ fontSize:10.5, color:"var(--ink-3)" }}>4 nuevas hoy</div>
+                <div style={{ position:"absolute", right:0, top:"calc(100% + 7px)", width:282, background:"rgba(4,6,14,0.97)", border:"1px solid rgba(255,255,255,0.09)", borderRadius:13, boxShadow:"0 22px 60px rgba(0,0,0,0.55)", backdropFilter:"blur(30px)", zIndex:200, overflow:"hidden" }}>
+                  <div style={{ padding:"12px 15px", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:"rgba(255,255,255,0.8)" }}>Notificaciones</div>
+                    <div style={{ fontSize:10.5, color:"rgba(255,255,255,0.26)" }}>4 nuevas hoy</div>
                   </div>
                   {activity.slice(0,4).map((n,i)=>(
-                    <div key={i} style={{ display:"flex", gap:9, padding:"10px 15px", borderBottom:i<3?"1px solid var(--ink-fill)":"none", cursor:"pointer", transition:"background .15s" }}
-                      onMouseEnter={e=>e.currentTarget.style.background="var(--ink-fill)"}
+                    <div key={i} style={{ display:"flex", gap:9, padding:"10px 15px", borderBottom:i<3?"1px solid rgba(255,255,255,0.036)":"none", cursor:"pointer", transition:"background .15s" }}
+                      onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.026)"}
                       onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                       <div style={{ width:25, height:25, borderRadius:7, background:`${n.c}12`, border:`1px solid ${n.c}20`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
                         <Icon name={n.ico} size={11} stroke={n.c}/>
                       </div>
                       <div>
-                        <div style={{ fontSize:11.5, color:"var(--ink-2)", fontWeight:500 }}>{n.txt}</div>
-                        <div style={{ fontSize:10, color:"var(--ink-3)", marginTop:2 }}>Hace {n.t}</div>
+                        <div style={{ fontSize:11.5, color:"rgba(255,255,255,0.65)", fontWeight:500 }}>{n.txt}</div>
+                        <div style={{ fontSize:10, color:"rgba(255,255,255,0.22)", marginTop:2 }}>Hace {n.t}</div>
                       </div>
                     </div>
                   ))}
@@ -1915,11 +1900,11 @@ export default function AstraHQ() {
           <div style={{ padding:"26px 26px", maxWidth:1380, margin:"0 auto" }}>
             {view==="dashboard" ? <DashboardView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : view==="academy" ? <AcademyView realData={realData}/> : view==="reuniones" ? <ReunionesView realData={realData}/> : view==="clientes" ? <ClientesView realData={realData}/>  : view==="captacion" ? <ClientesView realData={realData}/> : view==="whatsapp" ? <WhatsAppView realData={realData} onRefresh={fetchData}/> : view==="sistemas" ? <SistemasView realData={realData}/> : view==="analytics" ? <AnalyticsView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : (
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:300, gap:12 }}>
-                <div style={{ width:48, height:48, borderRadius:12, background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-                  <Icon name="layers" size={19} stroke="var(--ink-3)"/>
+                <div style={{ width:48, height:48, borderRadius:12, background:"rgba(255,255,255,0.038)", border:"1px solid rgba(255,255,255,0.068)", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                  <Icon name="layers" size={19} stroke="rgba(255,255,255,0.26)"/>
                 </div>
-                <div style={{ fontSize:14, fontWeight:600, color:"var(--ink-2)" }}>Módulo próximamente</div>
-                <div style={{ fontSize:11.5, color:"var(--ink-line)" }}>Integración n8n en desarrollo</div>
+                <div style={{ fontSize:14, fontWeight:600, color:"rgba(255,255,255,0.42)" }}>Módulo próximamente</div>
+                <div style={{ fontSize:11.5, color:"rgba(255,255,255,0.18)" }}>Integración n8n en desarrollo</div>
               </div>
             )}
           </div>
