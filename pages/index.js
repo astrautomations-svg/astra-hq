@@ -1403,6 +1403,7 @@ function WhatsAppView({ realData, onRefresh }) {
   const messages = (realData && realData.waMessages) || [];
   const leadState = (realData && realData.waLeadState) || [];
   const [selId, setSelId] = useState(null);
+  const [filtroTemp, setFiltroTemp] = useState("todos");
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const chatEndRef2 = useRef(null);
@@ -1420,6 +1421,15 @@ function WhatsAppView({ realData, onRefresh }) {
 
   // Cualificacion del contacto seleccionado
   const qual = leadState.find(s => s.contact_id === selKey) || null;
+
+  const tempDe = (id) => { const s = leadState.find(x => x.contact_id === id); return s ? s.temperatura : null; };
+  const filteredContacts = contacts.filter(c => {
+    if (filtroTemp === "todos") return true;
+    if (filtroTemp === "manual") return c.bot_activo === false;
+    return tempDe(c.id) === filtroTemp;
+  });
+  const countTemp = (t) => contacts.filter(c => tempDe(c.id) === t).length;
+  const countManual = contacts.filter(c => c.bot_activo === false).length;
 
   const fmtTime = d => d ? new Date(d).toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
   const tempColor = { caliente: "#34d399", tibio: "#fbbf24", frio: "#38bdf8", descartado: "#f87171" };
@@ -1461,13 +1471,41 @@ function WhatsAppView({ realData, onRefresh }) {
         <KpiCard label="Mensajes (recientes)" value={String(messages.length)} icon="activity" ac="#38bdf8" />
       </div>
 
+      <div className="wa-filtros" style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 14 }}>
+        {[
+          { k: "todos",      lbl: "Todos",       n: contacts.length,         col: "#94a3b8" },
+          { k: "caliente",   lbl: "Calientes",   n: countTemp("caliente"),   col: "#34d399" },
+          { k: "tibio",      lbl: "Tibios",      n: countTemp("tibio"),      col: "#fbbf24" },
+          { k: "frio",       lbl: "Frios",       n: countTemp("frio"),       col: "#38bdf8" },
+          { k: "descartado", lbl: "Descartados", n: countTemp("descartado"), col: "#f87171" },
+          { k: "manual",     lbl: "Manual",      n: countManual,             col: "#fbbf24" },
+        ].map(b => {
+          const on = filtroTemp === b.k;
+          return (
+            <button key={b.k} onClick={() => setFiltroTemp(b.k)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                padding: "5px 11px", borderRadius: 999, cursor: "pointer",
+                fontSize: 11.5, fontWeight: 600, whiteSpace: "nowrap",
+                color: on ? "#fff" : "var(--ink-2)",
+                background: on ? b.col + "22" : "var(--ink-fill)",
+                border: "1px solid " + (on ? b.col + "88" : "var(--ink-fill)"),
+                transition: "all .15s",
+              }}>
+              <span style={{ width: 7, height: 7, borderRadius: 999, background: b.col, flexShrink: 0 }} />
+              {b.lbl}
+              <span style={{ fontSize: 10.5, opacity: 0.7 }}>{b.n}</span>
+            </button>
+          );
+        })}
+      </div>
       <div className="wa-grid" style={{ display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: 12, height: "calc(100vh - 280px)", minHeight: 460 }}>
         {/* COLUMNA 1: contactos */}
         <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--ink-fill)", fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)" }}>Conversaciones</div>
           <div style={{ overflowY: "auto", flex: 1 }}>
-            {contacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "var(--ink-3)", textAlign: "center" }}>Sin conversaciones todavia</div>}
-            {contacts.map(c => {
+            {filteredContacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "var(--ink-3)", textAlign: "center" }}>{contacts.length === 0 ? "Sin conversaciones todavia" : "Sin conversaciones en este filtro"}</div>}
+            {filteredContacts.map(c => {
               const q = leadState.find(s => s.contact_id === c.id);
               const active = c.id === selKey;
               return (

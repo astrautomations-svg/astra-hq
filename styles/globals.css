@@ -25,6 +25,10 @@ button { cursor: pointer; border: none; background: none; }
   table { font-size: 11px !important; }
   th, td { padding: 7px 4px !important; }
   .hide-mobile { display: none !important; }
+  .wa-grid { grid-template-columns: 1fr !important; height: auto !important; }
+  .wa-grid > .gc { max-height: 50vh; }
+  .wa-filtros { flex-wrap: nowrap !important; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .wa-filtros button { flex-shrink: 0; }
 }
 @media (min-width: 769px) {
   .mobile-topbar { display: none !important; }
