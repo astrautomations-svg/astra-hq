@@ -908,7 +908,7 @@ function ClientesView({ realData }) {
 
 function ClientesRealView({ realData, onRefresh }) {
   const clients = (realData && realData.clients) || [];
-  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES") : "\u2014";
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES") : "—";
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -973,7 +973,7 @@ function ClientesRealView({ realData, onRefresh }) {
 
       <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:12 }}>
         <button className="btn" onClick={() => showForm ? setShowForm(false) : abrirNuevo()} style={{ fontSize:12 }}>
-          {showForm ? "\u2715 Cancelar" : "+ A\u00f1adir cliente"}
+          {showForm ? "✕ Cancelar" : "+ Anadir cliente"}
         </button>
       </div>
 
@@ -994,12 +994,12 @@ function ClientesRealView({ realData, onRefresh }) {
               <input style={inp} placeholder="Nombre de la empresa *" value={form.company_name} onChange={e=>setForm({...form, company_name:e.target.value})}/>
               <input style={inp} placeholder="Persona de contacto" value={form.contact_name} onChange={e=>setForm({...form, contact_name:e.target.value})}/>
               <div style={{ display:"flex", gap:9 }}>
-                <input style={inp} placeholder="Tel\u00e9fono" value={form.phone_e164} onChange={e=>setForm({...form, phone_e164:e.target.value})}/>
+                <input style={inp} placeholder="Telefono" value={form.phone_e164} onChange={e=>setForm({...form, phone_e164:e.target.value})}/>
                 <input style={inp} placeholder="Email" value={form.email} onChange={e=>setForm({...form, email:e.target.value})}/>
               </div>
               <div style={{ display:"flex", gap:9 }}>
-                <input style={inp} placeholder="Tipo (panader\u00eda, hosteler\u00eda...)" value={form.client_type} onChange={e=>setForm({...form, client_type:e.target.value})}/>
-                <input style={inp} placeholder="Responsable (Nico, Jos\u00e9...)" value={form.responsible_internal} onChange={e=>setForm({...form, responsible_internal:e.target.value})}/>
+                <input style={inp} placeholder="Tipo (panaderia, hosteleria...)" value={form.client_type} onChange={e=>setForm({...form, client_type:e.target.value})}/>
+                <input style={inp} placeholder="Responsable (Nico, Jose...)" value={form.responsible_internal} onChange={e=>setForm({...form, responsible_internal:e.target.value})}/>
               </div>
               <select style={inp} value={form.status} onChange={e=>setForm({...form, status:e.target.value})}>
                 <option value="activo">Activo</option>
@@ -1027,8 +1027,8 @@ function ClientesRealView({ realData, onRefresh }) {
                   {c.photo_url ? <img src={c.photo_url} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }}/> : <span style={{ fontSize:20, fontWeight:600, color:"var(--ink-2)" }}>{(c.company_name||c.name||"?").charAt(0).toUpperCase()}</span>}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:13.5, fontWeight:600, color:"var(--ink-1)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.company_name||c.name||"\u2014"}</div>
-                  <div style={{ fontSize:11.5, color:"var(--ink-3)" }}>{c.client_type||"\u2014"}</div>
+                  <div style={{ fontSize:13.5, fontWeight:600, color:"var(--ink-1)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.company_name||c.name||"—"}</div>
+                  <div style={{ fontSize:11.5, color:"var(--ink-3)" }}>{c.client_type||"—"}</div>
                 </div>
                 <span style={{ width:9, height:9, borderRadius:9, background:statusColor[(c.status||"").toLowerCase()]||"#64748b", flexShrink:0 }} title={c.status}/>
               </div>
@@ -1039,13 +1039,13 @@ function ClientesRealView({ realData, onRefresh }) {
                 {c.responsible_internal && <div style={{ color:"var(--ink-3)", marginTop:4 }}>Resp: {c.responsible_internal}</div>}
               </div>
               <div style={{ marginTop:10, paddingTop:10, borderTop:"1px solid var(--ink-fill)", fontSize:10.5, color:"var(--ink-3)", display:"flex", justifyContent:"space-between" }}>
-                <span>{c.status||"\u2014"}</span>
+                <span>{c.status||"—"}</span>
                 <span>Alta {fmtDate(c.created_at)}</span>
               </div>
             </div>
           ))}
         </div>
-      ) : <div className="gl gc" style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Sin clientes todav\u00eda. Pulsa "+ A\u00f1adir cliente" para crear el primero.</div>}
+      ) : <div className="gl gc" style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Sin clientes todavia. Pulsa "+ Anadir cliente" para crear el primero.</div>}
     </div>
   );
 }
