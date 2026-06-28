@@ -1043,7 +1043,7 @@ function ClientesRealView({ realData, onRefresh }) {
                   <div style={{ fontSize:11.5, color:"var(--ink-3)" }}>{c.client_type||"—"}</div>
                 </div>
                 <span style={{ width:9, height:9, borderRadius:9, background:statusColor[(c.status||"").toLowerCase()]||"#64748b", flexShrink:0 }} title={c.status}/>
-                <button onClick={(e)=>borrarCliente(c, e)} title="Eliminar cliente" style={{ marginLeft:8, width:22, height:22, borderRadius:6, border:"1px solid rgba(248,113,113,0.3)", background:"rgba(248,113,113,0.1)", color:"#f87171", fontSize:13, lineHeight:"1", cursor:"pointer", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", padding:0 }}>X</button>
+                <button onClick={(e)=>{e.preventDefault();e.stopPropagation();borrarCliente(c,e);}} onMouseDown={(e)=>e.stopPropagation()} title="Eliminar cliente" style={{ marginLeft:8, width:22, height:22, borderRadius:6, border:"1px solid rgba(248,113,113,0.3)", background:"rgba(248,113,113,0.1)", color:"#f87171", fontSize:13, lineHeight:"1", cursor:"pointer", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", padding:0, position:"relative", zIndex:5 }}>X</button>
               </div>
               <div style={{ fontSize:12, color:"var(--ink-2)", lineHeight:1.7 }}>
                 {c.contact_name && <div>{c.contact_name}</div>}
