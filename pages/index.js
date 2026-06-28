@@ -906,6 +906,150 @@ function ClientesView({ realData }) {
   );
 }
 
+function ClientesRealView({ realData, onRefresh }) {
+  const clients = (realData && realData.clients) || [];
+  const fmtDate = d => d ? new Date(d).toLocaleDateString("es-ES") : "\u2014";
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState("");
+  const empty = { company_name:"", contact_name:"", phone_e164:"", email:"", client_type:"", responsible_internal:"", status:"activo", notes:"", photo_url:"" };
+  const [form, setForm] = useState(empty);
+
+  const statusColor = { activo:"#34d399", pausado:"#fbbf24", baja:"#f87171", potencial:"#a78bfa", onboarding:"#38bdf8" };
+  const total = clients.length;
+  const activos = clients.filter(c => (c.status||"").toLowerCase()==="activo").length;
+  const tipos = new Set(clients.map(c => c.client_type).filter(Boolean)).size;
+
+  const abrirNuevo = () => { setForm(empty); setEditId(null); setShowForm(true); setMsg(""); };
+  const abrirEdit = (c) => { setForm({ ...empty, ...c }); setEditId(c.id); setShowForm(true); setMsg(""); };
+
+  const subirFoto = async (file) => {
+    if (!file) return;
+    setMsg("Subiendo foto...");
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const r = await fetch("/api/clients-manage", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileBase64: reader.result, fileName: file.name, contentType: file.type, clientId: editId || "new" }),
+        });
+        const d = await r.json();
+        if (d.ok) { setForm(f => ({ ...f, photo_url: d.url })); setMsg("Foto lista"); }
+        else setMsg("Error subiendo foto: " + (d.error||""));
+      } catch(e) { setMsg("Error: " + e.message); }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const guardar = async () => {
+    if (!form.company_name) { setMsg("Pon al menos el nombre de la empresa"); return; }
+    setSaving(true); setMsg("");
+    try {
+      const r = await fetch("/api/clients-manage", {
+        method: editId ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editId ? { ...form, id: editId } : form),
+      });
+      const d = await r.json();
+      if (d.ok) { setShowForm(false); setForm(empty); setEditId(null); if (onRefresh) onRefresh(); }
+      else setMsg("Error: " + (d.error||"no se pudo guardar"));
+    } catch(e) { setMsg("Error: " + e.message); }
+    setSaving(false);
+  };
+
+  const inp = { width:"100%", boxSizing:"border-box", padding:"8px 10px", borderRadius:8, fontSize:12.5, background:"var(--ink-fill)", color:"var(--ink-1)", border:"1px solid var(--ink-fill)", outline:"none", marginBottom:9 };
+
+  return (
+    <div className="fi">
+      <SHead title="Clientes" sub="Cartera de clientes contratados"/>
+      <div className="grid-4" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:11, marginBottom:16 }}>
+        <KpiCard label="Total clientes" value={String(total)} icon="briefcase" ac="#38bdf8"/>
+        <KpiCard label="Activos" value={String(activos)} icon="users" ac="#34d399"/>
+        <KpiCard label="Tipos de servicio" value={String(tipos)} icon="target" ac="#a78bfa"/>
+        <KpiCard label="Cartera total" value={String(total)} icon="capture" ac="#f97316"/>
+      </div>
+
+      <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:12 }}>
+        <button className="btn" onClick={() => showForm ? setShowForm(false) : abrirNuevo()} style={{ fontSize:12 }}>
+          {showForm ? "\u2715 Cancelar" : "+ A\u00f1adir cliente"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="gl gc" style={{ marginBottom:14 }}>
+          <div style={{ fontSize:12.5, fontWeight:600, color:"var(--ink-1)", marginBottom:14 }}>{editId ? "Editar cliente" : "Nuevo cliente"}</div>
+          <div style={{ display:"flex", gap:16, alignItems:"flex-start", flexWrap:"wrap" }}>
+            <div style={{ textAlign:"center" }}>
+              <div style={{ width:84, height:84, borderRadius:16, overflow:"hidden", background:"var(--ink-fill)", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:8, border:"1px solid var(--ink-line)" }}>
+                {form.photo_url ? <img src={form.photo_url} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }}/> : <span style={{ fontSize:24, color:"var(--ink-3)" }}>{(form.company_name||"?").charAt(0).toUpperCase()}</span>}
+              </div>
+              <label className="btn" style={{ fontSize:11, cursor:"pointer", display:"inline-block" }}>
+                Subir foto
+                <input type="file" accept="image/*" onChange={e => subirFoto(e.target.files[0])} style={{ display:"none" }}/>
+              </label>
+            </div>
+            <div style={{ flex:1, minWidth:240 }}>
+              <input style={inp} placeholder="Nombre de la empresa *" value={form.company_name} onChange={e=>setForm({...form, company_name:e.target.value})}/>
+              <input style={inp} placeholder="Persona de contacto" value={form.contact_name} onChange={e=>setForm({...form, contact_name:e.target.value})}/>
+              <div style={{ display:"flex", gap:9 }}>
+                <input style={inp} placeholder="Tel\u00e9fono" value={form.phone_e164} onChange={e=>setForm({...form, phone_e164:e.target.value})}/>
+                <input style={inp} placeholder="Email" value={form.email} onChange={e=>setForm({...form, email:e.target.value})}/>
+              </div>
+              <div style={{ display:"flex", gap:9 }}>
+                <input style={inp} placeholder="Tipo (panader\u00eda, hosteler\u00eda...)" value={form.client_type} onChange={e=>setForm({...form, client_type:e.target.value})}/>
+                <input style={inp} placeholder="Responsable (Nico, Jos\u00e9...)" value={form.responsible_internal} onChange={e=>setForm({...form, responsible_internal:e.target.value})}/>
+              </div>
+              <select style={inp} value={form.status} onChange={e=>setForm({...form, status:e.target.value})}>
+                <option value="activo">Activo</option>
+                <option value="onboarding">Onboarding</option>
+                <option value="pausado">Pausado</option>
+                <option value="potencial">Potencial</option>
+                <option value="baja">Baja</option>
+              </select>
+              <textarea style={{...inp, minHeight:60, resize:"vertical"}} placeholder="Notas internas" value={form.notes} onChange={e=>setForm({...form, notes:e.target.value})}/>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <button className="btn" onClick={guardar} disabled={saving} style={{ fontSize:12 }}>{saving ? "Guardando..." : (editId ? "Guardar cambios" : "Crear cliente")}</button>
+                {msg && <span style={{ fontSize:11.5, color:"var(--ink-3)" }}>{msg}</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {clients.length > 0 ? (
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(280px, 1fr))", gap:12 }}>
+          {clients.map((c,i)=>(
+            <div key={c.id||i} className="gl gc" style={{ padding:16, cursor:"pointer" }} onClick={()=>abrirEdit(c)}>
+              <div style={{ display:"flex", gap:12, alignItems:"center", marginBottom:12 }}>
+                <div style={{ width:52, height:52, borderRadius:13, overflow:"hidden", background:"var(--ink-fill)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, border:"1px solid var(--ink-line)" }}>
+                  {c.photo_url ? <img src={c.photo_url} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }}/> : <span style={{ fontSize:20, fontWeight:600, color:"var(--ink-2)" }}>{(c.company_name||c.name||"?").charAt(0).toUpperCase()}</span>}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13.5, fontWeight:600, color:"var(--ink-1)", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.company_name||c.name||"\u2014"}</div>
+                  <div style={{ fontSize:11.5, color:"var(--ink-3)" }}>{c.client_type||"\u2014"}</div>
+                </div>
+                <span style={{ width:9, height:9, borderRadius:9, background:statusColor[(c.status||"").toLowerCase()]||"#64748b", flexShrink:0 }} title={c.status}/>
+              </div>
+              <div style={{ fontSize:12, color:"var(--ink-2)", lineHeight:1.7 }}>
+                {c.contact_name && <div>ðŸ‘¤ {c.contact_name}</div>}
+                {c.phone_e164 && <div>ðŸ“± {c.phone_e164}</div>}
+                {c.email && <div style={{ overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>âœ‰ï¸ {c.email}</div>}
+                {c.responsible_internal && <div style={{ color:"var(--ink-3)", marginTop:4 }}>Resp: {c.responsible_internal}</div>}
+              </div>
+              <div style={{ marginTop:10, paddingTop:10, borderTop:"1px solid var(--ink-fill)", fontSize:10.5, color:"var(--ink-3)", display:"flex", justifyContent:"space-between" }}>
+                <span>{c.status||"\u2014"}</span>
+                <span>Alta {fmtDate(c.created_at)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : <div className="gl gc" style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Sin clientes todav\u00eda. Pulsa "+ A\u00f1adir cliente" para crear el primero.</div>}
+    </div>
+  );
+}
+
 function AcademyView({ realData }) {
   return (
     <div className="fi">
@@ -1990,7 +2134,7 @@ export default function AstraHQ() {
         <div className="main-wrap" style={{ marginLeft:sw, paddingTop:56, minHeight:"100vh", transition:"margin-left .28s ease", position:"relative", zIndex:2 }}
           onClick={()=>notif&&setNotif(false)}>
           <div style={{ padding:"26px 26px", maxWidth:1380, margin:"0 auto" }}>
-            {view==="dashboard" ? <DashboardView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : view==="academy" ? <AcademyView realData={realData}/> : view==="reuniones" ? <ReunionesView realData={realData}/> : view==="clientes" ? <ClientesView realData={realData}/>  : view==="captacion" ? <ClientesView realData={realData}/> : view==="whatsapp" ? <WhatsAppView realData={realData} onRefresh={fetchData}/> : view==="sistemas" ? <SistemasView realData={realData}/> : view==="analytics" ? <AnalyticsView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : (
+            {view==="dashboard" ? <DashboardView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : view==="academy" ? <AcademyView realData={realData}/> : view==="reuniones" ? <ReunionesView realData={realData}/> : view==="clientes" ? <ClientesRealView realData={realData} onRefresh={fetchData}/>  : view==="captacion" ? <ClientesView realData={realData}/> : view==="whatsapp" ? <WhatsAppView realData={realData} onRefresh={fetchData}/> : view==="sistemas" ? <SistemasView realData={realData}/> : view==="analytics" ? <AnalyticsView realData={realData}/> : view==="finanzas" ? <FinanzasView realData={realData} onRefresh={fetchData}/> : (
               <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", minHeight:300, gap:12 }}>
                 <div style={{ width:48, height:48, borderRadius:12, background:"var(--ink-fill)", border:"1px solid var(--ink-fill)", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   <Icon name="layers" size={19} stroke="var(--ink-3)"/>
