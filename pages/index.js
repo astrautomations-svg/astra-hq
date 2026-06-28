@@ -596,21 +596,6 @@ function FinanzasView({ realData, onRefresh }) {
     setSaving(false);
   };
 
-  const [aBorrar, setABorrar] = useState(null);
-  const borrarCliente = (cli, e) => {
-    if (e) { e.preventDefault(); e.stopPropagation(); }
-    setABorrar(cli);
-  };
-  const confirmarBorrado = async () => {
-    if (!aBorrar) return;
-    const cli = aBorrar;
-    try {
-      const r = await fetch("/api/clients-manage?id=" + encodeURIComponent(cli.id), { method: "DELETE" });
-      const d = await r.json();
-      if (d.ok) { setABorrar(null); if (onRefresh) onRefresh(); }
-      else alert("No se pudo eliminar: " + (d.error || ""));
-    } catch (err) { alert("Error: " + err.message); }
-  };
 
   return (
     <div className="fi">
@@ -931,6 +916,21 @@ function ClientesRealView({ realData, onRefresh }) {
   const [msg, setMsg] = useState("");
   const empty = { company_name:"", contact_name:"", phone_e164:"", email:"", client_type:"", responsible_internal:"", status:"activo", notes:"", photo_url:"" };
   const [form, setForm] = useState(empty);
+  const [aBorrar, setABorrar] = useState(null);
+  const borrarCliente = (cli, e) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    setABorrar(cli);
+  };
+  const confirmarBorrado = async () => {
+    if (!aBorrar) return;
+    const cli = aBorrar;
+    try {
+      const r = await fetch("/api/clients-manage?id=" + encodeURIComponent(cli.id), { method: "DELETE" });
+      const d = await r.json();
+      if (d.ok) { setABorrar(null); if (onRefresh) onRefresh(); }
+      else alert("No se pudo eliminar: " + (d.error || ""));
+    } catch (err) { alert("Error: " + err.message); }
+  };
 
   const statusColor = { activo:"#34d399", pausado:"#fbbf24", baja:"#f87171", potencial:"#a78bfa", onboarding:"#38bdf8" };
   const total = clients.length;
