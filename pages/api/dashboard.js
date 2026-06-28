@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET");
   try {
     const [pagos, academy, reuniones, leads, newsletter, chatbot, setter, leadsCaptacion,
-           waContacts, waMessages, waLeadState, panaderiasOutbound] = await Promise.all([
+           waContacts, waMessages, waLeadState, panaderiasOutbound, clients] = await Promise.all([
       supabase.from("pagos").select("*").order("processed_at", { ascending: false }),
       supabase.from("academy_members").select("*").order("joined_at", { ascending: false }),
       supabase.from("reuniones").select("*").order("start_time", { ascending: false }),
@@ -24,6 +24,7 @@ export default async function handler(req, res) {
       supabase.from("whatsapp_messages").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("whatsapp_lead_state").select("*"),
       supabase.from("panaderias_outbound").select("*"),
+      supabase.from("clients").select("*").order("created_at", { ascending: false }),
     ]);
     // Log any errors
     [pagos, academy, reuniones, leads, newsletter, chatbot, setter,
@@ -43,6 +44,7 @@ export default async function handler(req, res) {
       waMessages:  waMessages.data  || [],
       waLeadState: waLeadState.data || [],
       panaderiasOutbound: panaderiasOutbound.data || [],
+      clients: clients.data || [],
     });
   } catch (err) {
     console.error("Dashboard API error:", err);
