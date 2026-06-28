@@ -1404,6 +1404,7 @@ function WhatsAppView({ realData, onRefresh }) {
   const leadState = (realData && realData.waLeadState) || [];
   const [selId, setSelId] = useState(null);
   const [filtroTemp, setFiltroTemp] = useState("todos");
+  const [buscaContacto, setBuscaContacto] = useState("");
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const chatEndRef2 = useRef(null);
@@ -1424,9 +1425,15 @@ function WhatsAppView({ realData, onRefresh }) {
 
   const tempDe = (id) => { const s = leadState.find(x => x.contact_id === id); return s ? s.temperatura : null; };
   const filteredContacts = contacts.filter(c => {
-    if (filtroTemp === "todos") return true;
-    if (filtroTemp === "manual") return c.bot_activo === false;
-    return tempDe(c.id) === filtroTemp;
+    if (filtroTemp === "manual") { if (c.bot_activo !== false) return false; }
+    else if (filtroTemp !== "todos") { if (tempDe(c.id) !== filtroTemp) return false; }
+    const q = buscaContacto.trim().toLowerCase();
+    if (q) {
+      const nom = (c.name || "").toLowerCase();
+      const tel = (c.phone_e164 || "").toLowerCase();
+      if (!nom.includes(q) && !tel.includes(q)) return false;
+    }
+    return true;
   });
   const countTemp = (t) => contacts.filter(c => tempDe(c.id) === t).length;
   const countManual = contacts.filter(c => c.bot_activo === false).length;
@@ -1502,7 +1509,20 @@ function WhatsAppView({ realData, onRefresh }) {
       <div className="wa-grid" style={{ display: "grid", gridTemplateColumns: "260px 1fr 280px", gap: 12, height: "calc(100vh - 280px)", minHeight: 460 }}>
         {/* COLUMNA 1: contactos */}
         <div className="gl gc" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-          <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--ink-fill)", fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)" }}>Conversaciones</div>
+          <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--ink-fill)" }}>
+            <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-1)", marginBottom: 8 }}>Conversaciones</div>
+            <input
+              value={buscaContacto}
+              onChange={e => setBuscaContacto(e.target.value)}
+              placeholder="Buscar por nombre o telefono..."
+              style={{
+                width: "100%", boxSizing: "border-box",
+                padding: "7px 10px", borderRadius: 8, fontSize: 12,
+                background: "var(--ink-fill)", color: "var(--ink-1)",
+                border: "1px solid var(--ink-fill)", outline: "none",
+              }}
+            />
+          </div>
           <div style={{ overflowY: "auto", flex: 1 }}>
             {filteredContacts.length === 0 && <div style={{ padding: 20, fontSize: 12, color: "var(--ink-3)", textAlign: "center" }}>{contacts.length === 0 ? "Sin conversaciones todavia" : "Sin conversaciones en este filtro"}</div>}
             {filteredContacts.map(c => {
