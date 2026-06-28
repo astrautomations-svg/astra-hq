@@ -596,6 +596,18 @@ function FinanzasView({ realData, onRefresh }) {
     setSaving(false);
   };
 
+  const borrarCliente = async (cli, e) => {
+    if (e) e.stopPropagation();
+    const nombre = cli.company_name || cli.name || "este cliente";
+    if (!window.confirm("Seguro que quieres eliminar a " + nombre + "? Esta accion no se puede deshacer.")) return;
+    try {
+      const r = await fetch("/api/clients-manage?id=" + encodeURIComponent(cli.id), { method: "DELETE" });
+      const d = await r.json();
+      if (d.ok) { if (onRefresh) onRefresh(); }
+      else alert("No se pudo eliminar: " + (d.error || ""));
+    } catch (err) { alert("Error: " + err.message); }
+  };
+
   return (
     <div className="fi">
       <SHead title="Finanzas" sub="Stripe · Manual · Suscripciones activas"/>
@@ -973,7 +985,7 @@ function ClientesRealView({ realData, onRefresh }) {
 
       <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:12 }}>
         <button className="btn" onClick={() => showForm ? setShowForm(false) : abrirNuevo()} style={{ fontSize:12 }}>
-          {showForm ? "✕ Cancelar" : "+ Anadir cliente"}
+          {showForm ? "✕ Cancelar" : "+ Añadir cliente"}
         </button>
       </div>
 
@@ -1031,11 +1043,12 @@ function ClientesRealView({ realData, onRefresh }) {
                   <div style={{ fontSize:11.5, color:"var(--ink-3)" }}>{c.client_type||"—"}</div>
                 </div>
                 <span style={{ width:9, height:9, borderRadius:9, background:statusColor[(c.status||"").toLowerCase()]||"#64748b", flexShrink:0 }} title={c.status}/>
+                <button onClick={(e)=>borrarCliente(c, e)} title="Eliminar cliente" style={{ marginLeft:8, width:22, height:22, borderRadius:6, border:"1px solid rgba(248,113,113,0.3)", background:"rgba(248,113,113,0.1)", color:"#f87171", fontSize:13, lineHeight:"1", cursor:"pointer", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", padding:0 }}>X</button>
               </div>
               <div style={{ fontSize:12, color:"var(--ink-2)", lineHeight:1.7 }}>
-                {c.contact_name && <div>ðŸ‘¤ {c.contact_name}</div>}
-                {c.phone_e164 && <div>ðŸ“± {c.phone_e164}</div>}
-                {c.email && <div style={{ overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>âœ‰ï¸ {c.email}</div>}
+                {c.contact_name && <div>{c.contact_name}</div>}
+                {c.phone_e164 && <div>{c.phone_e164}</div>}
+                {c.email && <div style={{ overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.email}</div>}
                 {c.responsible_internal && <div style={{ color:"var(--ink-3)", marginTop:4 }}>Resp: {c.responsible_internal}</div>}
               </div>
               <div style={{ marginTop:10, paddingTop:10, borderTop:"1px solid var(--ink-fill)", fontSize:10.5, color:"var(--ink-3)", display:"flex", justifyContent:"space-between" }}>
@@ -1045,7 +1058,7 @@ function ClientesRealView({ realData, onRefresh }) {
             </div>
           ))}
         </div>
-      ) : <div className="gl gc" style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Sin clientes todavia. Pulsa "+ Anadir cliente" para crear el primero.</div>}
+      ) : <div className="gl gc" style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Sin clientes todavia. Pulsa "+ Añadir cliente" para crear el primero.</div>}
     </div>
   );
 }
