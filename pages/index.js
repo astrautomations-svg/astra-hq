@@ -944,17 +944,30 @@ function ClientesRealView({ realData, onRefresh }) {
     if (!file) return;
     setMsg("Subiendo foto...");
     const reader = new FileReader();
-    reader.onload = async () => {
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = async () => {
+        const max = 512;
+        let w = img.width, h = img.height;
+        if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+        else if (h > max) { w = Math.round(w * max / h); h = max; }
+        const cv = document.createElement("canvas");
+        cv.width = w; cv.height = h;
+        cv.getContext("2d").drawImage(img, 0, 0, w, h);
+        const small = cv.toDataURL("image/jpeg", 0.85);
+        setMsg("Subiendo foto...");
       try {
         const r = await fetch("/api/clients-manage", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fileBase64: reader.result, fileName: file.name, contentType: file.type, clientId: editId || "new" }),
+          body: JSON.stringify({ fileBase64: small, fileName: "foto.jpg", contentType: "image/jpeg", clientId: editId || "new" }),
         });
         const d = await r.json();
         if (d.ok) { setForm(f => ({ ...f, photo_url: d.url })); setMsg("Foto lista"); }
         else setMsg("Error subiendo foto: " + (d.error||""));
       } catch(e) { setMsg("Error: " + e.message); }
+      };
+      img.src = reader.result;
     };
     reader.readAsDataURL(file);
   };
