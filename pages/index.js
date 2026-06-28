@@ -596,14 +596,18 @@ function FinanzasView({ realData, onRefresh }) {
     setSaving(false);
   };
 
-  const borrarCliente = async (cli, e) => {
-    if (e) e.stopPropagation();
-    const nombre = cli.company_name || cli.name || "este cliente";
-    if (!window.confirm("Seguro que quieres eliminar a " + nombre + "? Esta accion no se puede deshacer.")) return;
+  const [aBorrar, setABorrar] = useState(null);
+  const borrarCliente = (cli, e) => {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    setABorrar(cli);
+  };
+  const confirmarBorrado = async () => {
+    if (!aBorrar) return;
+    const cli = aBorrar;
     try {
       const r = await fetch("/api/clients-manage?id=" + encodeURIComponent(cli.id), { method: "DELETE" });
       const d = await r.json();
-      if (d.ok) { if (onRefresh) onRefresh(); }
+      if (d.ok) { setABorrar(null); if (onRefresh) onRefresh(); }
       else alert("No se pudo eliminar: " + (d.error || ""));
     } catch (err) { alert("Error: " + err.message); }
   };
@@ -1059,6 +1063,18 @@ function ClientesRealView({ realData, onRefresh }) {
           ))}
         </div>
       ) : <div className="gl gc" style={{ textAlign:"center", color:"var(--ink-3)", padding:"40px 0", fontSize:12 }}>Sin clientes todavia. Pulsa "+ Añadir cliente" para crear el primero.</div>}
+      {aBorrar && (
+        <div onClick={()=>setABorrar(null)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:9999 }}>
+          <div onClick={(e)=>e.stopPropagation()} style={{ background:"#13151a", border:"1px solid #2a2d36", borderRadius:14, padding:"22px 24px", maxWidth:380, width:"90%", boxShadow:"0 20px 60px rgba(0,0,0,0.5)" }}>
+            <div style={{ fontSize:14.5, fontWeight:700, color:"#e8eaed", marginBottom:8 }}>Eliminar cliente</div>
+            <div style={{ fontSize:13, color:"#a8abb4", lineHeight:1.6, marginBottom:18 }}>Seguro que quieres eliminar a <b>{aBorrar.company_name || aBorrar.name || "este cliente"}</b>? Esta accion no se puede deshacer.</div>
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+              <button onClick={()=>setABorrar(null)} style={{ padding:"8px 16px", borderRadius:8, fontSize:12.5, fontWeight:600, background:"#1c1f27", color:"#e8eaed", border:"1px solid #2a2d36", cursor:"pointer" }}>Cancelar</button>
+              <button onClick={confirmarBorrado} style={{ padding:"8px 16px", borderRadius:8, fontSize:12.5, fontWeight:600, background:"#dc2626", color:"#fff", border:"none", cursor:"pointer" }}>Eliminar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
