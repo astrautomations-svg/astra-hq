@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       supabase.from("leads_captacion").select("*").order("updated_at", { ascending: false }),
       // --- WhatsApp ---
       supabase.from("whatsapp_contacts").select("*").order("last_message_at", { ascending: false }).limit(200),
-      supabase.from("whatsapp_messages").select("*").order("created_at", { ascending: false }).limit(500),
+      supabase.from("whatsapp_messages").select("*").order("created_at", { ascending: false }).limit(3000),
       supabase.from("whatsapp_lead_state").select("*"),
       supabase.from("panaderias_outbound").select("*"),
       supabase.from("clients").select("*").order("created_at", { ascending: false }),
