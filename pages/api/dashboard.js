@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET");
   try {
     const [pagos, academy, reuniones, leads, newsletter, chatbot, setter, leadsCaptacion,
-           waContacts, waMessages, waLeadState, panaderiasOutbound, clients] = await Promise.all([
+           waContacts, waLeadState, panaderiasOutbound, clients] = await Promise.all([
       supabase.from("pagos").select("*").order("processed_at", { ascending: false }),
       supabase.from("academy_members").select("*").order("joined_at", { ascending: false }),
       supabase.from("reuniones").select("*").order("start_time", { ascending: false }),
@@ -20,15 +20,17 @@ export default async function handler(req, res) {
       supabase.from("Leads-Setter-IA").select("*").order("updated_at", { ascending: false }).limit(100),
       supabase.from("leads_captacion").select("*").order("updated_at", { ascending: false }),
       // --- WhatsApp ---
+      // Ya NO se cargan todos los mensajes aqui (antes: waMessages con .limit(500) o .limit(3000)).
+      // Cada conversacion se pide bajo demanda en /api/wa-messages?contact_id=... al abrir el chat,
+      // asi no hay un limite global que corte conversaciones antiguas cuando el volumen crece.
       supabase.from("whatsapp_contacts").select("*").order("last_message_at", { ascending: false }).limit(200),
-      supabase.from("whatsapp_messages").select("*").order("created_at", { ascending: false }).limit(3000),
       supabase.from("whatsapp_lead_state").select("*"),
       supabase.from("panaderias_outbound").select("*"),
       supabase.from("clients").select("*").order("created_at", { ascending: false }),
     ]);
     // Log any errors
     [pagos, academy, reuniones, leads, newsletter, chatbot, setter,
-     waContacts, waMessages, waLeadState, panaderiasOutbound].forEach((r, i) => {
+     waContacts, waLeadState, panaderiasOutbound].forEach((r, i) => {
       if (r.error) console.error(`Table ${i} error:`, r.error);
     });
     res.status(200).json({
@@ -41,7 +43,6 @@ export default async function handler(req, res) {
       setter:     setter.data     || [],
       // WhatsApp
       waContacts:  waContacts.data  || [],
-      waMessages:  waMessages.data  || [],
       waLeadState: waLeadState.data || [],
       panaderiasOutbound: panaderiasOutbound.data || [],
       clients: clients.data || [],

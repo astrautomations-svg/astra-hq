@@ -1586,7 +1586,6 @@ function WhatsAppView({ realData, onRefresh }) {
   };
 
   const contacts = (realData && realData.waContacts) || [];
-  const messages = (realData && realData.waMessages) || [];
   const leadState = (realData && realData.waLeadState) || [];
   const [selId, setSelId] = useState(null);
   const [filtroTemp, setFiltroTemp] = useState("todos");
@@ -1598,10 +1597,25 @@ function WhatsAppView({ realData, onRefresh }) {
   const sel = contacts.find(c => c.id === selId) || contacts[0] || null;
   const selKey = sel ? sel.id : null;
 
-  // Mensajes del contacto seleccionado, en orden cronolÃ³gico
-  const thread = messages
-    .filter(m => m.contact_id === selKey)
-    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  // Mensajes del contacto seleccionado: se piden bajo demanda a /api/wa-messages
+  // en vez de filtrar un array global, asi no hay limite que corte historial antiguo.
+  const [thread, setThread] = useState([]);
+  const [loadingThread, setLoadingThread] = useState(false);
+
+  useEffect(() => {
+    if (!selKey) { setThread([]); return; }
+    let cancelled = false;
+    setLoadingThread(true);
+    fetch("/api/wa-messages?contact_id=" + encodeURIComponent(selKey))
+      .then(r => r.json())
+      .then(d => {
+        if (!cancelled) setThread(d.messages || []);
+      })
+      .catch(e => { console.error(e); if (!cancelled) setThread([]); })
+      .finally(() => { if (!cancelled) setLoadingThread(false); });
+    return () => { cancelled = true; };
+  }, [selKey]);
+
   useEffect(() => {
     if (chatEndRef2.current) chatEndRef2.current.scrollIntoView({ behavior: "auto", block: "end" });
   }, [selKey, thread.length]);
@@ -1638,7 +1652,15 @@ function WhatsAppView({ realData, onRefresh }) {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ contact_id: sel.id, wa_id: sel.wa_id, text: draft }),
       });
-      if (r.ok) { setDraft(""); if (onRefresh) onRefresh(); }
+      if (r.ok) {
+        setDraft("");
+        if (onRefresh) onRefresh();
+        // Refresca el hilo de este contacto para ver el mensaje enviado al momento
+        fetch("/api/wa-messages?contact_id=" + encodeURIComponent(sel.id))
+          .then(r2 => r2.json())
+          .then(d => setThread(d.messages || []))
+          .catch(e => console.error(e));
+      }
     } catch (e) { console.error(e); }
     setSending(false);
   };
@@ -1661,7 +1683,7 @@ function WhatsAppView({ realData, onRefresh }) {
         <KpiCard label="Contactos" value={String(contacts.length)} icon="msg" ac="#34d399" />
         <KpiCard label="En modo manual" value={String(contacts.filter(c => c.bot_activo === false).length)} icon="users" ac="#fbbf24" />
         <KpiCard label="Calientes" value={String(leadState.filter(s => s.temperatura === "caliente").length)} icon="target" ac="#f87171" />
-        <KpiCard label="Mensajes (recientes)" value={String(messages.length)} icon="activity" ac="#38bdf8" />
+        <KpiCard label="Activos (24h)" value={String(contacts.filter(c => c.last_message_at && (Date.now() - new Date(c.last_message_at).getTime()) < 86400000).length)} icon="activity" ac="#38bdf8" />
       </div>
 
       <div className="wa-filtros" style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 14 }}>
@@ -1753,7 +1775,8 @@ function WhatsAppView({ realData, onRefresh }) {
                 </button>
               </div>
               <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
-                {thread.length === 0 && <div style={{ fontSize: 12, color: "var(--ink-3)", textAlign: "center", marginTop: 30 }}>Sin mensajes</div>}
+                {loadingThread && <div style={{ fontSize: 12, color: "var(--ink-3)", textAlign: "center", marginTop: 30 }}>Cargando mensajes...</div>}
+                {!loadingThread && thread.length === 0 && <div style={{ fontSize: 12, color: "var(--ink-3)", textAlign: "center", marginTop: 30 }}>Sin mensajes</div>}
                 {thread.map((m, i) => {
                   const out = m.direction === "outbound";
                   const manual = m.is_manual === true;
